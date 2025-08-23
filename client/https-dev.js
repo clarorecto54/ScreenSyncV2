@@ -1,18 +1,18 @@
-const { createServer } = require('https')
-const { parse } = require('url')
-const os = require("os")
-const next = require('next')
-const fs = require("fs")
+import next from "next"
+import { networkInterfaces } from "os"
+import { createServer } from "https"
+import { parse } from "url"
+import fs from "fs"
 const dev = process.env.NODE_ENV !== 'production'
 process.env.TUBOPACK = "1"
 const port = 3000
 let IP = ""
 try {
-    for (let index = 0; index < 4; index++) {
-        let data = os.networkInterfaces()[Object.keys(os.networkInterfaces())[index]][0].address
-        if ((data.split(".").length - 1) === 3) {
-            IP = data
-            break
+    const networks = networkInterfaces()
+    for (const [name, descs] of Object.entries(networks)) {
+        if (!descs) continue
+        for (const desc of descs) {
+            if (desc.family === "IPv4" && !desc.internal) IP = desc.address
         }
     }
 } catch { console.log("No LAN Detected running on localhost") }

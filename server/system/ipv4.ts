@@ -1,12 +1,17 @@
-const os = require("os")
-export default function GETIP() {
+import { networkInterfaces } from "os";
+export default function GETIP()
+{
     var IP = "localhost" //? Default IP
-    try {
-        for (var index = 0; index < 4; index++) { //? Find a valid IP
-            const data: string = os.networkInterfaces()[Object.keys(os.networkInterfaces())[index]][0].address
-            if ((data.split(".").length - 1) === 3) {
-                IP = data //? If valid IP found it will return it
-                break
+    try
+   
+    {
+        const networks = networkInterfaces()
+        for (const [name, descs] of Object.entries(networks))
+        {
+            if (!descs) continue
+            for (const desc of descs)
+            {
+                if (desc.family === "IPv4" && !desc.internal) IP = desc.address
             }
         }
     } catch (error) { console.log("No LAN Detected running on localhost") }
