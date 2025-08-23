@@ -11,13 +11,16 @@ import { transformSDP } from "../utils/sdp.transform"
 import Inactives from "./interactive/inactives"
 import Whitelist from "../whitelist"
 
-export default function AppDock() {
+export default function AppDock()
+{
     /* ----- STATES & HOOKS ----- */
     const { meetingCode } = useGlobals()
     const [copy, setCopy] = useState<boolean>(false)
     /* ------ EVENT HANDLER ----- */
-    useEffect(() => {
-        if (copy) setTimeout(() => {
+    useEffect(() =>
+    {
+        if (copy) setTimeout(() =>
+        {
             setCopy(false)
         }, 3000)
     }, [copy])
@@ -29,7 +32,8 @@ export default function AppDock() {
         )}>
         <Button //* COPY MEETING
             useIcon iconSrc={require("@/public/images/Copy.svg")} iconOverlay
-            onClick={() => {
+            onClick={() =>
+            {
                 navigator.clipboard.writeText(meetingCode) //? Copy the meeting code to the clipboard
                 setCopy(true)
             }}
@@ -42,7 +46,8 @@ export default function AppDock() {
         <Interactive />
     </div>
 }
-function Dock() {
+function Dock()
+{
     /* ----- STATES & HOOKS ----- */
     const {
         host, participantList, setfullscreen,
@@ -59,103 +64,233 @@ function Dock() {
     const [requestCooldown, setRequestCooldown] = useState<boolean>(false)
     const [noRequest, setNoRequest] = useState<boolean>(false)
     /* ------ EVENT HANDLER ----- */
-    useEffect(() => {
-        socket?.on("get-stream", (targetID: string) => {
-            if (peer && stream) {
+    useEffect(() =>
+    {
+        socket?.on("get-stream", (targetID: string) =>
+        {
+            if (peer && stream)
+            {
                 const makeCall = peer.call(targetID, stream, { sdpTransform: transformSDP })
                 setcalls(prev => [...prev, makeCall])
             }
         })
-        socket?.on("streaming", () => {
-            if (!host) {
+        socket?.on("streaming", () =>
+        {
+            if (!host)
+            {
                 setstreamAcces(false)
                 setNoRequest(true)
                 setpresenting(true)
             }
         })
-        socket?.on("avail-req", () => {
-            if (!host || streamAccess) {
+        socket?.on("avail-req", () =>
+        {
+            if (!host || streamAccess)
+            {
                 setNoRequest(false)
                 setstreamAcces(false)
             }
-            if (calls.length !== 0) {
+            if (calls.length !== 0)
+            {
                 calls.forEach(call => call.close())
                 setcalls([])
             }
             if (stream) { stream.getTracks().forEach(track => track.stop()) }
             setpresenting(false)
         })
-        socket?.on("grant-access", (permittedID: string) => {
-            if (permittedID === myInfo.id) {
+        socket?.on("grant-access", (permittedID: string) =>
+        {
+            if (permittedID === myInfo.id)
+            {
                 setRequestCooldown(false)
                 setstreamAcces(true)
             } else { !host && setNoRequest(true) }
         })
-        socket?.on("req-stream", (client: UserProps) => {
-            if (host) {
+        socket?.on("req-stream", (client: UserProps) =>
+        {
+            if (host)
+            {
                 setRequestCooldown(false)
                 setsystemPopup({
                     type: "INFO",
                     message: `Allow ${client.name} to have streaming access?`,
                     icon: require("@/public/images/Share Screen (2).svg"),
-                    action() {
-                        socket.emit("grant-access", meetingCode, client.id)
+                    action()
+                    {
+                        socket?.emit("grant-access", meetingCode, client.id)
                     }
                 })
             } else { setRequestCooldown(true) }
         })
-        return () => {
-            socket?.off("get-stream", (targetID: string) => {
-                if (peer && stream) {
+        return () =>
+        {
+            socket?.off("get-stream", (targetID: string) =>
+            {
+                if (peer && stream)
+                {
                     const makeCall = peer.call(targetID, stream, { sdpTransform: transformSDP })
                     setcalls(prev => [...prev, makeCall])
                 }
             })
-            socket?.off("streaming", () => {
-                if (!host) {
+            socket?.off("streaming", () =>
+            {
+                if (!host)
+                {
                     setstreamAcces(false)
                     setNoRequest(true)
                     setpresenting(true)
                 }
             })
-            socket?.off("avail-req", () => {
-                if (!host || streamAccess) {
+            socket?.off("avail-req", () =>
+            {
+                if (!host || streamAccess)
+                {
                     setNoRequest(false)
                     setstreamAcces(false)
                 }
-                if (calls.length !== 0) {
+                if (calls.length !== 0)
+                {
                     calls.forEach(call => call.close())
                     setcalls([])
                 }
                 if (stream) { stream.getTracks().forEach(track => track.stop()) }
                 setpresenting(false)
             })
-            socket?.off("grant-access", (permittedID: string) => {
-                if (permittedID === myInfo.id) {
+            socket?.off("grant-access", (permittedID: string) =>
+            {
+                if (permittedID === myInfo.id)
+                {
                     setRequestCooldown(false)
                     setstreamAcces(true)
                 } else { !host && setNoRequest(true) }
             })
-            socket?.off("req-stream", (client: UserProps) => {
-                if (host) {
+            socket?.off("req-stream", (client: UserProps) =>
+            {
+                if (host)
+                {
                     setRequestCooldown(false)
                     setsystemPopup({
                         type: "INFO",
                         message: `Allow ${client.name} to have streaming access?`,
                         icon: require("@/public/images/Share Screen (2).svg"),
-                        action() {
-                            socket.emit("grant-access", meetingCode, client.id)
+                        action()
+                        {
+                            socket?.emit("grant-access", meetingCode, client.id)
                         }
                     })
                 } else { setRequestCooldown(true) }
             })
         }
     }, [host, peer, stream])
-    useEffect(() => {
-        requestCooldown && setTimeout(() => {
+    useEffect(() =>
+    {
+        requestCooldown && setTimeout(() =>
+        {
             setRequestCooldown(false)
         }, 5000)
     }, [requestCooldown])
+    /* ######### SHARE SCREEN METHOD ######## */
+    async function shareScreen()
+    {
+        if (streamAccess || host)
+        {
+            const mainStream = await navigator.mediaDevices.getDisplayMedia({
+                audio: true,
+                video: true
+            }).catch(err => console.warn(err))
+            if (socket && peer && mainStream)
+            {
+                /* ## STREAM MODIFICATIONS ## */
+                for (const track of mainStream.getTracks())
+                {
+                    if (track.kind === "audio")
+                    {
+                        track.contentHint = "music"
+                        await track.applyConstraints({
+                            autoGainControl: { ideal: false },
+                            echoCancellation: { ideal: false },
+                            noiseSuppression: { ideal: false },
+                            sampleRate: { ideal: 48000 },
+                            sampleSize: { ideal: 24 }
+                        }).catch(err => console.warn(err))
+                    }
+                    if (track.kind === "video")
+                    {
+                        track.contentHint = "detail"
+                        await track.applyConstraints({
+                            displaySurface: { exact: "window" },
+                            width: { ideal: 1920 },
+                            height: { ideal: 1080 },
+                            frameRate: { exact: 60 }
+                        }).catch(err => console.warn(err))
+                    }
+                    //* ADD EVENT LISTENER
+                    track.addEventListener("ended", function onEnded()
+                    {
+                        ((host || streamAccess) && (socket?.emit("stop-stream", meetingCode)))
+                        setpresenting(false)
+                        setstreamAcces(false)
+                        setNoRequest(false)
+                        track.removeEventListener("ended", onEnded)
+                    })
+                }
+                setstream(mainStream)
+                for (const participant of participantList)
+                {
+                    if (participant.id !== myInfo.id)
+                    {
+                        const makeCall = peer.call(participant.id, mainStream, { sdpTransform: transformSDP })
+                        //* DATA CHANNEL MODIFICATIONS
+                        const channel = makeCall.peerConnection.createDataChannel("myChannel", {
+                            ordered: false,
+                            maxRetransmits: 10
+                        })
+                        channel.bufferedAmountLowThreshold = 65536
+                        makeCall._initializeDataChannel(channel)
+                        //* TRANSCEIVER MODIFICATIONS
+                        const transceivers = makeCall.peerConnection.getTransceivers()
+                        for (const transceiver of transceivers)
+                        {
+                            if (transceiver.receiver.track.kind === "video") transceiver.receiver.track.contentHint = "detail"
+                            else transceiver.receiver.track.contentHint = "music"
+                        }
+                        //* SENDER PEER MODIFICATIONS
+                        const senders = makeCall.peerConnection.getSenders()
+                        for (const sender of senders)
+                        {
+                            if (sender.track?.kind === "video" && sender.track)
+                            {
+                                sender.track.contentHint = "detail"
+                                const params = sender.getParameters()
+                                //* DEGREDATION PREFERENCE
+                                params.degradationPreference = "maintain-framerate"
+                                //* ENCODINGS
+                                const encodings = params.encodings
+                                for (const encoding of encodings)
+                                {
+                                    encoding.priority = "high"
+                                    encoding.networkPriority = "high"
+                                    encoding.maxBitrate = 30000000
+                                    encoding.maxFramerate = 60
+                                    encoding.scaleResolutionDownBy = 1
+                                }
+                                await sender.setParameters(params)
+                            }
+                            if (sender.track?.kind === "audio" && sender.track) sender.track.contentHint = "music"
+                        }
+                        setcalls(prev => [...prev, makeCall])
+                    }
+                }
+            }
+            socket?.emit("start-stream", meetingCode, myInfo)
+            setpresenting(true)
+            setmutestream(true)
+        } else
+        {
+            socket?.emit("req-stream", meetingCode, myInfo)
+            setRequestCooldown(true)
+        }
+    }
     /* -------- RENDERING ------- */
     return <div //* CONTAINER
         className="flex gap-[16px] justify-center items-center">
@@ -178,89 +313,7 @@ function Dock() {
         {(!presenting && !requestCooldown && !noRequest && (host || streamAccess || !streamAccess)) && < Button //* SHARE SCREEN
             circle useIcon iconSrc={require("@/public/images/Share Screen (2).svg")}
             iconOverlay customOverlay={(presenting || (!streamAccess && !host)) ? "redOverlay" : undefined}
-            onClick={async () => {
-                if (streamAccess || host) {
-                    if (socket && peer && navigator.mediaDevices.getDisplayMedia) {
-                        //* GET DISPLAY
-                        const mainStream = await navigator.mediaDevices.getDisplayMedia({
-                            audio: {
-                                autoGainControl: { ideal: false },
-                                echoCancellation: { ideal: false },
-                                noiseSuppression: { ideal: false },
-                                sampleRate: { ideal: 48000 },
-                                sampleSize: { ideal: 24 }
-                            }, video: true
-                        })
-                            .then(async (originalStream) => {
-                                //* TRACK MODIFICATION
-                                for (const track of originalStream.getTracks()) {
-                                    if (track.kind === "audio") { track.contentHint = "music" }
-                                    else { track.contentHint = "detail" }
-                                    //* ADD EVENT LISTENER
-                                    await track.addEventListener("ended", function onEnded() {
-                                        ((host || streamAccess) && (socket?.emit("stop-stream", meetingCode)))
-                                        setpresenting(false)
-                                        setstreamAcces(false)
-                                        setNoRequest(false)
-                                        track.removeEventListener("ended", onEnded)
-                                    })
-                                }
-                                //* VIDEO MODIFICATION
-                                for (const video of originalStream.getVideoTracks()) {
-                                    await video.applyConstraints({
-                                        displaySurface: { exact: "window" },
-                                        frameRate: { exact: 60 }
-                                    }).then(() => { return }).catch(err => err)
-                                }
-                                return originalStream
-                            })
-                        setstream(mainStream)
-                        participantList.forEach(client => {
-                            if (client.id !== myInfo.id) {
-                                const makeCall = peer.call(client.id, mainStream, { sdpTransform: transformSDP })
-                                //* DATA CHANNEL MODIFICATIONS
-                                const channel = makeCall.peerConnection.createDataChannel("myChannel", {
-                                    id: 0,
-                                    maxRetransmits: 10,
-                                    negotiated: true,
-                                    ordered: false
-                                })
-                                channel.bufferedAmountLowThreshold = 65536
-                                makeCall._initializeDataChannel(channel)
-                                //* TRANSCEIVER MODIFICATIONS
-                                makeCall.peerConnection.getTransceivers().forEach(transceiver => {
-                                    if (transceiver.receiver.track.kind === "video") transceiver.receiver.track.contentHint = "detail"
-                                    else transceiver.receiver.track.contentHint = "music"
-                                })
-                                //* SENDER PEER MODIFICATIONS
-                                makeCall.peerConnection.getSenders().forEach(async (sender) => {
-                                    if (sender.track?.kind === "video") {
-                                        const params = sender.getParameters()
-                                        //* DEGREDATION PREFERENCE
-                                        params.degradationPreference = "maintain-framerate"
-                                        //* ENCODINGS
-                                        params.encodings.forEach(encoding => {
-                                            encoding.priority = "high"
-                                            encoding.networkPriority = "high"
-                                            encoding.maxBitrate = 30000000
-                                            encoding.maxFramerate = 60
-                                            encoding.scaleResolutionDownBy = 1
-                                        })
-                                        await sender.setParameters(params)
-                                    }
-                                })
-                                setcalls(prev => [...prev, makeCall])
-                            }
-                        })
-                    }
-                    socket?.emit("start-stream", meetingCode, myInfo)
-                    setpresenting(true)
-                    setmutestream(true)
-                } else {
-                    socket?.emit("req-stream", meetingCode, myInfo)
-                    setRequestCooldown(true)
-                }
-            }}
+            onClick={shareScreen}
             className={classMerge(
                 "bg-[#525252]", //? Background
                 "hover:bg-[#646464]", //? Hover
@@ -268,8 +321,10 @@ function Dock() {
         {(presenting && (host || streamAccess)) && < Button //* STOP SHARE SCREEN
             circle useIcon iconSrc={require("@/public/images/Share Screen (1).svg")}
             iconOverlay customOverlay={(presenting || (!streamAccess && !host)) ? "redOverlay" : undefined}
-            onClick={() => {
-                if (host || streamAccess) {
+            onClick={() =>
+            {
+                if (host || streamAccess)
+                {
                     calls.forEach(call => call.close())
                     setcalls([])
                 }
@@ -286,9 +341,12 @@ function Dock() {
             )} />}
         <Button //* END CALL
             circle useIcon iconOverlay iconSrc={require("@/public/images/End Call.svg")}
-            onClick={() => {
-                if (stream) {
-                    if (host || streamAccess) {
+            onClick={() =>
+            {
+                if (stream)
+                {
+                    if (host || streamAccess)
+                    {
                         calls.forEach(call => call.close())
                         setcalls([])
                     }
@@ -309,7 +367,8 @@ function Dock() {
             )} />
     </div>
 }
-function Interactive() {
+function Interactive()
+{
     /* ----- STATES & HOOKS ----- */
     const { setsystemPopup } = useGlobals()
     const { host } = useSession()
