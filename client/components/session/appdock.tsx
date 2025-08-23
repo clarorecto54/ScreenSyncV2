@@ -356,6 +356,7 @@ function Dock()
                     setpresenting(false)
                     setstreamAcces(false)
                     setNoRequest(false)
+                    window.location.replace("/")
                 }
                 socket?.emit("leave-room", meetingCode)
                 setmeetingCode("")
