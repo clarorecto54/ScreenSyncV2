@@ -18,8 +18,8 @@ export default function PendingItem({ user }: { user: UserProps }) {
             <Button //* ACCEPT
                 circle
                 onClick={() => {
-                    socket?.emit("accept-req", meetingCode, user) //? Update the user on their request
-                    socket?.emit("cancel-entry", meetingCode, user) //? Remove the user on the pending list
+                    socket.emit("accept-req", meetingCode, user) //? Update the user on their request
+                    socket.emit("cancel-entry", meetingCode, user) //? Remove the user on the pending list
                 }}
                 className={classMerge(
                     "bg-green-600 text-[0.5em] shadow-lg drop-shadow-sm", //? Base
@@ -29,8 +29,8 @@ export default function PendingItem({ user }: { user: UserProps }) {
             <Button //* REJECT
                 circle
                 onClick={() => {
-                    socket?.emit("cancel-req", user) //? Update the user on their request
-                    socket?.emit("cancel-entry", meetingCode, user) //? Remove the user on the pending list
+                    socket.emit("cancel-req", user) //? Update the user on their request
+                    socket.emit("cancel-entry", meetingCode, user) //? Remove the user on the pending list
                 }}
                 className={classMerge(
                     "bg-red-600 text-[0.5em] shadow-lg drop-shadow-sm", //? Base

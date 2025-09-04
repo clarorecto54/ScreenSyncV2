@@ -14,13 +14,13 @@ export default function Chat() {
     /* ------ EVENT HANDLER ----- */
     useEffect(() => {
         //* EMIT (REQ)
-        socket?.emit("get-chat", meetingCode)
+        socket.emit("get-chat", meetingCode)
         //* ON (RES)
-        socket?.on("updated-chat", (data: MessageProps[]) => setchatlog(data))
-        socket?.on("new-chat", () => { !interactive.includes("chat") && setnewchat(true) })
+        socket.on("updated-chat", (data: MessageProps[]) => setchatlog(data))
+        socket.on("new-chat", () => { !interactive.includes("chat") && setnewchat(true) })
         return () => {
-            socket?.off("updated-chat", (data: MessageProps[]) => setchatlog(data))
-            socket?.off("new-chat", () => { !interactive.includes("chat") && setnewchat(true) })
+            socket.off("updated-chat", (data: MessageProps[]) => setchatlog(data))
+            socket.off("new-chat", () => { !interactive.includes("chat") && setnewchat(true) })
         }
     }, [])
     /* -------- RENDERING ------- */
@@ -120,7 +120,7 @@ function Log({ chatlog, setnewchat }: { chatlog: MessageProps[], setnewchat: Dis
         <form //* INPUTS
             onSubmit={(thisElement) => {
                 thisElement.preventDefault()
-                message && socket?.emit("send-message", meetingCode, myInfo, message)
+                message && socket.emit("send-message", meetingCode, myInfo, message)
                 setMessage("")
             }}
             className={classMerge(

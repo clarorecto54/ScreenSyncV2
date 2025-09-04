@@ -57,18 +57,18 @@ function SessionInfo({ id, host, participants, meetingKey, strict, stream, white
     return <div //* SESSION INFO
         onClick={() => {
             if ((myInfo.name.toUpperCase() === host.name.toUpperCase()) && !participants.some(participants => participants.name.toUpperCase() === host.name.toUpperCase())) { //? If host rejoin the room
-                socket?.emit("join-room", id, myInfo)
+                socket.emit("join-room", id, myInfo)
                 return
             }
-            if (!meetingKey && (!strict || (strict && whitelist.includes(myInfo.name.toUpperCase())))) socket?.emit("join-room", id, myInfo) //? Join meeting
+            if (!meetingKey && (!strict || (strict && whitelist.includes(myInfo.name.toUpperCase())))) socket.emit("join-room", id, myInfo) //? Join meeting
             if (!meetingKey && strict && !whitelist.includes(myInfo.name.toUpperCase())) { //? Request Entry
-                socket?.emit("req-entry", id, myInfo)
+                socket.emit("req-entry", id, myInfo)
                 setsystemPopup({
                     type: "INFO",
                     message: `Waiting for approval of "${host.name}". Please close to cancel.`,
                     icon: require("@/public/images/Loading 1.svg"),
                     closeAction() {
-                        socket?.emit("cancel-entry", id, myInfo) //? Cancel Request
+                        socket.emit("cancel-entry", id, myInfo) //? Cancel Request
                     }
                 })
             }
@@ -116,18 +116,18 @@ function SessionInfo({ id, host, participants, meetingKey, strict, stream, white
             onSubmit={(thisElement) => {
                 thisElement.preventDefault()
                 if ((myInfo.name.toUpperCase() === host.name.toUpperCase()) && !participants.some(participants => participants.name.toUpperCase() === host.name.toUpperCase())) { //? If host rejoin the room
-                    socket?.emit("join-room", id, myInfo)
+                    socket.emit("join-room", id, myInfo)
                     return
                 }
-                if ((meetingKey === keyinput) && (!strict || (strict && whitelist.includes(myInfo.name.toUpperCase())))) socket?.emit("join-room", id, myInfo) //? Join meeting
+                if ((meetingKey === keyinput) && (!strict || (strict && whitelist.includes(myInfo.name.toUpperCase())))) socket.emit("join-room", id, myInfo) //? Join meeting
                 if ((meetingKey === keyinput) && strict && !whitelist.includes(myInfo.name.toUpperCase())) { //? Request Entry
-                    socket?.emit("req-entry", id, myInfo)
+                    socket.emit("req-entry", id, myInfo)
                     setsystemPopup({
                         type: "INFO",
                         message: `Waiting for approval of "${host.name}". Please close to cancel.`,
                         icon: require("@/public/images/Loading 1.svg"),
                         closeAction() {
-                            socket?.emit("cancel-entry", id, myInfo) //? Cancel Request
+                            socket.emit("cancel-entry", id, myInfo) //? Cancel Request
                         }
                     })
                 }

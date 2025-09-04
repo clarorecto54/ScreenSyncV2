@@ -91,7 +91,7 @@ function Popup({ participantList }: { participantList: UserProps[] }) {
                         {host && <Button //* ALERT ALL
                             circle useIcon iconSrc={require("@/public/images/Alert.svg")}
                             onClick={() => {
-                                socket?.emit("alert-all", meetingCode)
+                                socket.emit("alert-all", meetingCode)
                                 setSelected("")
                             }}
                             className={classMerge(
@@ -104,7 +104,7 @@ function Popup({ participantList }: { participantList: UserProps[] }) {
                         {host && <Button //* KICK ALL
                             circle useIcon iconSrc={require("@/public/images/Kick.svg")}
                             onClick={() => {
-                                socket?.emit("kick-all", meetingCode)
+                                socket.emit("kick-all", meetingCode)
                                 setSelected("")
                             }}
                             className={classMerge(
@@ -159,7 +159,7 @@ function Popup({ participantList }: { participantList: UserProps[] }) {
                                 {host && <Button //* Alert
                                     circle useIcon iconSrc={require("@/public/images/Alert.svg")}
                                     onClick={() => {
-                                        socket?.emit("alert", id)
+                                        socket.emit("alert", id)
                                         setSelected("")
                                     }}
                                     className={classMerge(
@@ -172,7 +172,7 @@ function Popup({ participantList }: { participantList: UserProps[] }) {
                                 {host && <Button //* KICK
                                     circle useIcon iconSrc={require("@/public/images/Kick.svg")}
                                     onClick={() => {
-                                        socket?.emit("kick", id)
+                                        socket.emit("kick", id)
                                         setSelected("")
                                     }}
                                     className={classMerge(

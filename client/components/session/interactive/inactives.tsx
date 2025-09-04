@@ -74,7 +74,7 @@ function Popup({ inactiveList }: { inactiveList: UserProps[] }) {
                         {host && <Button //* ALERT ALL
                             circle useIcon iconSrc={require("@/public/images/Alert.svg")}
                             onClick={() => {
-                                socket?.emit("alert-all-inactive", meetingCode)
+                                socket.emit("alert-all-inactive", meetingCode)
                                 setSelected("")
                             }}
                             className={classMerge(
@@ -87,7 +87,7 @@ function Popup({ inactiveList }: { inactiveList: UserProps[] }) {
                         {host && <Button //* KICK ALL
                             circle useIcon iconSrc={require("@/public/images/Kick.svg")}
                             onClick={() => {
-                                socket?.emit("kick-all-inactive", meetingCode)
+                                socket.emit("kick-all-inactive", meetingCode)
                                 setSelected("")
                             }}
                             className={classMerge(
@@ -125,7 +125,7 @@ function Popup({ inactiveList }: { inactiveList: UserProps[] }) {
                                 {host && <Button //* Alert
                                     circle useIcon iconSrc={require("@/public/images/Alert.svg")}
                                     onClick={() => {
-                                        socket?.emit("alert", id)
+                                        socket.emit("alert", id)
                                         setSelected("")
                                     }}
                                     className={classMerge(
@@ -138,7 +138,7 @@ function Popup({ inactiveList }: { inactiveList: UserProps[] }) {
                                 {host && <Button //* KICK
                                     circle useIcon iconSrc={require("@/public/images/Kick.svg")}
                                     onClick={() => {
-                                        socket?.emit("kick-inactive", meetingCode, id)
+                                        socket.emit("kick-inactive", meetingCode, id)
                                         setSelected("")
                                     }}
                                     className={classMerge(
