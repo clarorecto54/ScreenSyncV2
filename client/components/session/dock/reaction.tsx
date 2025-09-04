@@ -25,7 +25,7 @@ export default function Reaction() {
                 return <Button //* REACTION TRIGGER
                     key={index} circle
                     onClick={() => {
-                        socket?.emit("send-message", meetingCode, myInfo, message)
+                        socket.emit("send-message", meetingCode, myInfo, message)
                         setShowReactions(false)
                     }}
                     className={classMerge(

@@ -97,7 +97,7 @@ function Input() {
                     inactive: [],
                     strict: strict
                 }
-                socket?.emit("create-room", room)
+                socket.emit("create-room", room)
                 setmeetingCode(room.id)
             }
         }}>

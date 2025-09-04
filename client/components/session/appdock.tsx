@@ -66,7 +66,7 @@ function Dock()
     /* ------ EVENT HANDLER ----- */
     useEffect(() =>
     {
-        socket?.on("get-stream", (targetID: string) =>
+        socket.on("get-stream", (targetID: string) =>
         {
             if (peer && stream)
             {
@@ -74,7 +74,7 @@ function Dock()
                 setcalls(prev => [...prev, makeCall])
             }
         })
-        socket?.on("streaming", () =>
+        socket.on("streaming", () =>
         {
             if (!host)
             {
@@ -83,7 +83,7 @@ function Dock()
                 setpresenting(true)
             }
         })
-        socket?.on("avail-req", () =>
+        socket.on("avail-req", () =>
         {
             if (!host || streamAccess)
             {
@@ -98,7 +98,7 @@ function Dock()
             if (stream) { stream.getTracks().forEach(track => track.stop()) }
             setpresenting(false)
         })
-        socket?.on("grant-access", (permittedID: string) =>
+        socket.on("grant-access", (permittedID: string) =>
         {
             if (permittedID === myInfo.id)
             {
@@ -106,7 +106,7 @@ function Dock()
                 setstreamAcces(true)
             } else { !host && setNoRequest(true) }
         })
-        socket?.on("req-stream", (client: UserProps) =>
+        socket.on("req-stream", (client: UserProps) =>
         {
             if (host)
             {
@@ -117,14 +117,14 @@ function Dock()
                     icon: require("@/public/images/Share Screen (2).svg"),
                     action()
                     {
-                        socket?.emit("grant-access", meetingCode, client.id)
+                        socket.emit("grant-access", meetingCode, client.id)
                     }
                 })
             } else { setRequestCooldown(true) }
         })
         return () =>
         {
-            socket?.off("get-stream", (targetID: string) =>
+            socket.off("get-stream", (targetID: string) =>
             {
                 if (peer && stream)
                 {
@@ -132,7 +132,7 @@ function Dock()
                     setcalls(prev => [...prev, makeCall])
                 }
             })
-            socket?.off("streaming", () =>
+            socket.off("streaming", () =>
             {
                 if (!host)
                 {
@@ -141,7 +141,7 @@ function Dock()
                     setpresenting(true)
                 }
             })
-            socket?.off("avail-req", () =>
+            socket.off("avail-req", () =>
             {
                 if (!host || streamAccess)
                 {
@@ -156,7 +156,7 @@ function Dock()
                 if (stream) { stream.getTracks().forEach(track => track.stop()) }
                 setpresenting(false)
             })
-            socket?.off("grant-access", (permittedID: string) =>
+            socket.off("grant-access", (permittedID: string) =>
             {
                 if (permittedID === myInfo.id)
                 {
@@ -164,7 +164,7 @@ function Dock()
                     setstreamAcces(true)
                 } else { !host && setNoRequest(true) }
             })
-            socket?.off("req-stream", (client: UserProps) =>
+            socket.off("req-stream", (client: UserProps) =>
             {
                 if (host)
                 {
@@ -175,7 +175,7 @@ function Dock()
                         icon: require("@/public/images/Share Screen (2).svg"),
                         action()
                         {
-                            socket?.emit("grant-access", meetingCode, client.id)
+                            socket.emit("grant-access", meetingCode, client.id)
                         }
                     })
                 } else { setRequestCooldown(true) }
@@ -227,7 +227,7 @@ function Dock()
                     //* ADD EVENT LISTENER
                     track.addEventListener("ended", function onEnded()
                     {
-                        ((host || streamAccess) && (socket?.emit("stop-stream", meetingCode)))
+                        ((host || streamAccess) && (socket.emit("stop-stream", meetingCode)))
                         setpresenting(false)
                         setstreamAcces(false)
                         setNoRequest(false)
@@ -282,12 +282,12 @@ function Dock()
                     }
                 }
             }
-            socket?.emit("start-stream", meetingCode, myInfo)
+            socket.emit("start-stream", meetingCode, myInfo)
             setpresenting(true)
             setmutestream(true)
         } else
         {
-            socket?.emit("req-stream", meetingCode, myInfo)
+            socket.emit("req-stream", meetingCode, myInfo)
             setRequestCooldown(true)
         }
     }
@@ -329,7 +329,7 @@ function Dock()
                     setcalls([])
                 }
                 if (stream) { for (const track of stream.getTracks()) { track.stop() } }
-                socket?.emit("stop-stream", meetingCode)
+                socket.emit("stop-stream", meetingCode)
                 setstream(null)
                 setpresenting(false)
                 setstreamAcces(false)
@@ -351,14 +351,14 @@ function Dock()
                         setcalls([])
                     }
                     if (stream) { for (const track of stream.getTracks()) { track.stop() } }
-                    (host || streamAccess) && socket?.emit("stop-stream", meetingCode)
+                    (host || streamAccess) && socket.emit("stop-stream", meetingCode)
                     setstream(null)
                     setpresenting(false)
                     setstreamAcces(false)
                     setNoRequest(false)
                     window.location.replace("/")
                 }
-                socket?.emit("leave-room", meetingCode)
+                socket.emit("leave-room", meetingCode)
                 setmeetingCode("")
             }}
             containerClass="w-[6em]"

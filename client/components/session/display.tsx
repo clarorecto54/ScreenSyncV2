@@ -28,15 +28,15 @@ export default function MainDisplay() {
                     message: <Pending />,
                     action() { //? Accept All
                         pendingList.forEach(client => {
-                            socket?.emit("accept-req", meetingCode, client) //? Update the user on their request
-                            socket?.emit("cancel-entry", meetingCode, client) //? Remove the user on the pending list
+                            socket.emit("accept-req", meetingCode, client) //? Update the user on their request
+                            socket.emit("cancel-entry", meetingCode, client) //? Remove the user on the pending list
                         })
                     },
                     actionText: "Accept All",
                     closeAction() { //? Reject All
                         pendingList.forEach(client => {
-                            socket?.emit("cancel-req", client) //? Update the user on his request
-                            socket?.emit("cancel-entry", meetingCode, client) //? Remove the user on the pending list
+                            socket.emit("cancel-req", client) //? Update the user on his request
+                            socket.emit("cancel-entry", meetingCode, client) //? Remove the user on the pending list
                         })
                     },
                     closeText: "Reject All",
