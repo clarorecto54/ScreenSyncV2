@@ -339,6 +339,12 @@ function Dock()
                 "bg-[#525252]", //? Background
                 "hover:bg-[#646464]", //? Hover
             )} />}
+        {host && <Button circle useIcon iconOverlay iconSrc={require("@/public/images/Exam.svg")}
+            className="bg-[#525252] hover:bg-[#646464]"
+            onClick={() =>
+            {
+                console.log("Test")
+            }} />}
         <Button //* END CALL
             circle useIcon iconOverlay iconSrc={require("@/public/images/End Call.svg")}
             onClick={() =>
