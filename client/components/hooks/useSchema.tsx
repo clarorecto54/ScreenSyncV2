@@ -1,0 +1,35 @@
+"use client"
+import { ExamProp, HtmlElement } from "@/types/Exam.types";
+import { SchemaTypes } from "@/types/Schema.types";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+
+const context = createContext<SchemaTypes | undefined>(undefined)
+export function useSchema(): SchemaTypes { return useContext(context)! }
+
+export function SchemaContextProvider({ children }: { children: ReactNode })
+{
+    const [schemaBuilder, setSchemaBuilder] = useState<boolean>(false)
+    const [schemaData, setSchemaData] = useState<ExamProp>({
+        title: "",
+        timeLimit: 60,
+        startSurveyText: "Start Quiz",
+        pages: [
+            {
+                elements: [
+                    {
+                        type: "html",
+                        html: "Please input any starting message here"
+                    } satisfies HtmlElement
+                ]
+            }
+        ],
+    })
+
+    const defaultValues: SchemaTypes = {
+        schemaBuilder, setSchemaBuilder,
+        schemaData, setSchemaData
+    }
+    return <context.Provider value={defaultValues}>
+        {children}
+    </context.Provider>
+}
