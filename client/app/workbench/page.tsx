@@ -21,6 +21,18 @@ export default function Workbench()
                         fontFamily: "Montserrat, sans-serif"
                     }
                 }
+            },
+            MuiCardHeader: {
+                styleOverrides: {
+                    title: {
+                        fontFamily: "Montserrat, sans-serif",
+                        fontSize: "12pt",
+                        fontWeight: 500
+                    },
+                    root: {
+                        paddingBottom: "0px"
+                    }
+                }
             }
         }
     })
