@@ -6,7 +6,7 @@ import { HtmlElement, StandardQuestion } from "@/types/Exam.types";
 
 export default function SchemaProperties()
 {
-    const { schemaData, setSchemaData, schemaErrors } = useSchema()
+    const { schemaData, setSchemaData, schemaErrors, setPreviewMode } = useSchema()
     const [expanded, setExpanded] = useState<boolean>(true)
     function HandleTextField(element: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)
     {
@@ -107,13 +107,13 @@ export default function SchemaProperties()
                 </form>
             </Collapse>
             <CardContent sx={{ paddingY: 0, paddingTop: !expanded ? "16px" : 0 }}>
-                <Box>
+                <Box display={"flex"} alignItems={"center"} justifyContent={"space-around"}>
                     <Button
                         disabled={schemaErrors !== undefined}
                         color="success"
-                        variant="contained"
+                        variant="outlined"
                         size="small"
-                        sx={{ borderRadius: "100px", maxWidth: "fit-content" }}
+                        sx={{ borderRadius: "100px" }}
                         onClick={() => setSchemaData(prev =>
                         {
                             const updatedPages = prev.pages
@@ -132,6 +132,24 @@ export default function SchemaProperties()
                             return { ...prev, pages: updatedPages }
                         })}>
                         Add Question
+                    </Button>
+                    <Button
+                        disabled={schemaErrors !== undefined}
+                        color="success"
+                        variant="outlined"
+                        size="small"
+                        sx={{ borderRadius: "100px" }}
+                        onClick={() => setPreviewMode(true)}>
+                        Preview Schema
+                    </Button>
+                    <Button
+                        disabled={schemaErrors !== undefined}
+                        color="success"
+                        variant="contained"
+                        size="small"
+                        sx={{ borderRadius: "100px" }}
+                        onClick={() => { }}>
+                        Save Schema
                     </Button>
                 </Box>
             </CardContent>

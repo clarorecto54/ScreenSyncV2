@@ -23,6 +23,17 @@ input {
 }
 
 /* ----- CUSTOM STYLING ----- */
+.my-sd-timer
+{
+  position: absolute !important;
+}
+
+.myclockTimerMinorText
+{
+  color: black !important;
+  font-size: small !important;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

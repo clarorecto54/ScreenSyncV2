@@ -5,6 +5,9 @@ export default function GenerateBaseSchema(): ExamProp
     return {
         title: "",
         timeLimit: 30,
+        showProgressBar: true,
+        progressBarLocation: "bottom",
+        showTimer: true,
         startSurveyText: "Start Quiz",
         pages: [
             {

@@ -9,6 +9,8 @@ export interface SchemaTypes
     schemaData: ExamProp
     setSchemaData: Dispatch<SetStateAction<ExamProp>>
     schemaErrors: SchemaErrors | undefined
+    previewMode: boolean
+    setPreviewMode: Dispatch<SetStateAction<boolean>>
 }
 
 export interface CustomListItemProps extends ListItemProps
