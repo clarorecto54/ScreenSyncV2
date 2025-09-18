@@ -46,50 +46,52 @@ export default function SchemaProperties()
                 />
             </Box>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <CardContent className="flex flex-col gap-[16px] px-[16px]">
-                    <TextField
-                        variant="outlined"
-                        size="small"
-                        name="title"
-                        label="Exam Name"
-                        value={schemaData.title}
-                        onChange={HandleTextField}
-                        fullWidth
-                        required
-                        slotProps={{ htmlInput: { maxLength: 64 } }}
-                    />
-                    <TextField
-                        variant="outlined"
-                        size="small"
-                        name="startSurveyText"
-                        label="Survey Starting Text"
-                        value={(schemaData.pages[0].elements[0] as HtmlElement).html}
-                        onChange={(element) =>
-                        {
-                            setSchemaData(prev =>
+                <form autoComplete="off" onSubmit={(element) => element.preventDefault()}>
+                    <CardContent className="flex flex-col gap-[16px] px-[16px]">
+                        <TextField
+                            variant="outlined"
+                            size="small"
+                            name="title"
+                            label="Exam Name"
+                            value={schemaData.title}
+                            onChange={HandleTextField}
+                            fullWidth
+                            required
+                            slotProps={{ htmlInput: { maxLength: 64 } }}
+                        />
+                        <TextField
+                            variant="outlined"
+                            size="small"
+                            name="startSurveyText"
+                            label="Survey Starting Text"
+                            value={(schemaData.pages[0].elements[0] as HtmlElement).html}
+                            onChange={(element) =>
                             {
-                                const updated = { ...prev }
-                                const startingDisplay = updated.pages[0].elements[0] as HtmlElement
-                                startingDisplay.html = element.target.value
-                                return updated
-                            })
-                        }}
-                        fullWidth
-                        required
-                        slotProps={{ htmlInput: { maxLength: 128 } }}
-                    />
-                    <TextField
-                        variant="outlined"
-                        size="small"
-                        name="timeLimit"
-                        label="Time Limit of Exam (in seconds)"
-                        type="number"
-                        value={schemaData.timeLimit}
-                        onChange={HandleTextField}
-                        fullWidth
-                        required
-                    />
-                </CardContent>
+                                setSchemaData(prev =>
+                                {
+                                    const updated = { ...prev }
+                                    const startingDisplay = updated.pages[0].elements[0] as HtmlElement
+                                    startingDisplay.html = element.target.value
+                                    return updated
+                                })
+                            }}
+                            fullWidth
+                            required
+                            slotProps={{ htmlInput: { maxLength: 128 } }}
+                        />
+                        <TextField
+                            variant="outlined"
+                            size="small"
+                            name="timeLimit"
+                            label="Time Limit of Exam (in seconds)"
+                            type="number"
+                            value={schemaData.timeLimit}
+                            onChange={HandleTextField}
+                            fullWidth
+                            required
+                        />
+                    </CardContent>
+                </form>
             </Collapse>
         </Card>
     </Box>
