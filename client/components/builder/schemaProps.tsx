@@ -6,7 +6,7 @@ import { HtmlElement } from "@/types/Exam.types";
 
 export default function SchemaProperties()
 {
-    const { schemaData, setSchemaData } = useSchema()
+    const { schemaData, setSchemaData, schemaErrors } = useSchema()
     const [expanded, setExpanded] = useState<boolean>(true)
     function HandleTextField(element: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)
     {
@@ -55,6 +55,8 @@ export default function SchemaProperties()
                             label="Exam Name"
                             value={schemaData.title}
                             onChange={HandleTextField}
+                            error={schemaErrors?.SchemaTitleError !== ""}
+                            helperText={schemaErrors?.SchemaTitleError ?? ""}
                             fullWidth
                             required
                             slotProps={{ htmlInput: { maxLength: 64 } }}
@@ -65,6 +67,8 @@ export default function SchemaProperties()
                             name="startSurveyText"
                             label="Survey Starting Text"
                             value={(schemaData.pages[0].elements[0] as HtmlElement).html}
+                            error={schemaErrors?.SchemaStartingDisplayError !== ""}
+                            helperText={schemaErrors?.SchemaStartingDisplayError ?? ""}
                             onChange={(element) =>
                             {
                                 setSchemaData(prev =>
@@ -86,9 +90,14 @@ export default function SchemaProperties()
                             label="Time Limit of Exam (in seconds)"
                             type="number"
                             value={schemaData.timeLimit}
+                            error={schemaErrors?.SchemaTimeLimitError !== ""}
+                            helperText={schemaErrors?.SchemaTimeLimitError ?? ""}
                             onChange={HandleTextField}
                             fullWidth
                             required
+                            slotProps={{
+                                htmlInput: { min: 30 }
+                            }}
                         />
                     </CardContent>
                 </form>
