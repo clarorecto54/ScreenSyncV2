@@ -1,5 +1,5 @@
 "use client"
-import { ExamProp, HtmlElement } from "@/types/Exam.types";
+import { ExamProp, HtmlElement, StandardQuestion } from "@/types/Exam.types";
 import { SchemaTypes } from "@/types/Schema.types";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
@@ -21,10 +21,26 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
                         html: "Please input any starting message here"
                     } satisfies HtmlElement
                 ]
+            },
+            {
+                elements: [{
+                    name: "Question 1",
+                    question: "",
+                    type: "radiogroup",
+                    isRequired: true,
+                    correctAnswer: "",
+                    titleLocation: "top",
+                    choicesOrder: "random",
+                    choices: []
+                } satisfies StandardQuestion]
             }
         ],
     })
-
+    useEffect(() =>
+    {
+        console.clear()
+        console.log(JSON.stringify(schemaData, null, 2));
+    }, [schemaData])
     const defaultValues: SchemaTypes = {
         schemaBuilder, setSchemaBuilder,
         schemaData, setSchemaData

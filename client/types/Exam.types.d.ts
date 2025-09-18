@@ -27,6 +27,13 @@ export type HtmlElement = {
     html: string
 }
 
+export type ImageQuestion = {
+    type: "image",
+    name: string,
+    imageLink: string,
+    imageHeight: number,
+}
+
 export type StandardQuestion = {
     type: "radiogroup"
     name: string
@@ -38,7 +45,7 @@ export type StandardQuestion = {
     titleLocation: "default" | "top" | "bottom" | "left" | "hidden"
 }
 
-export type Question = StandardQuestion | HtmlElement
+export type Question = StandardQuestion | HtmlElement | ImageQuestion
 
 export type Element = {
     elements: Question[]

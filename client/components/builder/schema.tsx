@@ -1,11 +1,17 @@
-import { Box, Card } from "@mui/material"
+import { Box } from "@mui/material"
 import SchemaHeader from "./schemaHeader"
 import SchemaProperties from "./schemaProps"
+import SchemaQuestions from "./questions"
+import { useSchema } from "../hooks/useSchema"
 
 export default function SchemaBuilder()
 {
-    return <Box className="pt-[16px] w-full" display="flex" flexDirection="column" gap="16px">
+    const { schemaData } = useSchema()
+    return <Box className="pt-[16px] w-full" display="flex" flexDirection="column" gap="16px" overflow="hidden" height="100%">
         <SchemaHeader />
-        <SchemaProperties />
+        <Box display="flex" flexDirection="column" gap="16px" overflow="auto" height="100%" paddingX="8px">
+            <SchemaProperties />
+            {(schemaData.pages.length - 1) > 0 && schemaData.pages.slice(1).map((question, index) => <SchemaQuestions key={index} index={index + 1} />)}
+        </Box>
     </Box>
 }
