@@ -36,7 +36,7 @@ export default function SchemaDataListener(schemaData: ExamProp, setSchemaErrors
                         fieldError: "This field must not be empty"
                     })
                 }
-                if (element.choices.length <= 0)
+                if (element.choices.length < 2)
                     questionError.error = "This question don't have choices"
             }
         })
