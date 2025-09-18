@@ -8,6 +8,7 @@ export interface SchemaTypes
     setSchemaBuilder: Dispatch<SetStateAction<boolean>>
     schemaData: ExamProp
     setSchemaData: Dispatch<SetStateAction<ExamProp>>
+    schemaErrors: SchemaErrors | undefined
 }
 
 export interface CustomListItemProps extends ListItemProps
@@ -28,6 +29,7 @@ export interface SchemaPropertiesErrorList
 export interface SchemaErrors
 {
     SchemaTitleError: string
+    SchemaStartingDisplayError: string
     SchemaTimeLimitError: string
     QuestionsError: QuestionErrors[]
 }

@@ -11,14 +11,14 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
     const [schemaBuilder, setSchemaBuilder] = useState<boolean>(false)
     const [schemaData, setSchemaData] = useState<ExamProp>({
         title: "",
-        timeLimit: 60,
+        timeLimit: 30,
         startSurveyText: "Start Quiz",
         pages: [
             {
                 elements: [
                     {
                         type: "html",
-                        html: "Please input any starting message here"
+                        html: ""
                     } satisfies HtmlElement
                 ]
             },
@@ -36,19 +36,21 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
             }
         ],
     })
-    const [schemaErrors, setSchemaErrors] = useState<SchemaErrors>({
-        QuestionsError: [],
-        SchemaTimeLimitError: "",
-        SchemaTitleError: ""
-    })
+    const [schemaErrors, setSchemaErrors] = useState<SchemaErrors | undefined>(undefined)
     useEffect(() =>
     {
         console.clear()
         console.log(JSON.stringify(schemaData, null, 2));
         console.log(JSON.stringify(schemaErrors, null, 2));
-        const UpdatedSchemaErrors: SchemaErrors = schemaErrors
+        const UpdatedSchemaErrors: SchemaErrors = {
+            QuestionsError: [],
+            SchemaStartingDisplayError: "",
+            SchemaTimeLimitError: "",
+            SchemaTitleError: ""
+        }
         if (!schemaData.title) UpdatedSchemaErrors.SchemaTitleError = "Exam Name must not be empty"
         if (schemaData.timeLimit <= 0) UpdatedSchemaErrors.SchemaTimeLimitError = "Timelimit is invalid"
+        if (!(schemaData.pages[0].elements[0] as HtmlElement).html) UpdatedSchemaErrors.SchemaStartingDisplayError = "Please input starting message here"
         schemaData.pages.forEach((page, questionIndex) =>
         {
             let questionError: QuestionErrors = {
@@ -83,7 +85,8 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
     }, [schemaData])
     const defaultValues: SchemaTypes = {
         schemaBuilder, setSchemaBuilder,
-        schemaData, setSchemaData
+        schemaData, setSchemaData,
+        schemaErrors
     }
     return <context.Provider value={defaultValues}>
         {children}
