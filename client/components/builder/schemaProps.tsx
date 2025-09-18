@@ -1,4 +1,4 @@
-import { CardContent, TextField, CardHeader, Card, Avatar, Box, IconButton, Collapse } from "@mui/material";
+import { CardContent, TextField, CardHeader, Card, Avatar, Box, IconButton, Collapse, CardActionArea, Button } from "@mui/material";
 import { useSchema } from "../hooks/useSchema";
 import { ChangeEvent, useState } from "react";
 import Image from "next/image";
@@ -46,7 +46,7 @@ export default function SchemaProperties()
                             color: schemaErrors?.SchemaTitleError || schemaErrors?.SchemaTimeLimitError || schemaErrors?.SchemaStartingDisplayError ? "error" : "textSecondary"
                         }
                     }}
-                    sx={{ paddingBottom: expanded ? 0 : "16px" }}
+                    sx={{ paddingBottom: 0 }}
                 />
             </Box>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -59,7 +59,7 @@ export default function SchemaProperties()
                             label="Exam Name"
                             value={schemaData.title}
                             onChange={HandleTextField}
-                            error={schemaErrors?.SchemaTitleError !== ""}
+                            error={schemaErrors && schemaErrors.SchemaTitleError !== ""}
                             helperText={schemaErrors?.SchemaTitleError ?? ""}
                             fullWidth
                             required
@@ -71,7 +71,7 @@ export default function SchemaProperties()
                             name="startSurveyText"
                             label="Survey Starting Text"
                             value={(schemaData.pages[0].elements[0] as HtmlElement).html}
-                            error={schemaErrors?.SchemaStartingDisplayError !== ""}
+                            error={schemaErrors && schemaErrors.SchemaStartingDisplayError !== ""}
                             helperText={schemaErrors?.SchemaStartingDisplayError ?? ""}
                             onChange={(element) =>
                             {
@@ -94,7 +94,7 @@ export default function SchemaProperties()
                             label="Time Limit of Exam (in seconds)"
                             type="number"
                             value={schemaData.timeLimit}
-                            error={schemaErrors?.SchemaTimeLimitError !== ""}
+                            error={schemaErrors && schemaErrors.SchemaTimeLimitError !== ""}
                             helperText={schemaErrors?.SchemaTimeLimitError ?? ""}
                             onChange={HandleTextField}
                             fullWidth
@@ -106,6 +106,19 @@ export default function SchemaProperties()
                     </CardContent>
                 </form>
             </Collapse>
+            <CardContent sx={{ paddingY: 0, paddingTop: !expanded ? "16px" : 0 }}>
+                <CardActionArea>
+                    <Button
+                        disabled={schemaErrors !== undefined}
+                        color="success"
+                        variant="contained"
+                        size="small"
+                        sx={{ borderRadius: "100px", maxWidth: "fit-content" }}
+                        onClick={() => { }}>
+                        Add Question
+                    </Button>
+                </CardActionArea>
+            </CardContent>
         </Card>
     </Box>
 }

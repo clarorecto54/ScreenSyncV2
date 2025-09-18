@@ -43,5 +43,11 @@ export default function SchemaDataListener(schemaData: ExamProp, setSchemaErrors
         if (questionError.fieldErrors.length > 0 || questionError.error)
             UpdatedSchemaErrors.QuestionsError.push(questionError)
     })
-    setSchemaErrors(UpdatedSchemaErrors)
+    if (
+        UpdatedSchemaErrors.SchemaTitleError ||
+        UpdatedSchemaErrors.SchemaStartingDisplayError ||
+        UpdatedSchemaErrors.SchemaTimeLimitError ||
+        UpdatedSchemaErrors.QuestionsError.length !== 0
+    ) setSchemaErrors(UpdatedSchemaErrors)
+    else setSchemaErrors(undefined)
 }
