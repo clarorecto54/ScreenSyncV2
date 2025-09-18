@@ -11,7 +11,7 @@ export default function SchemaBuilder()
         <SchemaHeader />
         <Box display="flex" flexDirection="column" gap="16px" overflow="auto" height="100%" paddingX="8px">
             <SchemaProperties />
-            {(schemaData.pages.length - 1) > 0 && schemaData.pages.slice(1).map((question, index) => <SchemaQuestions key={index} index={index + 1} />)}
+            {(schemaData.pages.length - 1) > 0 && schemaData.pages.slice(1).map((_, index) => <SchemaQuestions key={index} index={index + 1} />)}
         </Box>
     </Box>
 }
