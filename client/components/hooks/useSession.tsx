@@ -68,6 +68,10 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         !meetingCode && redirect("/", RedirectType.replace)
     }, [meetingCode])
     /* ----- SOCKET HANDLER ----- */
+    useEffect(() =>
+    {
+        setstream(new MediaStream())
+    },[])
     useEffect(() => {
         /* ---- HANDLER FUNCTIONS --- */
         function VisibilityHandler() {
