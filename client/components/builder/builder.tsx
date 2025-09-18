@@ -6,7 +6,6 @@ import { useSchema } from "../hooks/useSchema"
 
 export default function ExamBuilder()
 {
-    const { schemaList, setSchemaList } = useExam()
     const { schemaBuilder } = useSchema()
     return <div className="
     h-[670px] w-[1600px] p-[32px] rounded-3xl bg-[#242424]
