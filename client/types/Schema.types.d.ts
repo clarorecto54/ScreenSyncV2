@@ -24,3 +24,25 @@ export interface SchemaPropertiesErrorList
     startSurveyText: string
     timeLimit: string
 }
+
+export interface SchemaErrors
+{
+    SchemaTitleError: string
+    SchemaTimeLimitError: string
+    QuestionsError: QuestionErrors[]
+}
+
+export interface QuestionErrors
+{
+    name: string
+    index: number
+    error: string
+    panelErrors: FieldErrors[]
+}
+
+export interface FieldErrors
+{
+    fieldType: string
+    fieldName: string
+    fieldError: string
+}
