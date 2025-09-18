@@ -19,6 +19,7 @@ export default function SchemaProperties()
                 <CardHeader
                     className="transition-all duration-300"
                     title="Exam Properties"
+                    subheader={schemaErrors?.SchemaTitleError || schemaErrors?.SchemaTimeLimitError || schemaErrors?.SchemaStartingDisplayError}
                     avatar={<Avatar
                         sx={{
                             height: "24px", width: "24px", background: "none",
@@ -40,6 +41,9 @@ export default function SchemaProperties()
                             fontFamily: "Montserrat, sans-serif",
                             fontSize: "12pt",
                             fontWeight: 500
+                        },
+                        subheader: {
+                            color: schemaErrors?.SchemaTitleError || schemaErrors?.SchemaTimeLimitError || schemaErrors?.SchemaStartingDisplayError ? "error" : "textSecondary"
                         }
                     }}
                     sx={{ paddingBottom: expanded ? 0 : "16px" }}
