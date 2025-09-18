@@ -4,14 +4,17 @@ import { useSchema } from "../hooks/useSchema";
 import { StandardQuestion } from "@/types/Exam.types";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import ChoiceElement from "./choice";
+import { FieldErrors, QuestionErrors } from "@/types/Schema.types";
 
 export default function SchemaQuestions({ index }: { index: number })
 {
-    const { schemaData, setSchemaData } = useSchema()
+    const { schemaData, setSchemaData, schemaErrors } = useSchema()
     const [expanded, setExpanded] = useState<boolean>(true)
     const [questionData, setQuestionData] = useState<StandardQuestion>(schemaData.pages[index].elements[0] as StandardQuestion)
     const [choiceData, setChoiceData] = useState<string>("")
     const [choiceError, setChoiceError] = useState<string>("")
+    const [questionError, setQuestionError] = useState<QuestionErrors | undefined>(undefined)
+    const [fieldErrors, setFieldErrors] = useState<FieldErrors[]>([])
     function HandleTextFieldChange(element: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) 
     {
         const thisElement = element.target
@@ -24,6 +27,17 @@ export default function SchemaQuestions({ index }: { index: number })
         setQuestionData(prev => ({ ...prev, choices: [...prev.choices, choiceData] }))
         setChoiceData("")
     }
+    useEffect(() =>
+    {
+        const instance = schemaErrors?.QuestionsError[index - 1]
+        if (instance) setQuestionError(instance)
+        else
+        {
+            setQuestionError(undefined)
+            setFieldErrors([])
+        }
+        if (questionError && questionError.fieldErrors) setFieldErrors(questionError.fieldErrors)
+    }, [schemaErrors, questionError])
     useEffect(() =>
     {
         if ((!questionData.choices.includes(questionData.correctAnswer) && questionData.choices.length > 0) ||
@@ -48,6 +62,7 @@ export default function SchemaQuestions({ index }: { index: number })
                 <CardHeader
                     className="transition-all duration-300"
                     title={`Question ${index}`}
+                    subheader={questionError?.error}
                     avatar={<Avatar
                         sx={{
                             height: "24px", width: "24px", background: "none",
@@ -64,6 +79,11 @@ export default function SchemaQuestions({ index }: { index: number })
                             className={`h-[16px] w-[16px] rotate-${expanded ? 180 : 0} transition-all duration-300`}
                         />
                     </IconButton>}
+                    slotProps={{
+                        subheader: {
+                            color: questionError ? "error" : "textSecondary"
+                        }
+                    }}
                     sx={{ paddingBottom: expanded ? 0 : "16px" }}
                 />
             </Box>
@@ -77,6 +97,8 @@ export default function SchemaQuestions({ index }: { index: number })
                             label="What is the question?"
                             multiline
                             maxRows={3}
+                            error={fieldErrors && fieldErrors.find(({ fieldName }) => fieldName === "question") ? fieldErrors.find(({ fieldName }) => fieldName === "question")!.fieldError !== "" : false}
+                            helperText={fieldErrors.find(({ fieldName }) => fieldName === "question")?.fieldError ?? ""}
                             value={questionData.question}
                             onChange={HandleTextFieldChange}
                             fullWidth
@@ -149,7 +171,7 @@ export default function SchemaQuestions({ index }: { index: number })
                             display: "flex",
                             flexWrap: "wrap",
                             flex: "flex-shrink",
-                            flexFlow:"column",
+                            flexFlow: "column",
                             gap: 1,
                         }}
                     >
@@ -157,12 +179,12 @@ export default function SchemaQuestions({ index }: { index: number })
                         {
                             if (questionData.correctAnswer === "" && index === 0) setQuestionData(prev => ({ ...prev, correctAnswer: choice }))
                             return <ChoiceElement
-                            key={index}
-                            choice={choice}
-                            index={index}
-                            questionData={questionData}
-                            setQuestionData={setQuestionData}
-                        />
+                                key={index}
+                                choice={choice}
+                                index={index}
+                                questionData={questionData}
+                                setQuestionData={setQuestionData}
+                            />
                         })}
                     </List>}
                 </CardContent>
