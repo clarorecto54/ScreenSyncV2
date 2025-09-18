@@ -1,8 +1,8 @@
-import { CardContent, TextField, CardHeader, Card, Avatar, Box, IconButton, Collapse, CardActionArea, Button } from "@mui/material";
+import { CardContent, TextField, CardHeader, Card, Avatar, Box, IconButton, Collapse, Button } from "@mui/material";
 import { useSchema } from "../hooks/useSchema";
 import { ChangeEvent, useState } from "react";
 import Image from "next/image";
-import { HtmlElement } from "@/types/Exam.types";
+import { HtmlElement, StandardQuestion } from "@/types/Exam.types";
 
 export default function SchemaProperties()
 {
@@ -107,17 +107,33 @@ export default function SchemaProperties()
                 </form>
             </Collapse>
             <CardContent sx={{ paddingY: 0, paddingTop: !expanded ? "16px" : 0 }}>
-                <CardActionArea>
+                <Box>
                     <Button
                         disabled={schemaErrors !== undefined}
                         color="success"
                         variant="contained"
                         size="small"
                         sx={{ borderRadius: "100px", maxWidth: "fit-content" }}
-                        onClick={() => { }}>
+                        onClick={() => setSchemaData(prev =>
+                        {
+                            const updatedPages = prev.pages
+                            updatedPages.push({
+                                elements: [{
+                                    name: `Question ${updatedPages.length - 1}`,
+                                    question: "",
+                                    type: "radiogroup",
+                                    isRequired: true,
+                                    correctAnswer: "",
+                                    titleLocation: "top",
+                                    choicesOrder: "random",
+                                    choices: []
+                                } satisfies StandardQuestion]
+                            })
+                            return { ...prev, pages: updatedPages }
+                        })}>
                         Add Question
                     </Button>
-                </CardActionArea>
+                </Box>
             </CardContent>
         </Card>
     </Box>
