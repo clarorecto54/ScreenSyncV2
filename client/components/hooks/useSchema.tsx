@@ -39,9 +39,6 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
     const [schemaErrors, setSchemaErrors] = useState<SchemaErrors | undefined>(undefined)
     useEffect(() =>
     {
-        console.clear()
-        console.log(JSON.stringify(schemaData, null, 2));
-        console.log(JSON.stringify(schemaErrors, null, 2));
         const UpdatedSchemaErrors: SchemaErrors = {
             QuestionsError: [],
             SchemaStartingDisplayError: "",
@@ -57,7 +54,7 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
                 name: "",
                 index: questionIndex,
                 error: "",
-                panelErrors: [],
+                fieldErrors: [],
             }
             page.elements.forEach((element) =>
             {
@@ -68,7 +65,7 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
                     if (!element.question)
                     {
                         questionError.error = "This question has missing fields"
-                        questionError.panelErrors.push({
+                        questionError.fieldErrors.push({
                             fieldType: element.type,
                             fieldName: "question",
                             fieldError: "This field must not be empty"
@@ -78,7 +75,7 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
                         questionError.error = "This question don't have choices"
                 }
             })
-            if (questionError.panelErrors.length > 0)
+            if (questionError.fieldErrors.length > 0 || questionError.error)
                 UpdatedSchemaErrors.QuestionsError.push(questionError)
         })
         setSchemaErrors(UpdatedSchemaErrors)

@@ -39,7 +39,7 @@ export interface QuestionErrors
     name: string
     index: number
     error: string
-    panelErrors: FieldErrors[]
+    fieldErrors: FieldErrors[]
 }
 
 export interface FieldErrors
