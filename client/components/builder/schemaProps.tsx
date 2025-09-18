@@ -119,7 +119,7 @@ export default function SchemaProperties()
                             const updatedPages = prev.pages
                             updatedPages.push({
                                 elements: [{
-                                    name: `Question ${updatedPages.length - 1}`,
+                                    name: `Question ${updatedPages.length}`,
                                     question: "",
                                     type: "radiogroup",
                                     isRequired: true,

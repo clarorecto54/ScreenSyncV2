@@ -29,7 +29,7 @@ export default function SchemaQuestions({ index }: { index: number })
     }
     useEffect(() =>
     {
-        const instance = schemaErrors?.QuestionsError[index - 1]
+        const instance = schemaErrors?.QuestionsError.find(question => question.name === `Question ${index}`)
         if (instance) setQuestionError(instance)
         else
         {
