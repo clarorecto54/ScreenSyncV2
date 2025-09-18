@@ -14,7 +14,7 @@ export default function SchemaProperties()
         setSchemaData(prev => ({ ...prev, [name]: name === "timeLimit" ? Number(value) : value }))
     }
     return <Box>
-        <Card className="Unselectable">
+        <Card className="Unselectable" variant="elevation" elevation={2}>
             <Box onClick={() => setExpanded(!expanded)} sx={{ cursor: "pointer" }}>
                 <CardHeader
                     className="transition-all duration-300"
