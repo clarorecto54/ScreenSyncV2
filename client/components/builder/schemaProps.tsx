@@ -11,7 +11,7 @@ export default function SchemaProperties()
     function HandleTextField(element: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)
     {
         const { name, value } = element.target
-        setSchemaData(prev => ({ ...prev, [name]: name === "timeLimit" ? Number(value) : value }))
+        setSchemaData(prev => ({ ...prev, [name]: name === "timeLimitPerPage" ? Number(value) : value }))
     }
     return <Box>
         <Card className="Unselectable" variant="elevation" elevation={2}>
@@ -90,17 +90,17 @@ export default function SchemaProperties()
                         <TextField
                             variant="outlined"
                             size="small"
-                            name="timeLimit"
-                            label="Time Limit of Exam (in seconds)"
+                            name="timeLimitPerPage"
+                            label="Timer for each question (in seconds)"
                             type="number"
-                            value={schemaData.timeLimit}
+                            value={schemaData.timeLimitPerPage}
                             error={schemaErrors && schemaErrors.SchemaTimeLimitError !== ""}
                             helperText={schemaErrors?.SchemaTimeLimitError ?? ""}
                             onChange={HandleTextField}
                             fullWidth
                             required
                             slotProps={{
-                                htmlInput: { min: 30 }
+                                htmlInput: { min: 10 }
                             }}
                         />
                     </CardContent>

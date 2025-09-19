@@ -2,7 +2,7 @@
 import { ExamProp } from "@/types/Exam.types";
 import { SchemaErrors, SchemaTypes } from "@/types/Schema.types";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import SchemaDataListener from "../utils/schemaData.listener";
+import { SchemaDataListener } from "../utils/schemaData.listener";
 import GenerateBaseSchema from "../utils/generateBaseSchema";
 
 const context = createContext<SchemaTypes | undefined>(undefined)
@@ -14,7 +14,7 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
     const [previewMode, setPreviewMode] = useState<boolean>(false)
     const [schemaData, setSchemaData] = useState<ExamProp>(GenerateBaseSchema())
     const [schemaErrors, setSchemaErrors] = useState<SchemaErrors | undefined>(undefined)
-    useEffect(() => SchemaDataListener(schemaData, setSchemaErrors), [schemaData])
+    useEffect(() => SchemaDataListener(setSchemaData, schemaData, setSchemaErrors), [schemaData])
     const defaultValues: SchemaTypes = {
         schemaBuilder, setSchemaBuilder,
         schemaData, setSchemaData,

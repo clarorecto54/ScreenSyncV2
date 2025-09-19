@@ -4,7 +4,8 @@ export default function GenerateBaseSchema(): ExamProp
 {
     return {
         title: "",
-        timeLimit: 30,
+        timeLimit: 10,
+        timeLimitPerPage: 10,
         showProgressBar: true,
         progressBarLocation: "bottom",
         showTimer: true,
