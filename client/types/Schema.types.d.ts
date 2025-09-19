@@ -2,6 +2,8 @@ import { Dispatch, SetStateAction } from "react"
 import { ExamProp, StandardQuestion } from "./Exam.types"
 import { ChipProps, ListItemProps } from "@mui/material"
 
+export type SchemaPage = "Schema Properties" | "Questions" | "Edit Question"
+
 export interface SchemaTypes
 {
     schemaBuilder: boolean
@@ -11,6 +13,8 @@ export interface SchemaTypes
     schemaErrors: SchemaErrors | undefined
     previewMode: boolean
     setPreviewMode: Dispatch<SetStateAction<boolean>>
+    builderPage: SchemaPage
+    setBuilderPage: Dispatch<SetStateAction<SchemaPage>>
 }
 
 export type SchemaDataListenerTypes = (
