@@ -95,7 +95,7 @@ export default function SchemaPropBuilder()
                                 variant="outlined"
                                 size="small"
                                 name={key}
-                                type={schemaData.lock ? "password" : "text"}
+                                type={key === "password" ? "password" : "text"}
                                 label={{ title: "Name", description: "Subject", password: "Lock Key" }[key]}
                                 value={key !== "password" ? schemaData[key] : schemaKey}
                                 onChange={HandleTextField}
