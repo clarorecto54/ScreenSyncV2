@@ -63,7 +63,6 @@ export function GlobalContextProvider({ children }: { children: ReactNode })
         const socketInstance = io(`https://${window.location.hostname}:3001`)
         function AcceptReq(targetRoom: string)
         {
-            console.log(myInfoRef.current)
             setsystemPopup(null) //? Close popup
             socket.emit("join-room", targetRoom, myInfoRef.current) //? Join meeting
         }
