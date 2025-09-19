@@ -21,7 +21,7 @@ export default function GenerateBaseSchema(): ExamProp
             {
                 elements: [{
                     name: "Question 1",
-                    question: "",
+                    title: "",
                     type: "radiogroup",
                     isRequired: true,
                     correctAnswer: "",

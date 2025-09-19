@@ -93,13 +93,13 @@ export default function SchemaQuestions({ index }: { index: number })
                         <TextField
                             variant="outlined"
                             size="small"
-                            name="question"
+                            name="title"
                             label="What is the question?"
                             multiline
                             maxRows={3}
-                            error={fieldErrors && fieldErrors.find(({ fieldName }) => fieldName === "question") ? fieldErrors.find(({ fieldName }) => fieldName === "question")!.fieldError !== "" : false}
-                            helperText={fieldErrors.find(({ fieldName }) => fieldName === "question")?.fieldError ?? ""}
-                            value={questionData.question}
+                            error={fieldErrors && fieldErrors.find(({ fieldName }) => fieldName === "title") ? fieldErrors.find(({ fieldName }) => fieldName === "title")!.fieldError !== "" : false}
+                            helperText={fieldErrors.find(({ fieldName }) => fieldName === "title")?.fieldError ?? ""}
+                            value={questionData.title}
                             onChange={HandleTextFieldChange}
                             fullWidth
                             required

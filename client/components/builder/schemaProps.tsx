@@ -6,7 +6,7 @@ import { HtmlElement, StandardQuestion } from "@/types/Exam.types";
 
 export default function SchemaProperties()
 {
-    const { schemaData, setSchemaData, schemaErrors, setPreviewMode } = useSchema()
+        const { schemaData, setSchemaData, schemaErrors, setPreviewMode } = useSchema()
     const [expanded, setExpanded] = useState<boolean>(true)
     function HandleTextField(element: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)
     {
@@ -120,7 +120,7 @@ export default function SchemaProperties()
                             updatedPages.push({
                                 elements: [{
                                     name: `Question ${updatedPages.length}`,
-                                    question: "",
+                                    title: "",
                                     type: "radiogroup",
                                     isRequired: true,
                                     correctAnswer: "",

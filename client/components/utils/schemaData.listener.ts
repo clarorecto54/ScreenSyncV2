@@ -27,7 +27,7 @@ export default function SchemaDataListener(schemaData: ExamProp, setSchemaErrors
             {
                 const panelName = element.name
                 questionError.name = panelName
-                if (!element.question)
+                if (!element.title)
                 {
                     questionError.error = "This question has missing fields"
                     questionError.fieldErrors.push({

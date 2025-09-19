@@ -37,7 +37,7 @@ export type ImageQuestion = {
 export type StandardQuestion = {
     type: "radiogroup"
     name: string
-    question: string
+    title: string
     choices: string[]
     choicesOrder: "none" | "asc" | "desc" | "random"
     correctAnswer: string
