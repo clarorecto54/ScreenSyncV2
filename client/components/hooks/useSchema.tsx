@@ -11,14 +11,16 @@ export function useSchema(): SchemaTypes { return useContext(context)! }
 export function SchemaContextProvider({ children }: { children: ReactNode })
 {
     const [builderPage, setBuilderPage] = useState<SchemaPage>("Schema Properties")
+    const [schemaKey, setschemaKey] = useState<string>("")
     const [builderMode, setBuilderMode] = useState<boolean>(false)
     const [previewMode, setPreviewMode] = useState<boolean>(false)
     const [schemaData, setSchemaData] = useState<ExamProp>(GenerateBaseSchema())
     const [schemaErrors, setSchemaErrors] = useState<SchemaErrors | undefined>(undefined)
-    useEffect(() => SchemaDataListener(setSchemaData, schemaData, setSchemaErrors), [schemaData])
+    useEffect(() => SchemaDataListener(setSchemaData, schemaData, schemaKey, setSchemaErrors), [schemaData])
     const defaultValues: SchemaTypes = {
         builderMode, setBuilderMode,
         builderPage, setBuilderPage,
+        schemaKey, setschemaKey,
         schemaData, setSchemaData,
         schemaErrors,
         previewMode, setPreviewMode,

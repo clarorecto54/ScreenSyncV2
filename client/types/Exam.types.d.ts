@@ -9,6 +9,8 @@ export interface ExamTypes
 }
 
 export type ExamProp = {
+    id: string
+    lock: boolean
     password: string
     title: string
     description: string

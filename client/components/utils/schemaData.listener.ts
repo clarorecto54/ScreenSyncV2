@@ -1,29 +1,36 @@
 import { HtmlElement } from "@/types/Exam.types"
 import { SchemaErrors, QuestionErrors, SchemaDataListenerTypes, SchemaErrorListenerTypes, SchemaValidableKeys } from "@/types/Schema.types"
 
-export const SchemaDataListener: SchemaDataListenerTypes = (setSchemaData, schemaData, setSchemaErrors) =>
+export const SchemaDataListener: SchemaDataListenerTypes = (setSchemaData, schemaData, schemaKey, setSchemaErrors) =>
 {
+    console.clear()
     const instanceSchemaData = schemaData
     instanceSchemaData.timeLimit = instanceSchemaData.timeLimitPerPage * (instanceSchemaData.pages.length - 1)
-    SchemaErrorListener(schemaData, setSchemaErrors)
+    SchemaErrorListener(schemaData, schemaKey, setSchemaErrors)
     setSchemaData(instanceSchemaData)
+    console.log(JSON.stringify(instanceSchemaData, null, 2))
 }
 
-const SchemaErrorListener: SchemaErrorListenerTypes = (schemaData, setSchemaErrors) =>
+const SchemaErrorListener: SchemaErrorListenerTypes = (schemaData, schemaKey, setSchemaErrors) =>
 {
     const UpdatedSchemaErrors: SchemaErrors = {
+        password: "",
         title: "",
         description: "",
         timeLimitPerPage: "",
         SchemaStartingDisplayError: "",
         QuestionsError: [],
     }
-    const iterableFields: SchemaValidableKeys[] = ["description", "timeLimitPerPage", "title"]
+    const iterableFields: SchemaValidableKeys[] = ["description", "timeLimitPerPage", "title", schemaData.lock && "password"]
+        .filter((key): key is SchemaValidableKeys => key !== false)
     for (const key of iterableFields)
     {
         let errorMessage = ""
         switch (key)
         {
+            case "password":
+                errorMessage = "Key must not be empty"
+                break
             case "title":
                 errorMessage = "Name must not be empty"
                 break
@@ -39,6 +46,7 @@ const SchemaErrorListener: SchemaErrorListenerTypes = (schemaData, setSchemaErro
         }
         const schemaValue = schemaData[key]
         if (!schemaValue) UpdatedSchemaErrors[key] = errorMessage
+        if (key === "password" && schemaKey.length < 4) UpdatedSchemaErrors[key] = "Key must have a minimum of 4 characters"
     }
     if (!(schemaData.pages[0].elements[0] as HtmlElement).html)
         UpdatedSchemaErrors.SchemaStartingDisplayError = "Please input starting message here"

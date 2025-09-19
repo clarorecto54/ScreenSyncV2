@@ -8,6 +8,8 @@ export interface SchemaTypes
 {
     builderMode: boolean
     setBuilderMode: Dispatch<SetStateAction<boolean>>
+    schemaKey: string
+    setschemaKey: Dispatch<SetStateAction<string>>
     schemaData: ExamProp
     setSchemaData: Dispatch<SetStateAction<ExamProp>>
     schemaErrors: SchemaErrors | undefined
@@ -22,11 +24,13 @@ export type SchemaValidableKeys = Extract<keyof SchemaErrors, keyof ExamProp>
 export type SchemaDataListenerTypes = (
     setSchemaData: Dispatch<SetStateAction<ExamProp>>,
     schemaData: ExamProp,
+    schemaKey: string,
     setSchemaErrors: Dispatch<SetStateAction<SchemaErrors | undefined>>
 ) => void
 
 export type SchemaErrorListenerTypes = (
     schemaData: ExamProp,
+    schemaKey: string,
     setSchemaErrors: Dispatch<SetStateAction<SchemaErrors | undefined>>
 ) => void
 
@@ -47,6 +51,7 @@ export interface SchemaPropertiesErrorList
 
 export interface SchemaErrors
 {
+    password: string
     title: string
     description: string
     SchemaStartingDisplayError: string

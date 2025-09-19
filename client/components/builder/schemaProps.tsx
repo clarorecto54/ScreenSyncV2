@@ -2,12 +2,13 @@ import { TextField, CardHeader, Card, Avatar, Box, FormGroup, FormControlLabel, 
 import { useSchema } from "../hooks/useSchema";
 import { ChangeEvent } from "react";
 import Image from "next/image";
-import { HtmlElement } from "@/types/Exam.types";
+import { ExamProp, HtmlElement } from "@/types/Exam.types";
 import { SchemaValidableKeys } from "@/types/Schema.types";
+import HashData from "../utils/crypto";
 
 export default function SchemaPropBuilder()
 {
-    const { schemaData, setSchemaData, schemaErrors } = useSchema()
+    const { schemaData, setSchemaData, schemaErrors, schemaKey, setschemaKey } = useSchema()
     const HandleSwitch = ({ target }: ChangeEvent<HTMLInputElement>) =>
         setSchemaData(prev =>
         {
@@ -18,14 +19,32 @@ export default function SchemaPropBuilder()
     function HandleTextField(element: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)
     {
         const { name, value } = element.target
-        setSchemaData(prev => ({ ...prev, [name]: name === "timeLimitPerPage" ? Number(value) : value }))
+        const key = name as keyof ExamProp
+        const transformValue = () =>
+        {
+            switch (key)
+            {
+                case "timeLimitPerPage":
+                    return Number(value)
+                case "password":
+                    setschemaKey(value)
+                    const final = value.length < 4 ? "" : HashData(value)
+                    return final
+                default:
+                    return value
+            }
+        }
+        setSchemaData(prev => ({
+            ...prev,
+            [key]: transformValue()
+        }))
     }
     return <Box height="100%" padding="8px" paddingTop={0} overflow={"hidden"}>
         <Card className="h-full flex flex-col Unselectable" variant="elevation" elevation={2}>
             <Box>
                 <CardHeader
                     className="transition-all duration-300"
-                    title="Exam Properties"
+                    title="Properties"
                     subheader={
                         (Object.keys(schemaErrors ?? {}) as SchemaValidableKeys[])
                             .map(key => schemaErrors?.[key])
@@ -40,6 +59,15 @@ export default function SchemaPropBuilder()
                             src={require("@/public/images/Settings.svg")}
                         />
                     </Avatar>}
+                    action={<FormControlLabel
+                        label="Lock"
+                        labelPlacement="top"
+                        control={<Switch
+                            size="small"
+                            name="lock"
+                            onChange={HandleSwitch}
+                            checked={schemaData.lock} />}
+                        slotProps={{ typography: { fontSize: "10pt" } }} />}
                     slotProps={{
                         title: {
                             fontFamily: "Montserrat, sans-serif",
@@ -60,22 +88,24 @@ export default function SchemaPropBuilder()
                     autoComplete="off"
                     className="p-[16px] flex flex-col gap-[16px]"
                     onSubmit={(element) => element.preventDefault()}>
-                    {(["title", "description"] as Array<"title" | "description">).map((key) => (
-                        <TextField
-                            key={key}
-                            variant="outlined"
-                            size="small"
-                            name={key}
-                            label={{ title: "Name", description: "Subject" }[key]}
-                            value={schemaData[key]}
-                            onChange={HandleTextField}
-                            error={!!schemaErrors?.[key]}
-                            helperText={schemaErrors?.[key]}
-                            fullWidth
-                            required
-                            slotProps={{ htmlInput: { maxLength: 64 } }}
-                        />
-                    ))}
+                    {(["password", "title", "description"] as Array<"title" | "description" | "password">)
+                        .filter(key => !(!schemaData.lock && key === "password")).map((key) => (
+                            <TextField
+                                key={key}
+                                variant="outlined"
+                                size="small"
+                                name={key}
+                                type={schemaData.lock ? "password" : "text"}
+                                label={{ title: "Name", description: "Subject", password: "Lock Key" }[key]}
+                                value={key !== "password" ? schemaData[key] : schemaKey}
+                                onChange={HandleTextField}
+                                error={!!schemaErrors?.[key]}
+                                helperText={schemaErrors?.[key]}
+                                fullWidth
+                                required
+                                slotProps={{ htmlInput: { maxLength: 64 } }}
+                            />
+                        ))}
                     <TextField
                         variant="outlined"
                         size="small"

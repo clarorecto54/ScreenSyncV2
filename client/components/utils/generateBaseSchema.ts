@@ -1,8 +1,11 @@
 import { ExamProp, HtmlElement } from "@/types/Exam.types";
+import { randomBytes } from "crypto";
 
 export default function GenerateBaseSchema(): ExamProp
 {
     return {
+        id: randomBytes(16).toString("base64"),
+        lock: true,
         password: "",
         title: "",
         description: "",
