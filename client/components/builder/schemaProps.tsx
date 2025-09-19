@@ -48,7 +48,7 @@ export default function SchemaPropBuilder()
                     subheader={
                         (Object.keys(schemaErrors ?? {}) as SchemaValidableKeys[])
                             .map(key => schemaErrors?.[key])
-                            .find(errorMsg => !!errorMsg)
+                            .find(errorMsg => typeof errorMsg !== "object" && !!errorMsg)
                     }
                     avatar={<Avatar
                         sx={{
@@ -77,7 +77,7 @@ export default function SchemaPropBuilder()
                         subheader: {
                             color: (Object.keys(schemaErrors ?? {}) as SchemaValidableKeys[])
                                 .map(key => schemaErrors?.[key])
-                                .find(errorMsg => !!errorMsg) ? "error" : "textSecondary"
+                                .find(errorMsg => typeof errorMsg !== "object" && !!errorMsg) ? "error" : "textSecondary"
                         }
                     }}
                     sx={{ paddingBottom: "8px" }}
@@ -138,8 +138,8 @@ export default function SchemaPropBuilder()
                             size="small"
                             name={key}
                             label={{
-                                timeLimit: "Total Time Limit (in seconds)",
-                                timeLimitPerPage: "Time for each questions (in seconds)"
+                                timeLimit: "Total Time Limit (seconds)",
+                                timeLimitPerPage: "Time for each questions (seconds)"
                             }[key]}
                             type="number"
                             value={schemaData[key]}
