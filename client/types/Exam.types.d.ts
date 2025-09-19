@@ -10,14 +10,26 @@ export interface ExamTypes
 
 export type ExamProp = {
     title: string
-    startSurveyText: string
+    logo: string
+    logoFit: "contain" | "cover" | "fill" | "none"
+    logoWidth: string | "auto"
+    logoHeight: string
     timeLimit: number
-    pages: Element[]
     timeLimitPerPage: number
-    showProgressBar?: boolean
-    showTimer?: boolean
-    firstPageIsStartPage?: boolean
-    progressBarLocation?: "aboveHeader" | "belowHeader" | "bottom" | "topBottom" | "auto"
+    showTimer: boolean
+    timerInfoMode: "survey" | "page" | "combined"
+    showProgressBar: boolean
+    progressBarLocation: "aboveHeader" | "belowHeader" | "bottom" | "topBottom" | "auto"
+    showPreviewBeforeComplete: boolean
+    questionOrder: "initial" | "random"
+    pages: Element[]
+    /* ########### DEFAULT VALUES ########### */
+    lazyRenderEnabled: boolean
+    startSurveyText: string
+    previewMode: "answeredQuestions" | "allQuestions"
+    previewText: string
+    /* ############## OPTIONAL ############## */
+    questionsOnPageMode?: "singlePage" | "questionPerPage" | "inputPerPage" | "standard"
     completedHtml?: string
     completedHtmlOnCondition?: ExamHtmlCondition[]
 }

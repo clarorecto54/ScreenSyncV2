@@ -1,15 +1,22 @@
-import { ExamProp, HtmlElement, StandardQuestion } from "@/types/Exam.types";
+import { ExamProp, HtmlElement } from "@/types/Exam.types";
+import AddQuestion from "./generateQuestion";
 
 export default function GenerateBaseSchema(): ExamProp
 {
     return {
         title: "",
+        logo: "",
+        logoFit: "cover",
+        logoHeight: "80px",
+        logoWidth: "auto",
         timeLimit: 10,
         timeLimitPerPage: 10,
+        showTimer: true,
+        timerInfoMode: "combined",
         showProgressBar: true,
         progressBarLocation: "bottom",
-        showTimer: true,
-        startSurveyText: "Start Quiz",
+        showPreviewBeforeComplete: true,
+        questionOrder: "random",
         pages: [
             {
                 elements: [
@@ -19,18 +26,12 @@ export default function GenerateBaseSchema(): ExamProp
                     } satisfies HtmlElement
                 ]
             },
-            {
-                elements: [{
-                    name: "Question 1",
-                    title: "",
-                    type: "radiogroup",
-                    isRequired: true,
-                    correctAnswer: "",
-                    titleLocation: "top",
-                    choicesOrder: "random",
-                    choices: []
-                } satisfies StandardQuestion]
-            }
+            AddQuestion(1)
         ],
+        /* ######### DEFAULT VALUES ######### */
+        lazyRenderEnabled: true,
+        startSurveyText: "Start Quiz",
+        previewMode: "answeredQuestions",
+        previewText: "Review your answers"
     }
 }

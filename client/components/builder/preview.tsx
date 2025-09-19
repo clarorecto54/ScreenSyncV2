@@ -12,12 +12,18 @@ export default function SchemaPreview()
     survey.timerInfoMode = "combined"
     survey.css.clockTimerRoot = "sd-timer my-sd-timer"
     survey.css.clockTimerMinorText = "sd-timer__text--minor myclockTimerMinorText"
+    survey.onStarted.add((sender, options) => sender.startTimer())
+    survey.onCurrentPageChanged.add((sender, options) => sender.startTimer())
+    survey.onShowingPreview.add((sender, options) => sender.stopTimer())
+    survey.onCompleting.add((sender, options) => sender.stopTimer())
     survey.onComplete.add((sender, options) =>
     {
+        sender.stopTimer()
+        sender.showTimerPanel = "none"
         setTimeout(() =>
         {
             setPreviewMode(false)
-        },3000)
+        }, 3000)
     })
     return <Survey model={survey} />
 }
