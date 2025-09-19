@@ -2,19 +2,36 @@
 import SchemaBuilder from "./schema"
 import SchemaList from "./schemaList"
 import { useSchema } from "../hooks/useSchema"
+import SchemaPreview from "./preview"
+import { Box, SxProps } from "@mui/material"
+import { useState } from "react"
+import { Theme } from "@emotion/react"
 
 export default function ExamBuilder()
 {
     const { builderMode } = useSchema()
-    return <div className="
-    h-[670px] w-[1600px] p-[32px] rounded-3xl bg-[#242424]
-    flex justify-center items-center
-    ">
-        <div className={`
-        h-full w-full max-w-[600px] rounded-[32px] p-[24px] bg-[hsl(0,0%,95%)]
-        flex flex-col items-center gap-[16px]`} >
+    const [panelStyling] = useState<SxProps<Theme>>({
+        height: "100%",
+        width: "100%",
+        maxWidth: "600px",
+        borderRadius: "32px",
+        padding: "24px",
+        background: "hsl(0,0%,95%)"
+    })
+    return <Box display="flex" gap="32px" justifyContent="center" alignItems="center"
+        sx={{
+            height: "670px",
+            width: "1600px",
+            padding: "32px",
+            borderRadius: "24px",
+            backgroundColor: "#242424",
+        }}>
+        <Box sx={panelStyling}>
             {!builderMode && <SchemaList />}
             {builderMode && <SchemaBuilder />}
-        </div>
-    </div>
+        </Box>
+        {builderMode && <Box sx={panelStyling} >
+            <SchemaPreview />
+        </Box>}
+    </Box>
 }

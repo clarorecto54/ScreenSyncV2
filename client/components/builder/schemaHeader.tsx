@@ -1,21 +1,78 @@
 import { Button, CardHeader } from "@mui/material"
 import { useSchema } from "../hooks/useSchema"
 import Image from "next/image"
+import AddQuestion from "../utils/generateQuestion"
+import { QuestionErrors, SchemaValidableKeys } from "@/types/Schema.types"
+import { useEffect, useState } from "react"
 
 export default function SchemaHeader()
 {
-    const { setBuilderMode, builderPage } = useSchema()
+    const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData } = useSchema()
+    const [globalError, setGlobalError] = useState<string | undefined>(undefined)
+    useEffect(() => setGlobalError((Object.keys(schemaErrors ?? {}) as SchemaValidableKeys[])
+        .map(key =>
+        {
+            if (schemaErrors)
+            {
+                const value = schemaErrors[key];
+                if (typeof value === "string")
+                    return value;
+                if (typeof value === "object")
+                {
+                    const firstError = (value as QuestionErrors[]).find(err => !!err.name);
+                    return `${firstError?.name} : ${firstError?.error}`;
+                }
+            }
+            return undefined;
+        })
+        .find(Boolean)), [schemaErrors])
     return <CardHeader
         avatar={
             <Button
                 size="small"
                 variant="contained"
-                onClick={() => setBuilderMode(false)}
+                onClick={() =>
+                {
+                    switch (builderPage)
+                    {
+                        case "Questions":
+                            return setBuilderPage("Schema Properties")
+                        case "Edit Question":
+                            return setBuilderPage("Questions")
+                        case "Schema Properties":
+                            return setBuilderMode(false)
+                    }
+                }}
             >
                 Back
             </Button>
         }
         title={builderPage}
+        subheader={globalError}
+        action={
+            builderPage !== "Edit Question" && <Button
+                sx={{ background: "#9333ea" }}
+                variant="contained"
+                size="small"
+                onClick={() =>
+                {
+                    switch (builderPage)
+                    {
+                        case "Schema Properties": return setBuilderPage("Questions")
+                        case "Questions":
+                            setSchemaData(prev =>
+                            {
+                                const updatedPages = prev.pages
+                                updatedPages.push(AddQuestion(prev.pages.length))
+                                return { ...prev, pages: updatedPages }
+                            })
+                            return setBuilderPage("Edit Question")
+                    }
+                }}>
+                {builderPage === "Schema Properties" && "Questions"}
+                {builderPage === "Questions" && "Add Question"}
+            </Button>
+        }
         slotProps={{
             avatar: {
                 style: {
@@ -31,23 +88,31 @@ export default function SchemaHeader()
             },
             root: {
                 style: {
+                    justifyContent: "space-between",
                     position: "relative",
                     margin: 0,
                     padding: 0,
                     paddingBottom: "8px",
                 }
-            }
-        }}
-        sx={{
-            "& *": { margin: 0 },
-            "& .MuiCardHeader-content": {
-                width: "100%",
-                position: "absolute",
             },
-            "& .MuiCardHeader-title": {
-                fontSize: "16pt",
-                textAlign: "center",
-                fontWeight: 600,
+            content: {
+                style: {
+                    width: "100%",
+                    position: "absolute",
+                }
+            },
+            subheader: {
+                className: "Unselectable",
+                color: globalError ? "error" : "textSecondary",
+                style: { textAlign: "center" }
+            },
+            title: {
+                className: "Unselectable",
+                style: {
+                    fontSize: "16pt",
+                    textAlign: "center",
+                    fontWeight: 600,
+                }
             }
         }}
     />

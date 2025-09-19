@@ -3,10 +3,11 @@ import { PlainDark } from "survey-core/themes"
 import { Survey } from "survey-react-ui"
 import { useSchema } from "../hooks/useSchema"
 import "survey-core/survey-core.min.css"
+import { Box } from "@mui/material"
 
 export default function SchemaPreview()
 {
-    const { schemaData, setPreviewMode } = useSchema()
+    const { schemaData } = useSchema()
     const survey = new Model(JSON.stringify(schemaData))
     survey.applyTheme(PlainDark)
     survey.timerInfoMode = "combined"
@@ -20,10 +21,9 @@ export default function SchemaPreview()
     {
         sender.stopTimer()
         sender.showTimerPanel = "none"
-        setTimeout(() =>
-        {
-            setPreviewMode(false)
-        }, 3000)
+        setTimeout(() => survey.clear(), 3000)
     })
-    return <Survey model={survey} />
+    return <Box height="100%" sx={{ borderRadius: "24px", overflow: "hidden" }}>
+        <Survey model={survey} />
+    </Box>
 }

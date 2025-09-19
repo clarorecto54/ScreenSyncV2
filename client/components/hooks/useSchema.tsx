@@ -13,7 +13,6 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
     const [builderPage, setBuilderPage] = useState<SchemaPage>("Schema Properties")
     const [schemaKey, setschemaKey] = useState<string>("")
     const [builderMode, setBuilderMode] = useState<boolean>(false)
-    const [previewMode, setPreviewMode] = useState<boolean>(false)
     const [schemaData, setSchemaData] = useState<ExamProp>(GenerateBaseSchema())
     const [schemaErrors, setSchemaErrors] = useState<SchemaErrors | undefined>(undefined)
     useEffect(() => SchemaDataListener(setSchemaData, schemaData, schemaKey, setSchemaErrors), [schemaData])
@@ -22,8 +21,7 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
         builderPage, setBuilderPage,
         schemaKey, setschemaKey,
         schemaData, setSchemaData,
-        schemaErrors,
-        previewMode, setPreviewMode,
+        schemaErrors
     }
     return <context.Provider value={defaultValues}>
         {children}

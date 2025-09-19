@@ -13,8 +13,6 @@ export interface SchemaTypes
     schemaData: ExamProp
     setSchemaData: Dispatch<SetStateAction<ExamProp>>
     schemaErrors: SchemaErrors | undefined
-    previewMode: boolean
-    setPreviewMode: Dispatch<SetStateAction<boolean>>
     builderPage: SchemaPage
     setBuilderPage: Dispatch<SetStateAction<SchemaPage>>
 }

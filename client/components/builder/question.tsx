@@ -1,4 +1,4 @@
-import { Avatar, Box, Card, CardContent, CardHeader, Chip, Collapse, Divider, FormControl, IconButton, InputAdornment, InputLabel, List, MenuItem, Select, TextField } from "@mui/material";
+import { Avatar, Box, Card, CardContent, CardHeader, Chip, Divider, FormControl, InputAdornment, InputLabel, List, MenuItem, Select, TextField } from "@mui/material";
 import Image from "next/image";
 import { useSchema } from "../hooks/useSchema";
 import { StandardQuestion } from "@/types/Exam.types";
@@ -9,7 +9,6 @@ import { FieldErrors, QuestionErrors } from "@/types/Schema.types";
 export default function SchemaQuestionBuilder({ index }: { index: number })
 {
     const { schemaData, setSchemaData, schemaErrors } = useSchema()
-    const [expanded, setExpanded] = useState<boolean>(true)
     const [questionData, setQuestionData] = useState<StandardQuestion>(schemaData.pages[index].elements[0] as StandardQuestion)
     const [choiceData, setChoiceData] = useState<string>("")
     const [choiceError, setChoiceError] = useState<string>("")
@@ -56,9 +55,12 @@ export default function SchemaQuestionBuilder({ index }: { index: number })
     return <Box
         display="flex"
         flexDirection="column"
-        gap="16px">
-        <Card className="Unselectable" variant="elevation" elevation={2}>
-            <Box onClick={() => setExpanded(!expanded)} sx={{ cursor: "pointer" }}>
+        gap="16px"
+        padding="8px"
+        height="100%"
+        overflow="hidden">
+        <Card className="h-full Unselectable flex flex-col" variant="elevation" elevation={2} sx={{ overflow: "hidden" }}>
+            <Box >
                 <CardHeader
                     className="transition-all duration-300"
                     title={`Question ${index}`}
@@ -72,22 +74,15 @@ export default function SchemaQuestionBuilder({ index }: { index: number })
                             src={require("@/public/images/Question.svg")}
                         />
                     </Avatar>}
-                    action={<IconButton onClick={() => setExpanded(!expanded)}>
-                        <Image
-                            src={require("@/public/images/Arrow.svg")}
-                            alt="back"
-                            className={`h-[16px] w-[16px] rotate-${expanded ? 180 : 0} transition-all duration-300`}
-                        />
-                    </IconButton>}
                     slotProps={{
                         subheader: {
                             color: questionError ? "error" : "textSecondary"
                         }
                     }}
-                    sx={{ paddingBottom: expanded ? 0 : "16px" }}
+                    sx={{ paddingBottom: "16px" }}
                 />
             </Box>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <Box height="100%" sx={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
                 <CardContent className="flex flex-col gap-[16px] px-[16px]">
                     <form autoComplete="off">
                         <TextField
@@ -165,9 +160,14 @@ export default function SchemaQuestionBuilder({ index }: { index: number })
                             }}
                         />
                     </form>
+                </CardContent>
+                <CardContent sx={{ height: "100%", paddingTop: 0, display: "flex", overflow: "hidden" }}>
                     {questionData.choices.length > 0 && <List
                         dense
                         sx={{
+                            height: "100%",
+                            width: "100%",
+                            overflowY: "auto",
                             display: "flex",
                             flexWrap: "wrap",
                             flex: "flex-shrink",
@@ -188,7 +188,7 @@ export default function SchemaQuestionBuilder({ index }: { index: number })
                         })}
                     </List>}
                 </CardContent>
-            </Collapse>
+            </Box>
         </Card>
     </Box>
 }

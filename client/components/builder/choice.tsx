@@ -28,6 +28,7 @@ export default function ChoiceElement({ choice, index, questionData, setQuestion
                 border: "2px solid #ddd",
                 borderRadius: 1,
                 height: "auto",
+                maxHeight: "fit-content",
                 px: "16px"
             }}
         >
