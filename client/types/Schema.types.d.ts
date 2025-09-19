@@ -17,6 +17,8 @@ export interface SchemaTypes
     setBuilderPage: Dispatch<SetStateAction<SchemaPage>>
 }
 
+export type SchemaValidableKeys = Extract<keyof SchemaErrors, keyof ExamProp>
+
 export type SchemaDataListenerTypes = (
     setSchemaData: Dispatch<SetStateAction<ExamProp>>,
     schemaData: ExamProp,
@@ -45,9 +47,10 @@ export interface SchemaPropertiesErrorList
 
 export interface SchemaErrors
 {
-    SchemaTitleError: string
+    title: string
+    description: string
     SchemaStartingDisplayError: string
-    SchemaTimeLimitError: string
+    timeLimitPerPage: string
     QuestionsError: QuestionErrors[]
 }
 

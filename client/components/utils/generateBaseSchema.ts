@@ -1,10 +1,11 @@
 import { ExamProp, HtmlElement } from "@/types/Exam.types";
-import AddQuestion from "./generateQuestion";
 
 export default function GenerateBaseSchema(): ExamProp
 {
     return {
+        password: "",
         title: "",
+        description: "",
         logo: "",
         logoFit: "cover",
         logoHeight: "80px",
@@ -12,9 +13,7 @@ export default function GenerateBaseSchema(): ExamProp
         timeLimit: 10,
         timeLimitPerPage: 10,
         showTimer: true,
-        timerInfoMode: "combined",
         showProgressBar: true,
-        progressBarLocation: "bottom",
         showPreviewBeforeComplete: true,
         questionOrder: "random",
         pages: [
@@ -25,10 +24,11 @@ export default function GenerateBaseSchema(): ExamProp
                         html: ""
                     } satisfies HtmlElement
                 ]
-            },
-            AddQuestion(1)
+            }
         ],
         /* ######### DEFAULT VALUES ######### */
+        progressBarLocation: "bottom",
+        timerInfoMode: "combined",
         lazyRenderEnabled: true,
         startSurveyText: "Start Quiz",
         previewMode: "answeredQuestions",

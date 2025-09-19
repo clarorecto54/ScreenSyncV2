@@ -9,7 +9,9 @@ export interface ExamTypes
 }
 
 export type ExamProp = {
+    password: string
     title: string
+    description: string
     logo: string
     logoFit: "contain" | "cover" | "fill" | "none"
     logoWidth: string | "auto"
@@ -17,13 +19,13 @@ export type ExamProp = {
     timeLimit: number
     timeLimitPerPage: number
     showTimer: boolean
-    timerInfoMode: "survey" | "page" | "combined"
     showProgressBar: boolean
-    progressBarLocation: "aboveHeader" | "belowHeader" | "bottom" | "topBottom" | "auto"
     showPreviewBeforeComplete: boolean
     questionOrder: "initial" | "random"
     pages: Element[]
     /* ########### DEFAULT VALUES ########### */
+    progressBarLocation: "aboveHeader" | "belowHeader" | "bottom" | "topBottom" | "auto"
+    timerInfoMode: "survey" | "page" | "combined"
     lazyRenderEnabled: boolean
     startSurveyText: string
     previewMode: "answeredQuestions" | "allQuestions"

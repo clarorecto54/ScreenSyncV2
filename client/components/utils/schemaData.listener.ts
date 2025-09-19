@@ -1,25 +1,49 @@
 import { HtmlElement } from "@/types/Exam.types"
-import { SchemaErrors, QuestionErrors, SchemaDataListenerTypes, SchemaErrorListenerTypes } from "@/types/Schema.types"
+import { SchemaErrors, QuestionErrors, SchemaDataListenerTypes, SchemaErrorListenerTypes, SchemaValidableKeys } from "@/types/Schema.types"
 
 export const SchemaDataListener: SchemaDataListenerTypes = (setSchemaData, schemaData, setSchemaErrors) =>
 {
+    console.clear()
     const instanceSchemaData = schemaData
     instanceSchemaData.timeLimit = instanceSchemaData.timeLimitPerPage * (instanceSchemaData.pages.length - 1)
     SchemaErrorListener(schemaData, setSchemaErrors)
     setSchemaData(instanceSchemaData)
+    console.log(JSON.stringify(instanceSchemaData, null, 1))
 }
 
 const SchemaErrorListener: SchemaErrorListenerTypes = (schemaData, setSchemaErrors) =>
 {
     const UpdatedSchemaErrors: SchemaErrors = {
-        QuestionsError: [],
+        title: "",
+        description: "",
+        timeLimitPerPage: "",
         SchemaStartingDisplayError: "",
-        SchemaTimeLimitError: "",
-        SchemaTitleError: ""
+        QuestionsError: [],
     }
-    if (!schemaData.title) UpdatedSchemaErrors.SchemaTitleError = "Exam Name must not be empty"
-    if (schemaData.timeLimitPerPage <= 0) UpdatedSchemaErrors.SchemaTimeLimitError = "Timelimit is invalid"
-    if (!(schemaData.pages[0].elements[0] as HtmlElement).html) UpdatedSchemaErrors.SchemaStartingDisplayError = "Please input starting message here"
+    const iterableFields: SchemaValidableKeys[] = ["description", "timeLimitPerPage", "title"]
+    for (const key of iterableFields)
+    {
+        let errorMessage = ""
+        switch (key)
+        {
+            case "title":
+                errorMessage = "Name must not be empty"
+                break
+            case "description":
+                errorMessage = "Subject must not be empty"
+                break
+            case "timeLimitPerPage":
+                errorMessage = "Timelimit is invalid"
+                break
+            default:
+                errorMessage = "This field must not be empty"
+                break
+        }
+        const schemaValue = schemaData[key]
+        if (!schemaValue) UpdatedSchemaErrors[key] = errorMessage
+    }
+    if (!(schemaData.pages[0].elements[0] as HtmlElement).html)
+        UpdatedSchemaErrors.SchemaStartingDisplayError = "Please input starting message here"
     schemaData.pages.forEach((page, questionIndex) =>
     {
         let questionError: QuestionErrors = {
@@ -50,11 +74,10 @@ const SchemaErrorListener: SchemaErrorListenerTypes = (schemaData, setSchemaErro
         if (questionError.fieldErrors.length > 0 || questionError.error)
             UpdatedSchemaErrors.QuestionsError.push(questionError)
     })
-    if (
-        UpdatedSchemaErrors.SchemaTitleError ||
-        UpdatedSchemaErrors.SchemaStartingDisplayError ||
-        UpdatedSchemaErrors.SchemaTimeLimitError ||
-        UpdatedSchemaErrors.QuestionsError.length !== 0
-    ) setSchemaErrors(UpdatedSchemaErrors)
-    else setSchemaErrors(undefined)
+    const schemaHasError = (Object.keys(UpdatedSchemaErrors) as [keyof SchemaErrors])
+        .some((key) => key !== "QuestionsError" && UpdatedSchemaErrors[key]) || UpdatedSchemaErrors.QuestionsError.length !== 0
+    if (schemaHasError)
+        setSchemaErrors(UpdatedSchemaErrors)
+    else
+        setSchemaErrors(undefined)
 }

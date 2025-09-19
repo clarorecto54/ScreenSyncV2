@@ -1,25 +1,36 @@
-import { CardContent, TextField, CardHeader, Card, Avatar, Box, IconButton, Collapse, Button } from "@mui/material";
+import { TextField, CardHeader, Card, Avatar, Box, FormGroup, FormControlLabel, Switch } from "@mui/material";
 import { useSchema } from "../hooks/useSchema";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent } from "react";
 import Image from "next/image";
-import { HtmlElement, StandardQuestion } from "@/types/Exam.types";
+import { HtmlElement } from "@/types/Exam.types";
+import { SchemaValidableKeys } from "@/types/Schema.types";
 
 export default function SchemaPropBuilder()
 {
-        const { schemaData, setSchemaData, schemaErrors, setPreviewMode } = useSchema()
-    const [expanded, setExpanded] = useState<boolean>(true)
+    const { schemaData, setSchemaData, schemaErrors } = useSchema()
+    const HandleSwitch = ({ target }: ChangeEvent<HTMLInputElement>) =>
+        setSchemaData(prev =>
+        {
+            const key = target.name as "showTimer" | "showProgressBar" | "showPreviewBeforeComplete" | "questionOrder"
+            const value = target.checked
+            return { ...prev, [key]: key !== "questionOrder" ? value : value ? "random" : "initial" }
+        })
     function HandleTextField(element: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)
     {
         const { name, value } = element.target
         setSchemaData(prev => ({ ...prev, [name]: name === "timeLimitPerPage" ? Number(value) : value }))
     }
-    return <Box>
-        <Card className="Unselectable" variant="elevation" elevation={2}>
-            <Box onClick={() => setExpanded(!expanded)} sx={{ cursor: "pointer" }}>
+    return <Box height="100%" padding="8px" paddingTop={0} overflow={"hidden"}>
+        <Card className="h-full flex flex-col Unselectable" variant="elevation" elevation={2}>
+            <Box>
                 <CardHeader
                     className="transition-all duration-300"
                     title="Exam Properties"
-                    subheader={schemaErrors?.SchemaTitleError || schemaErrors?.SchemaTimeLimitError || schemaErrors?.SchemaStartingDisplayError}
+                    subheader={
+                        (Object.keys(schemaErrors ?? {}) as SchemaValidableKeys[])
+                            .map(key => schemaErrors?.[key])
+                            .find(errorMsg => !!errorMsg)
+                    }
                     avatar={<Avatar
                         sx={{
                             height: "24px", width: "24px", background: "none",
@@ -29,13 +40,6 @@ export default function SchemaPropBuilder()
                             src={require("@/public/images/Settings.svg")}
                         />
                     </Avatar>}
-                    action={<IconButton onClick={() => setExpanded(!expanded)}>
-                        <Image
-                            src={require("@/public/images/Arrow.svg")}
-                            alt="back"
-                            className={`h-[16px] w-[16px] rotate-${expanded ? 180 : 0} transition-all duration-300`}
-                        />
-                    </IconButton>}
                     slotProps={{
                         title: {
                             fontFamily: "Montserrat, sans-serif",
@@ -43,116 +47,102 @@ export default function SchemaPropBuilder()
                             fontWeight: 500
                         },
                         subheader: {
-                            color: schemaErrors?.SchemaTitleError || schemaErrors?.SchemaTimeLimitError || schemaErrors?.SchemaStartingDisplayError ? "error" : "textSecondary"
+                            color: (Object.keys(schemaErrors ?? {}) as SchemaValidableKeys[])
+                                .map(key => schemaErrors?.[key])
+                                .find(errorMsg => !!errorMsg) ? "error" : "textSecondary"
                         }
                     }}
-                    sx={{ paddingBottom: 0 }}
+                    sx={{ paddingBottom: "16px" }}
                 />
             </Box>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <form autoComplete="off" onSubmit={(element) => element.preventDefault()}>
-                    <CardContent className="flex flex-col gap-[16px] px-[16px]">
+            <Box sx={{ overflowY: "auto", paddingBottom: "16px" }}>
+                <form
+                    autoComplete="off"
+                    className="px-[16px] flex flex-col gap-[16px]"
+                    onSubmit={(element) => element.preventDefault()}>
+                    {(["title", "description"] as Array<"title" | "description">).map((key) => (
                         <TextField
+                            key={key}
                             variant="outlined"
                             size="small"
-                            name="title"
-                            label="Exam Name"
-                            value={schemaData.title}
+                            name={key}
+                            label={{ title: "Name", description: "Subject" }[key]}
+                            value={schemaData[key]}
                             onChange={HandleTextField}
-                            error={schemaErrors && schemaErrors.SchemaTitleError !== ""}
-                            helperText={schemaErrors?.SchemaTitleError ?? ""}
+                            error={!!schemaErrors?.[key]}
+                            helperText={schemaErrors?.[key]}
                             fullWidth
                             required
                             slotProps={{ htmlInput: { maxLength: 64 } }}
                         />
-                        <TextField
-                            variant="outlined"
-                            size="small"
-                            name="startSurveyText"
-                            label="Survey Starting Text"
-                            value={(schemaData.pages[0].elements[0] as HtmlElement).html}
-                            error={schemaErrors && schemaErrors.SchemaStartingDisplayError !== ""}
-                            helperText={schemaErrors?.SchemaStartingDisplayError ?? ""}
-                            onChange={(element) =>
+                    ))}
+                    <TextField
+                        variant="outlined"
+                        size="small"
+                        name="startSurveyText"
+                        label="Starting Message"
+                        value={(schemaData.pages[0].elements[0] as HtmlElement).html}
+                        error={schemaErrors && schemaErrors.SchemaStartingDisplayError !== ""}
+                        helperText={schemaErrors?.SchemaStartingDisplayError ?? ""}
+                        onChange={(element) =>
+                        {
+                            setSchemaData(prev =>
                             {
-                                setSchemaData(prev =>
-                                {
-                                    const updated = { ...prev }
-                                    const startingDisplay = updated.pages[0].elements[0] as HtmlElement
-                                    startingDisplay.html = element.target.value
-                                    return updated
-                                })
-                            }}
+                                const updated = { ...prev }
+                                const startingDisplay = updated.pages[0].elements[0] as HtmlElement
+                                startingDisplay.html = element.target.value
+                                return updated
+                            })
+                        }}
+                        fullWidth
+                        required
+                        slotProps={{ htmlInput: { maxLength: 128 } }}
+                    />
+                    <FormGroup row sx={{ gap: 2 }}>
+                        {(["timeLimitPerPage", "timeLimit"] as Array<"timeLimitPerPage" | "timeLimit">).map(key => <TextField
+                            key={key}
+                            sx={{ flex: 1 }}
+                            disabled={key === "timeLimit"}
                             fullWidth
-                            required
-                            slotProps={{ htmlInput: { maxLength: 128 } }}
-                        />
-                        <TextField
                             variant="outlined"
                             size="small"
-                            name="timeLimitPerPage"
-                            label="Timer for each question (in seconds)"
+                            name={key}
+                            label={{
+                                timeLimit: "Time for each questions (in seconds)",
+                                timeLimitPerPage: "Total Time Limit (in seconds)"
+                            }[key]}
                             type="number"
-                            value={schemaData.timeLimitPerPage}
-                            error={schemaErrors && schemaErrors.SchemaTimeLimitError !== ""}
-                            helperText={schemaErrors?.SchemaTimeLimitError ?? ""}
+                            value={schemaData[key]}
+                            error={key === "timeLimitPerPage" && schemaErrors?.timeLimitPerPage !== ""}
+                            helperText={key === "timeLimitPerPage" && schemaErrors?.timeLimitPerPage}
                             onChange={HandleTextField}
-                            fullWidth
                             required
                             slotProps={{
                                 htmlInput: { min: 10 }
                             }}
-                        />
-                    </CardContent>
+                        />)}
+                    </FormGroup>
+                    <FormGroup row sx={{ justifyContent: "space-around" }}>
+                        {(["showTimer", "showProgressBar", "showPreviewBeforeComplete", "questionOrder"] as Array<"showTimer" | "showProgressBar" | "showPreviewBeforeComplete" | "questionOrder">)
+                            .map(key => <FormControlLabel
+                                sx={{ flex: 1, margin: 0 }}
+                                key={key}
+                                label={{
+                                    showTimer: "Show Timer",
+                                    showProgressBar: "Show Progress",
+                                    showPreviewBeforeComplete: "Review Answer",
+                                    questionOrder: "Shuffle questions"
+                                }[key]}
+                                labelPlacement="top"
+                                control={<Switch
+                                    size="small"
+                                    name={key}
+                                    onChange={HandleSwitch}
+                                    checked={key !== "questionOrder" ? schemaData[key] : schemaData[key] === "random" ? true : false} />}
+                                slotProps={{ typography: { fontSize: "10pt" } }} />)}
+                    </FormGroup>
                 </form>
-            </Collapse>
-            <CardContent sx={{ paddingY: 0, paddingTop: !expanded ? "16px" : 0 }}>
-                <Box display={"flex"} alignItems={"center"} justifyContent={"space-around"}>
-                    <Button
-                        disabled={schemaErrors !== undefined}
-                        color="success"
-                        variant="outlined"
-                        size="small"
-                        sx={{ borderRadius: "100px" }}
-                        onClick={() => setSchemaData(prev =>
-                        {
-                            const updatedPages = prev.pages
-                            updatedPages.push({
-                                elements: [{
-                                    name: `Question ${updatedPages.length}`,
-                                    title: "",
-                                    type: "radiogroup",
-                                    isRequired: true,
-                                    correctAnswer: "",
-                                    titleLocation: "top",
-                                    choicesOrder: "random",
-                                    choices: []
-                                } satisfies StandardQuestion]
-                            })
-                            return { ...prev, pages: updatedPages }
-                        })}>
-                        Add Question
-                    </Button>
-                    <Button
-                        disabled={schemaErrors !== undefined}
-                        color="success"
-                        variant="outlined"
-                        size="small"
-                        sx={{ borderRadius: "100px" }}
-                        onClick={() => setPreviewMode(true)}>
-                        Preview Schema
-                    </Button>
-                    <Button
-                        disabled={schemaErrors !== undefined}
-                        color="success"
-                        variant="contained"
-                        size="small"
-                        sx={{ borderRadius: "100px" }}
-                        onClick={() => { }}>
-                        Save Schema
-                    </Button>
-                </Box>
-            </CardContent>
+            </Box>
         </Card>
     </Box>
 }
