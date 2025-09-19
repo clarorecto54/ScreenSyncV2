@@ -3,12 +3,10 @@ import { SchemaErrors, QuestionErrors, SchemaDataListenerTypes, SchemaErrorListe
 
 export const SchemaDataListener: SchemaDataListenerTypes = (setSchemaData, schemaData, setSchemaErrors) =>
 {
-    console.clear()
     const instanceSchemaData = schemaData
     instanceSchemaData.timeLimit = instanceSchemaData.timeLimitPerPage * (instanceSchemaData.pages.length - 1)
     SchemaErrorListener(schemaData, setSchemaErrors)
     setSchemaData(instanceSchemaData)
-    console.log(JSON.stringify(instanceSchemaData, null, 1))
 }
 
 const SchemaErrorListener: SchemaErrorListenerTypes = (schemaData, setSchemaErrors) =>

@@ -113,7 +113,7 @@ export default function SchemaPropBuilder()
                             }[key]}
                             type="number"
                             value={schemaData[key]}
-                            error={key === "timeLimitPerPage" && schemaErrors?.timeLimitPerPage !== ""}
+                            error={key === "timeLimitPerPage" && !!schemaErrors?.timeLimitPerPage}
                             helperText={key === "timeLimitPerPage" && schemaErrors?.timeLimitPerPage}
                             onChange={HandleTextField}
                             required
