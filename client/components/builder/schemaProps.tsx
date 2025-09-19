@@ -52,13 +52,13 @@ export default function SchemaPropBuilder()
                                 .find(errorMsg => !!errorMsg) ? "error" : "textSecondary"
                         }
                     }}
-                    sx={{ paddingBottom: "16px" }}
+                    sx={{ paddingBottom: "8px" }}
                 />
             </Box>
-            <Box sx={{ overflowY: "auto", paddingBottom: "16px" }}>
+            <Box sx={{ overflowY: "auto" }}>
                 <form
                     autoComplete="off"
-                    className="px-[16px] flex flex-col gap-[16px]"
+                    className="p-[16px] flex flex-col gap-[16px]"
                     onSubmit={(element) => element.preventDefault()}>
                     {(["title", "description"] as Array<"title" | "description">).map((key) => (
                         <TextField
