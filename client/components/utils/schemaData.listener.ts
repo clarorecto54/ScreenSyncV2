@@ -1,8 +1,15 @@
-import { ExamProp, HtmlElement } from "@/types/Exam.types"
-import { SchemaErrors, QuestionErrors } from "@/types/Schema.types"
-import { Dispatch, SetStateAction } from "react"
+import { HtmlElement } from "@/types/Exam.types"
+import { SchemaErrors, QuestionErrors, SchemaDataListenerTypes, SchemaErrorListenerTypes } from "@/types/Schema.types"
 
-export default function SchemaDataListener(schemaData: ExamProp, setSchemaErrors: Dispatch<SetStateAction<SchemaErrors | undefined>>)
+export const SchemaDataListener: SchemaDataListenerTypes = (setSchemaData, schemaData, setSchemaErrors) =>
+{
+    const instanceSchemaData = schemaData
+    instanceSchemaData.timeLimit = instanceSchemaData.timeLimitPerPage * (instanceSchemaData.pages.length - 1)
+    SchemaErrorListener(schemaData, setSchemaErrors)
+    setSchemaData(instanceSchemaData)
+}
+
+const SchemaErrorListener: SchemaErrorListenerTypes = (schemaData, setSchemaErrors) =>
 {
     const UpdatedSchemaErrors: SchemaErrors = {
         QuestionsError: [],
@@ -11,7 +18,7 @@ export default function SchemaDataListener(schemaData: ExamProp, setSchemaErrors
         SchemaTitleError: ""
     }
     if (!schemaData.title) UpdatedSchemaErrors.SchemaTitleError = "Exam Name must not be empty"
-    if (schemaData.timeLimit <= 0) UpdatedSchemaErrors.SchemaTimeLimitError = "Timelimit is invalid"
+    if (schemaData.timeLimitPerPage <= 0) UpdatedSchemaErrors.SchemaTimeLimitError = "Timelimit is invalid"
     if (!(schemaData.pages[0].elements[0] as HtmlElement).html) UpdatedSchemaErrors.SchemaStartingDisplayError = "Please input starting message here"
     schemaData.pages.forEach((page, questionIndex) =>
     {

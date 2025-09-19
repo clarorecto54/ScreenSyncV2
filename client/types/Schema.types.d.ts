@@ -13,6 +13,17 @@ export interface SchemaTypes
     setPreviewMode: Dispatch<SetStateAction<boolean>>
 }
 
+export type SchemaDataListenerTypes = (
+    setSchemaData: Dispatch<SetStateAction<ExamProp>>,
+    schemaData: ExamProp,
+    setSchemaErrors: Dispatch<SetStateAction<SchemaErrors | undefined>>
+) => void
+
+export type SchemaErrorListenerTypes = (
+    schemaData: ExamProp,
+    setSchemaErrors: Dispatch<SetStateAction<SchemaErrors | undefined>>
+) => void
+
 export interface CustomListItemProps extends ListItemProps
 {
     index: number

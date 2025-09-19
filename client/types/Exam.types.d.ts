@@ -13,7 +13,7 @@ export type ExamProp = {
     startSurveyText: string
     timeLimit: number
     pages: Element[]
-    timeLimitPerPage?: number
+    timeLimitPerPage: number
     showProgressBar?: boolean
     showTimer?: boolean
     firstPageIsStartPage?: boolean
