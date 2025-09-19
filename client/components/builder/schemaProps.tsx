@@ -138,8 +138,8 @@ export default function SchemaPropBuilder()
                             size="small"
                             name={key}
                             label={{
-                                timeLimit: "Time for each questions (in seconds)",
-                                timeLimitPerPage: "Total Time Limit (in seconds)"
+                                timeLimit: "Total Time Limit (in seconds)",
+                                timeLimitPerPage: "Time for each questions (in seconds)"
                             }[key]}
                             type="number"
                             value={schemaData[key]}
