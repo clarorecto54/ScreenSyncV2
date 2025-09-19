@@ -6,8 +6,8 @@ export type SchemaPage = "Schema Properties" | "Questions" | "Edit Question"
 
 export interface SchemaTypes
 {
-    schemaBuilder: boolean
-    setSchemaBuilder: Dispatch<SetStateAction<boolean>>
+    builderMode: boolean
+    setBuilderMode: Dispatch<SetStateAction<boolean>>
     schemaData: ExamProp
     setSchemaData: Dispatch<SetStateAction<ExamProp>>
     schemaErrors: SchemaErrors | undefined

@@ -4,7 +4,7 @@ import Image from "next/image"
 
 export default function SchemaHeader()
 {
-    const { setSchemaBuilder } = useSchema()
+    const { setBuilderMode, builderPage } = useSchema()
     return <Box
         display="flex"
         alignItems="center"
@@ -12,7 +12,7 @@ export default function SchemaHeader()
         <Button
             variant="text"
             size="small"
-            onClick={() => setSchemaBuilder(false)}
+            onClick={() => setBuilderMode(false)}
             startIcon={
                 <Image
                     src={require("@/public/images/Arrow.svg")}
@@ -32,7 +32,7 @@ export default function SchemaHeader()
                 fontWeight: 600,
                 fontSize: "16pt",
             }}>
-            Creating New Schema
+            {builderPage}
         </Typography>
     </Box>
 }

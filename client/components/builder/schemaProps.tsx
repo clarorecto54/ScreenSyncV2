@@ -4,7 +4,7 @@ import { ChangeEvent, useState } from "react";
 import Image from "next/image";
 import { HtmlElement, StandardQuestion } from "@/types/Exam.types";
 
-export default function SchemaProperties()
+export default function SchemaPropBuilder()
 {
         const { schemaData, setSchemaData, schemaErrors, setPreviewMode } = useSchema()
     const [expanded, setExpanded] = useState<boolean>(true)

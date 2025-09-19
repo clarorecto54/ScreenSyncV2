@@ -6,7 +6,7 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import ChoiceElement from "./choice";
 import { FieldErrors, QuestionErrors } from "@/types/Schema.types";
 
-export default function SchemaQuestions({ index }: { index: number })
+export default function SchemaQuestionBuilder({ index }: { index: number })
 {
     const { schemaData, setSchemaData, schemaErrors } = useSchema()
     const [expanded, setExpanded] = useState<boolean>(true)
