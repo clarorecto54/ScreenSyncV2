@@ -129,7 +129,7 @@ export default function SchemaQuestionBuilder({ index }: { index: number })
                         </FormControl>
                     </Box>
                     <Divider>
-                        <Chip label="CHOICES" variant="outlined" size="small" />
+                        CHOICES
                     </Divider>
                     <form autoComplete="off" onSubmit={HandleAddChoice}>
                         <TextField
