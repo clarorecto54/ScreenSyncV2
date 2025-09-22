@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { useSchema } from "../hooks/useSchema";
 import AddQuestion from "../utils/generateQuestion";
 import { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ export default function SchemaQuestionList()
     const { schemaData, setBuilderPage, setSchemaData, schemaErrors } = useSchema()
     const [questionList, setQuestionList] = useState<Element[]>([])
     useEffect(() => setQuestionList(schemaData.pages.filter(page => page.elements.some(element => element.type === "radiogroup"))), [schemaData])
-    return <Box height="100%" display="flex" gap="16px" flexDirection="column">
+    return <Box height="100%" display="flex" gap="16px" flexDirection="column" overflow="auto">
         {schemaData.pages.length < 2 && <Box
             height="100%"
             display="flex"
@@ -36,6 +36,17 @@ export default function SchemaQuestionList()
                 Add Question
             </Button>
         </Box>}
-        {schemaData.pages.length > 1 && questionList.map(({ elements }, index) => SchemaQuestionPreview(elements, index))}
+        {schemaData.pages.length > 1 && <Box display="flex">
+            <Stack
+                height="100%"
+                width="100%"
+                padding={0.5}
+                spacing={2}
+            >
+                {questionList.map(
+                    ({ elements }, index) => <SchemaQuestionPreview key={index} elements={elements} index={index} />
+                )}
+            </Stack>
+        </Box>}
     </Box>
 }

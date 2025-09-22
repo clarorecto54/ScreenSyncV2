@@ -4,7 +4,7 @@ import { Card, CardHeader, Avatar } from "@mui/material"
 import { useSchema } from "../hooks/useSchema"
 import Image from "next/image"
 
-export default function SchemaQuestionPreview(elements: Question[], index: number)
+export default function SchemaQuestionPreview({ elements, index }: { elements: Question[], index: number })
 {
     const { schemaErrors } = useSchema()
     const element = elements.find(element => element.type === "radiogroup")!
