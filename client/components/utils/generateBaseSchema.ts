@@ -1,3 +1,4 @@
+import AddQuestion from "@/components/utils/generateQuestion";
 import { ExamProp, HtmlElement } from "@/types/Exam.types";
 import { randomBytes } from "crypto";
 
@@ -21,15 +22,18 @@ export default function GenerateBaseSchema(): ExamProp
         questionOrder: "random",
         pages: [
             {
+                id: "start",
                 elements: [
                     {
                         type: "html",
                         html: ""
                     } satisfies HtmlElement
                 ]
-            }
+            },
+            AddQuestion()
         ],
         /* ######### DEFAULT VALUES ######### */
+        firstPageIsStartPage: true,
         progressBarLocation: "bottom",
         timerInfoMode: "combined",
         lazyRenderEnabled: true,

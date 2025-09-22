@@ -26,6 +26,7 @@ export type ExamProp = {
     questionOrder: "initial" | "random"
     pages: Element[]
     /* ########### DEFAULT VALUES ########### */
+    firstPageIsStartPage: boolean
     progressBarLocation: "aboveHeader" | "belowHeader" | "bottom" | "topBottom" | "auto"
     timerInfoMode: "survey" | "page" | "combined"
     lazyRenderEnabled: boolean
@@ -64,6 +65,7 @@ export type StandardQuestion = {
 export type Question = StandardQuestion | HtmlElement | ImageQuestion
 
 export type Element = {
+    id: string
     elements: Question[]
 }
 

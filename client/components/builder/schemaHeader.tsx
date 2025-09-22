@@ -63,7 +63,7 @@ export default function SchemaHeader()
                             setSchemaData(prev =>
                             {
                                 const updatedPages = prev.pages
-                                updatedPages.push(AddQuestion(prev.pages.length))
+                                updatedPages.push(AddQuestion())
                                 return { ...prev, pages: updatedPages }
                             })
                             return setBuilderPage("Edit Question")

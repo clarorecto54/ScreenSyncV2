@@ -28,7 +28,7 @@ export default function SchemaQuestionList()
                     setSchemaData(prev =>
                     {
                         const updatedPages = prev.pages
-                        updatedPages.push(AddQuestion(prev.pages.length))
+                        updatedPages.push(AddQuestion())
                         return { ...prev, pages: updatedPages }
                     })
                     setBuilderPage("Edit Question")
