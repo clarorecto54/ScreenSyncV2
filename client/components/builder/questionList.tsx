@@ -47,7 +47,7 @@ export default function SchemaQuestionList()
                 spacing={2}
             >
                 {questionList.map(
-                    ({ elements }, index) => <SchemaQuestionPreview key={index} elements={elements} index={index} />
+                    ({ id, elements }, index) => <SchemaQuestionPreview key={index} id={id} elements={elements} index={index} />
                 )}
             </Stack>
         </Box>}

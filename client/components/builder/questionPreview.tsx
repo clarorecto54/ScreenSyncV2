@@ -4,11 +4,11 @@ import { Card, CardHeader, Avatar } from "@mui/material"
 import { useSchema } from "../hooks/useSchema"
 import Image from "next/image"
 
-export default function SchemaQuestionPreview({ elements, index }: { elements: Question[], index: number })
+export default function SchemaQuestionPreview({ id, elements, index }: { id: string, elements: Question[], index: number })
 {
     const { schemaErrors } = useSchema()
     const element = elements.find(element => element.type === "radiogroup")!
-    const questionError = schemaErrors?.QuestionsError.find(question => question.name === element.name)
+    const questionError = schemaErrors.QuestionsError.find(question => question.id === id)
     return <Card key={index} sx={{ display: "flex", flexDirection: "column" }}>
         <CardHeader
             className="transition-all duration-300"

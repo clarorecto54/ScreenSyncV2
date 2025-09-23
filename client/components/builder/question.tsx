@@ -4,19 +4,25 @@ import { useSchema } from "../hooks/useSchema";
 import { StandardQuestion } from "@/types/Exam.types";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import ChoiceElement from "./choice";
-import { FieldErrors, QuestionErrors } from "@/types/Schema.types";
+import { QuestionErrors } from "@/types/Schema.types";
+import useCustomHooks from "@/components/utils/customHooks";
 
 export default function SchemaQuestionBuilder()
 {
-    const { schemaData, setSchemaData, schemaErrors, questionId } = useSchema()
+    const { schemaData, setSchemaData, questionId } = useSchema()
+    const { UpdateQuestionErrorMessage } = useCustomHooks()
     const [questionData, setQuestionData] = useState<StandardQuestion>(
         schemaData.pages.find(page => page.id === questionId)!
             .elements.find(element => element.type === "radiogroup")!
     )
     const [choiceData, setChoiceData] = useState<string>("")
     const [choiceError, setChoiceError] = useState<string>("")
-    const [questionError, setQuestionError] = useState<QuestionErrors | undefined>(undefined)
-    const [fieldErrors, setFieldErrors] = useState<FieldErrors[]>([])
+    const [questionError, setQuestionError] = useState<QuestionErrors>({
+        id: questionId,
+        name: questionData.name,
+        error: "",
+        fieldErrors: []
+    })
     function HandleTextFieldChange(element: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) 
     {
         const thisElement = element.target
@@ -31,17 +37,7 @@ export default function SchemaQuestionBuilder()
     }
     useEffect(() =>
     {
-        const instance = schemaErrors?.QuestionsError.find(question => question.id === questionId)
-        if (instance) setQuestionError(instance)
-        else
-        {
-            setQuestionError(undefined)
-            setFieldErrors([])
-        }
-        if (questionError && questionError.fieldErrors) setFieldErrors(questionError.fieldErrors)
-    }, [schemaErrors, questionError])
-    useEffect(() =>
-    {
+        setQuestionError(UpdateQuestionErrorMessage(questionData, questionError))
         if ((!questionData.choices.includes(questionData.correctAnswer) && questionData.choices.length > 0) ||
             questionData.choices.length <= 0 && questionData.correctAnswer !== "")
         {
@@ -106,8 +102,8 @@ export default function SchemaQuestionBuilder()
                             label="What is the question?"
                             multiline
                             maxRows={3}
-                            error={fieldErrors && fieldErrors.find(({ fieldName }) => fieldName === "title") ? fieldErrors.find(({ fieldName }) => fieldName === "title")!.fieldError !== "" : false}
-                            helperText={fieldErrors.find(({ fieldName }) => fieldName === "title")?.fieldError ?? ""}
+                            error={questionError.fieldErrors && questionError.fieldErrors.find(({ fieldName }) => fieldName === "title") ? questionError.fieldErrors.find(({ fieldName }) => fieldName === "title")!.fieldError !== "" : false}
+                            helperText={questionError.fieldErrors.find(({ fieldName }) => fieldName === "title")?.fieldError ?? ""}
                             value={questionData.title}
                             onChange={HandleTextFieldChange}
                             fullWidth
