@@ -1,4 +1,5 @@
 import AddQuestion from "@/components/utils/generateQuestion";
+import GenerateRandomBytes from "@/components/utils/randomBytes";
 import { ExamProp, HtmlElement } from "@/types/Exam.types";
 import { randomBytes } from "crypto";
 
@@ -30,7 +31,7 @@ export default function GenerateBaseSchema(): ExamProp
                     } satisfies HtmlElement
                 ]
             },
-            AddQuestion()
+            AddQuestion(GenerateRandomBytes())
         ],
         /* ######### DEFAULT VALUES ######### */
         firstPageIsStartPage: true,

@@ -6,10 +6,13 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import ChoiceElement from "./choice";
 import { FieldErrors, QuestionErrors } from "@/types/Schema.types";
 
-export default function SchemaQuestionBuilder({ index }: { index: number })
+export default function SchemaQuestionBuilder()
 {
-    const { schemaData, setSchemaData, schemaErrors } = useSchema()
-    const [questionData, setQuestionData] = useState<StandardQuestion>(schemaData.pages[index].elements[0] as StandardQuestion)
+    const { schemaData, setSchemaData, schemaErrors, questionId } = useSchema()
+    const [questionData, setQuestionData] = useState<StandardQuestion>(
+        schemaData.pages.find(page => page.id === questionId)!
+            .elements.find(element => element.type === "radiogroup")!
+    )
     const [choiceData, setChoiceData] = useState<string>("")
     const [choiceError, setChoiceError] = useState<string>("")
     const [questionError, setQuestionError] = useState<QuestionErrors | undefined>(undefined)
@@ -28,7 +31,7 @@ export default function SchemaQuestionBuilder({ index }: { index: number })
     }
     useEffect(() =>
     {
-        const instance = schemaErrors?.QuestionsError.find(question => question.name === `Question ${index}`)
+        const instance = schemaErrors?.QuestionsError.find(question => question.id === questionId)
         if (instance) setQuestionError(instance)
         else
         {
@@ -46,12 +49,23 @@ export default function SchemaQuestionBuilder({ index }: { index: number })
         }
         setSchemaData(prev =>
         {
-            const updatedPages = prev.pages
             const totalTime = prev.timeLimit
-            updatedPages[index] = { elements: [questionData] }
-            return { ...prev, timeLimitPerPage: totalTime / (updatedPages.length - 1), pages: updatedPages }
+            const updatedData = prev.pages.map(page =>
+            {
+                if (page.id !== questionId) return page
+                const dataIndex = page.elements.findIndex(element => element.type === "radiogroup")
+                const updatedElements = [...page.elements]
+                updatedElements[dataIndex] = questionData
+                return { ...page, elements: updatedElements }
+            })
+            return { ...prev, timeLimitPerPage: totalTime / (updatedData.length - 1), pages: updatedData }
         })
     }, [questionData])
+    useEffect(() =>
+    {
+        if (questionData.correctAnswer === "" && questionData.choices.length > 0)
+            setQuestionData(prev => ({ ...prev, correctAnswer: prev.choices[0] }))
+    }, [questionData.correctAnswer, questionData.choices])
     return <Box
         display="flex"
         flexDirection="column"
@@ -63,7 +77,7 @@ export default function SchemaQuestionBuilder({ index }: { index: number })
             <Box >
                 <CardHeader
                     className="transition-all duration-300"
-                    title={`Question ${index}`}
+                    title={questionData.name}
                     subheader={questionError?.error}
                     avatar={<Avatar
                         sx={{
@@ -176,16 +190,14 @@ export default function SchemaQuestionBuilder({ index }: { index: number })
                         }}
                     >
                         {questionData.choices.map((choice, index) =>
-                        {
-                            if (questionData.correctAnswer === "" && index === 0) setQuestionData(prev => ({ ...prev, correctAnswer: choice }))
-                            return <ChoiceElement
+                            <ChoiceElement
                                 key={index}
                                 choice={choice}
                                 index={index}
                                 questionData={questionData}
                                 setQuestionData={setQuestionData}
                             />
-                        })}
+                        )}
                     </List>}
                 </CardContent>
             </Box>

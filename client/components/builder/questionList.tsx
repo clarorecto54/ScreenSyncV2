@@ -4,10 +4,11 @@ import AddQuestion from "../utils/generateQuestion";
 import { useEffect, useState } from "react";
 import { Element } from "@/types/Exam.types";
 import SchemaQuestionPreview from "./questionPreview";
+import GenerateRandomBytes from "@/components/utils/randomBytes";
 
 export default function SchemaQuestionList()
 {
-    const { schemaData, setBuilderPage, setSchemaData, schemaErrors } = useSchema()
+    const { schemaData, setSchemaData, setQuestionId, setBuilderPage } = useSchema()
     const [questionList, setQuestionList] = useState<Element[]>([])
     useEffect(() => setQuestionList(schemaData.pages.filter(page => page.elements.some(element => element.type === "radiogroup"))), [schemaData])
     return <Box height="100%" display="flex" gap="16px" flexDirection="column" overflow="auto">
@@ -25,10 +26,12 @@ export default function SchemaQuestionList()
                 size="small"
                 onClick={() =>
                 {
+                    const questionId = GenerateRandomBytes()
+                    setQuestionId(questionId)
                     setSchemaData(prev =>
                     {
                         const updatedPages = prev.pages
-                        updatedPages.push(AddQuestion())
+                        updatedPages.push(AddQuestion(questionId))
                         return { ...prev, pages: updatedPages }
                     })
                     setBuilderPage("Edit Question")

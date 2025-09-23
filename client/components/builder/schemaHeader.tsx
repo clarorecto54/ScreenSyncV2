@@ -4,10 +4,12 @@ import Image from "next/image"
 import AddQuestion from "../utils/generateQuestion"
 import { QuestionErrors, SchemaValidableKeys } from "@/types/Schema.types"
 import { useEffect, useState } from "react"
+import { randomBytes } from "crypto"
+import GenerateRandomBytes from "@/components/utils/randomBytes"
 
 export default function SchemaHeader()
 {
-    const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData } = useSchema()
+    const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId } = useSchema()
     const [globalError, setGlobalError] = useState<string | undefined>(undefined)
     useEffect(() => setGlobalError((Object.keys(schemaErrors ?? {}) as SchemaValidableKeys[])
         .map(key =>
@@ -60,10 +62,12 @@ export default function SchemaHeader()
                     {
                         case "Schema Properties": return setBuilderPage("Questions")
                         case "Questions":
+                            const questionId = GenerateRandomBytes()
+                            setQuestionId(questionId)
                             setSchemaData(prev =>
                             {
                                 const updatedPages = prev.pages
-                                updatedPages.push(AddQuestion())
+                                updatedPages.push(AddQuestion(questionId))
                                 return { ...prev, pages: updatedPages }
                             })
                             return setBuilderPage("Edit Question")

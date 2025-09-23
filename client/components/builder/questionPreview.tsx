@@ -12,7 +12,7 @@ export default function SchemaQuestionPreview({ elements, index }: { elements: Q
     return <Card key={index} sx={{ display: "flex", flexDirection: "column" }}>
         <CardHeader
             className="transition-all duration-300"
-            title={element.name}
+            title={element.title || element.name}
             subheader={questionError?.error}
             avatar={<Avatar
                 sx={{

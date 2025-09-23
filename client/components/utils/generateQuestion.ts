@@ -1,10 +1,9 @@
 import { Element, StandardQuestion } from "@/types/Exam.types";
-import { randomBytes } from "crypto";
 
-export default function AddQuestion(): Element
+export default function AddQuestion(id: string): Element
 {
     return {
-        id: randomBytes(16).toString("base64"),
+        id,
         elements: [{
             name: "Question",
             title: "",

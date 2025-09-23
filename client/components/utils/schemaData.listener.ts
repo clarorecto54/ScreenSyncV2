@@ -50,32 +50,21 @@ const SchemaErrorListener: SchemaErrorListenerTypes = (schemaData, schemaKey, se
         UpdatedSchemaErrors.SchemaStartingDisplayError = "Please input starting message here"
     schemaData.pages.forEach((page, questionIndex) =>
     {
-        let questionError: QuestionErrors = {
-            name: "",
-            index: questionIndex,
-            error: "",
-            fieldErrors: [],
-        }
-        page.elements.forEach((element) =>
-        {
-            if (element.type === "radiogroup")
-            {
-                const panelName = element.name
-                questionError.name = panelName
-                if (!element.title)
-                {
-                    questionError.error = "This question has missing fields"
-                    questionError.fieldErrors.push({
-                        fieldType: element.type,
-                        fieldName: "question",
-                        fieldError: "This field must not be empty"
-                    })
+        let questionError: QuestionErrors | null = null
+        const questionElement = page.elements.find(element => element.type === "radiogroup")
+        if (questionElement && (!questionElement.title || questionElement.choices.length < 2))
+            questionError = {
+                name: questionElement.name,
+                id: page.id,
+                error: !questionElement.title ? "This question has missing fields" : "This question don't have choices",
+                fieldErrors: !questionElement.title ? [{
+                    fieldType: questionElement.type,
+                    fieldName: "question",
+                    fieldError: "This field must not be empty"
                 }
-                if (element.choices.length < 2)
-                    questionError.error = "This question don't have choices"
+                ] : [],
             }
-        })
-        if (questionError.fieldErrors.length > 0 || questionError.error)
+        if (questionError && (questionError.fieldErrors.length > 0 || questionError.error))
             UpdatedSchemaErrors.QuestionsError.push(questionError)
     })
     const schemaHasError = (Object.keys(UpdatedSchemaErrors) as [keyof SchemaErrors])

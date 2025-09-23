@@ -15,6 +15,8 @@ export interface SchemaTypes
     schemaErrors: SchemaErrors | undefined
     builderPage: SchemaPage
     setBuilderPage: Dispatch<SetStateAction<SchemaPage>>
+    questionId: string
+    setQuestionId: Dispatch<SetStateAction<string>>
 }
 
 export type SchemaValidableKeys = Extract<keyof SchemaErrors, keyof ExamProp>
@@ -59,8 +61,8 @@ export interface SchemaErrors
 
 export interface QuestionErrors
 {
+    id: string
     name: string
-    index: number
     error: string
     fieldErrors: FieldErrors[]
 }
