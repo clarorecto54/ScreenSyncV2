@@ -5,10 +5,12 @@ import Image from "next/image";
 import { ExamProp, HtmlElement } from "@/types/Exam.types";
 import { SchemaValidableKeys } from "@/types/Schema.types";
 import HashData from "../utils/crypto";
+import useCustomHooks from "@/components/utils/customHooks";
 
 export default function SchemaPropBuilder()
 {
-    const { schemaData, setSchemaData, schemaErrors, setSchemaErrors, schemaKey, setschemaKey } = useSchema()
+    const { schemaData, setSchemaData, schemaErrors, schemaKey, setschemaKey } = useSchema()
+    const { UpdateSchemaErrorMessage } = useCustomHooks()
     const HandleSwitch = ({ target }: ChangeEvent<HTMLInputElement>) =>
         setSchemaData(prev =>
         {
@@ -16,11 +18,6 @@ export default function SchemaPropBuilder()
             const value = target.checked
             return { ...prev, [key]: key !== "questionOrder" ? value : value ? "random" : "initial" }
         })
-    function UpdateSchemaErrorMessage(key: string, condition: boolean, message: string | null = null)
-    {
-        if (condition) setSchemaErrors(prev => ({ ...prev, [key]: message ?? `${key.toUpperCase()} is invalid/empty` }))
-        else setSchemaErrors(prev => ({ ...prev, [key]: "" }))
-    }
     function HandleTextField(element: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)
     {
         const { name, value } = element.target
