@@ -12,7 +12,8 @@ export interface SchemaTypes
     setschemaKey: Dispatch<SetStateAction<string>>
     schemaData: ExamProp
     setSchemaData: Dispatch<SetStateAction<ExamProp>>
-    schemaErrors: SchemaErrors | undefined
+    schemaErrors: SchemaErrors
+    setSchemaErrors: Dispatch<SetStateAction<SchemaErrors>>
     builderPage: SchemaPage
     setBuilderPage: Dispatch<SetStateAction<SchemaPage>>
     questionId: string
@@ -24,14 +25,6 @@ export type SchemaValidableKeys = Extract<keyof SchemaErrors, keyof ExamProp>
 export type SchemaDataListenerTypes = (
     setSchemaData: Dispatch<SetStateAction<ExamProp>>,
     schemaData: ExamProp,
-    schemaKey: string,
-    setSchemaErrors: Dispatch<SetStateAction<SchemaErrors | undefined>>
-) => void
-
-export type SchemaErrorListenerTypes = (
-    schemaData: ExamProp,
-    schemaKey: string,
-    setSchemaErrors: Dispatch<SetStateAction<SchemaErrors | undefined>>
 ) => void
 
 export interface CustomListItemProps extends ListItemProps

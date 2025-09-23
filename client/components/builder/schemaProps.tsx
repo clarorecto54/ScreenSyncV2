@@ -8,7 +8,7 @@ import HashData from "../utils/crypto";
 
 export default function SchemaPropBuilder()
 {
-    const { schemaData, setSchemaData, schemaErrors, schemaKey, setschemaKey } = useSchema()
+    const { schemaData, setSchemaData, schemaErrors, setSchemaErrors, schemaKey, setschemaKey } = useSchema()
     const HandleSwitch = ({ target }: ChangeEvent<HTMLInputElement>) =>
         setSchemaData(prev =>
         {
@@ -16,6 +16,11 @@ export default function SchemaPropBuilder()
             const value = target.checked
             return { ...prev, [key]: key !== "questionOrder" ? value : value ? "random" : "initial" }
         })
+    function UpdateSchemaErrorMessage(key: string, condition: boolean, message: string | null = null)
+    {
+        if (condition) setSchemaErrors(prev => ({ ...prev, [key]: message ?? `${key.toUpperCase()} is invalid/empty` }))
+        else setSchemaErrors(prev => ({ ...prev, [key]: "" }))
+    }
     function HandleTextField(element: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)
     {
         const { name, value } = element.target
@@ -25,12 +30,15 @@ export default function SchemaPropBuilder()
             switch (key)
             {
                 case "timeLimitPerPage":
+                    UpdateSchemaErrorMessage(key, Number(value) < 10, "Time limit is not valid")
                     return Number(value)
                 case "password":
+                    UpdateSchemaErrorMessage(key, value.length < 4, "Key must have a minimum of 3 characters")
                     setschemaKey(value)
                     const final = value.length < 4 ? "" : HashData(value)
                     return final
                 default:
+                    UpdateSchemaErrorMessage(key, !value)
                     return value
             }
         }
@@ -96,7 +104,7 @@ export default function SchemaPropBuilder()
                                 size="small"
                                 name={key}
                                 type={key === "password" ? "password" : "text"}
-                                label={{ title: "Name", description: "Subject", password: "Lock Key" }[key]}
+                                label={{ title: "Name/Title", description: "Subject/Description", password: "Lock Key" }[key]}
                                 value={key !== "password" ? schemaData[key] : schemaKey}
                                 onChange={HandleTextField}
                                 error={!!schemaErrors?.[key]}
@@ -116,11 +124,13 @@ export default function SchemaPropBuilder()
                         helperText={schemaErrors?.SchemaStartingDisplayError ?? ""}
                         onChange={(element) =>
                         {
+                            const value = element.target.value
+                            UpdateSchemaErrorMessage("SchemaStartingDisplayError", !value, "Starting message must not be empty")
                             setSchemaData(prev =>
                             {
                                 const updated = { ...prev }
                                 const startingDisplay = updated.pages[0].elements[0] as HtmlElement
-                                startingDisplay.html = element.target.value
+                                startingDisplay.html = value
                                 return updated
                             })
                         }}

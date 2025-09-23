@@ -11,10 +11,18 @@ export default function SchemaHeader()
 {
     const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId } = useSchema()
     const [globalError, setGlobalError] = useState<string | undefined>(undefined)
+    const hasSchemaErrors = () => (
+        schemaErrors.password ||
+        schemaErrors.title ||
+        schemaErrors.description ||
+        schemaErrors.SchemaStartingDisplayError ||
+        schemaErrors.timeLimitPerPage ||
+        schemaErrors.QuestionsError.length > 0
+    )
     useEffect(() => setGlobalError((Object.keys(schemaErrors ?? {}) as SchemaValidableKeys[])
         .map(key =>
         {
-            if (schemaErrors)
+            if (hasSchemaErrors())
             {
                 const value = schemaErrors[key];
                 if (typeof value === "string")
