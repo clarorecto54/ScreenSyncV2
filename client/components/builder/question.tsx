@@ -89,7 +89,7 @@ export default function SchemaQuestionBuilder()
                             color: questionError ? "error" : "textSecondary"
                         }
                     }}
-                    sx={{ paddingBottom: "16px" }}
+                    sx={{ paddingBottom: 0 }}
                 />
             </Box>
             <Box height="100%" sx={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
