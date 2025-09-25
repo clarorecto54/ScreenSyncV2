@@ -102,7 +102,7 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
                                 } />)}
                     </RadioGroup>
                 </CardContent>}
-                <CardActions >
+                <CardActions sx={{ paddingTop: "16px" }}>
                     {["Edit", "Delete"].map((value, index) => <Button
                         key={index}
                         size="small"
