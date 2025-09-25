@@ -64,23 +64,42 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
                     <Divider>
                         Choices
                     </Divider>
-                    <RadioGroup sx={{ paddingLeft: "8px" }}>
+                    <RadioGroup sx={{
+                        paddingLeft: "8px",
+                        maxHeight: "128px",
+                        display: "flex",
+                        flexDirection: "row",
+                        overflowY: "scroll"
+                    }}>
                         {element.choices.map((choice, index) =>
-                            <FormControlLabel key={index} control={
-                                <Radio
-                                    checked={element.correctAnswer === choice}
-                                    disableRipple
-                                    color="default"
-                                    onClick={() => setSchemaData(prev =>
-                                    {
-                                        const updatedPages = [...prev.pages]
-                                        const element = updatedPages.find(page => page.id === id)!
-                                        const question = element.elements.find(question => question.type === "radiogroup")!
-                                        question.correctAnswer = choice
-                                        return { ...prev, pages: updatedPages }
-                                    })}
-                                />
-                            } label={choice} />)}
+                            <FormControlLabel
+                                key={index}
+                                label={choice}
+                                slotProps={{
+                                    typography: {
+                                        noWrap: false,
+                                        style: { whiteSpace: "normal", wordBreak: "break-word" }
+                                    }
+                                }}
+                                sx={{
+                                    alignItems: "flex-start",
+                                    width: "100%"
+                                }}
+                                control={
+                                    <Radio
+                                        checked={element.correctAnswer === choice}
+                                        disableRipple
+                                        color="default"
+                                        onClick={() => setSchemaData(prev =>
+                                        {
+                                            const updatedPages = [...prev.pages]
+                                            const element = updatedPages.find(page => page.id === id)!
+                                            const question = element.elements.find(question => question.type === "radiogroup")!
+                                            question.correctAnswer = choice
+                                            return { ...prev, pages: updatedPages }
+                                        })}
+                                    />
+                                } />)}
                     </RadioGroup>
                 </CardContent>}
                 <CardActions >
