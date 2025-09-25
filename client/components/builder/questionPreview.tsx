@@ -1,6 +1,6 @@
 "use client"
 import { Question } from "@/types/Exam.types"
-import { Card, CardHeader, Avatar, Collapse, CardContent, CardActions, Button, RadioGroup, FormControlLabel, Radio } from "@mui/material"
+import { Card, CardHeader, Avatar, Collapse, CardContent, CardActions, Button, RadioGroup, FormControlLabel, Radio, Typography, Divider } from "@mui/material"
 import { useSchema } from "../hooks/useSchema"
 import Image from "next/image"
 import { useState } from "react"
@@ -55,9 +55,12 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
         <Collapse
             in={hover} timeout="auto" unmountOnExit
         >
-            <CardContent>
-                {element.choices.length > 0 && <CardContent>
-                    <RadioGroup>
+            <CardContent sx={{ paddingY: 0 }}>
+                {element.choices.length > 0 && <CardContent sx={{ paddingY: 0, paddingTop: "16px" }}>
+                    <Divider>
+                        Choices
+                    </Divider>
+                    <RadioGroup sx={{ paddingLeft: "8px" }}>
                         {element.choices.map((choice, index) =>
                             <FormControlLabel key={index} control={
                                 <Radio
