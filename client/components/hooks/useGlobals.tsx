@@ -97,8 +97,8 @@ export function GlobalContextProvider({ children }: { children: ReactNode })
         socketInstance.on("room-list", RoomList)
         const OnSocketConnect = () =>
         {
-            setmyInfo(prev => ({ ...prev, id: socketInstance.id, IPv4: window.location.hostname }))
-            setpeer(ConnectPeer(socketInstance.id))
+            setmyInfo(prev => ({ ...prev, id: socketInstance.id!, IPv4: window.location.hostname }))
+            setpeer(ConnectPeer(socketInstance.id!))
         }
         socketInstance.on("connect", OnSocketConnect)
         const OnSocketDisconnect = () => setmyInfo(prev => ({ ...prev, id: "" }))
