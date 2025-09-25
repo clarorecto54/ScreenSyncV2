@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Card, CardContent, CardHeader, Chip, Divider, FormControl, InputAdornment, InputLabel, List, MenuItem, Select, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import Image from "next/image";
 import { useSchema } from "../hooks/useSchema";
-import { ImageQuestion, Question, StandardQuestion } from "@/types/Exam.types";
+import { Element, ImageQuestion, Question, StandardQuestion } from "@/types/Exam.types";
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import ChoiceElement from "./choice";
 import { QuestionErrors } from "@/types/Schema.types";
@@ -11,13 +11,19 @@ export default function SchemaQuestionBuilder()
 {
     const { schemaData, setSchemaData, questionId } = useSchema()
     const imgPicker = useRef<HTMLInputElement>(null)
-    const [imgBlob, setImgBlob] = useState<string>("")
     const [imgRatio, setImgRatio] = useState<number>(1)
     const { UpdateQuestionErrorMessage } = useCustomHooks()
-    const [imageElement, setImageElement] = useState<ImageQuestion>()
+    const [targetElement] = useState<Element>(schemaData.pages.find(page => page.id === questionId)!)
+    const [imageElement, setImageElement] = useState<ImageQuestion | undefined>(
+        targetElement.elements.find(element => element.type === "image")
+    )
+    const [imgBlob, setImgBlob] = useState<string>(() =>
+    {
+        if (imageElement) return imageElement.imageLink
+        return ""
+    })
     const [questionData, setQuestionData] = useState<StandardQuestion>(
-        schemaData.pages.find(page => page.id === questionId)!
-            .elements.find(element => element.type === "radiogroup")! as StandardQuestion
+        targetElement.elements.find(element => element.type === "radiogroup")! as StandardQuestion
     )
     const [choiceData, setChoiceData] = useState<string>("")
     const [choiceError, setChoiceError] = useState<string>("")
