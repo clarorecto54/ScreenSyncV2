@@ -43,6 +43,10 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
                 />
             </Avatar>}
             slotProps={{
+                title: {
+                    noWrap: false,
+                    style: { whiteSpace: "normal", wordBreak: "break-word" }
+                },
                 subheader: {
                     color: questionError ? "error" : "textSecondary"
                 }
