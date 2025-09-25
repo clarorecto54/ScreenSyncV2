@@ -48,6 +48,7 @@ export default function SchemaHeader()
                         case "Questions":
                             return setBuilderPage("Schema Properties")
                         case "Edit Question":
+                            setQuestionId("")
                             return setBuilderPage("Questions")
                         case "Schema Properties":
                             return setBuilderMode(false)

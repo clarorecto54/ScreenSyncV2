@@ -73,7 +73,7 @@ export default function SchemaQuestionBuilder()
             <Box >
                 <CardHeader
                     className="transition-all duration-300"
-                    title={questionData.name}
+                    title={questionData.title || questionData.name}
                     subheader={questionError?.error}
                     avatar={<Avatar
                         sx={{
