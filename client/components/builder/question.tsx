@@ -1,8 +1,8 @@
-import { Avatar, Box, Card, CardContent, CardHeader, Chip, Divider, FormControl, InputAdornment, InputLabel, List, MenuItem, Select, TextField } from "@mui/material";
+import { Avatar, Box, Button, Card, CardContent, CardHeader, Chip, Divider, FormControl, InputAdornment, InputLabel, List, MenuItem, Select, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import Image from "next/image";
 import { useSchema } from "../hooks/useSchema";
 import { StandardQuestion } from "@/types/Exam.types";
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import ChoiceElement from "./choice";
 import { QuestionErrors } from "@/types/Schema.types";
 import useCustomHooks from "@/components/utils/customHooks";
@@ -10,6 +10,9 @@ import useCustomHooks from "@/components/utils/customHooks";
 export default function SchemaQuestionBuilder()
 {
     const { schemaData, setSchemaData, questionId } = useSchema()
+    const imgPicker = useRef<HTMLInputElement>(null)
+    const [imgBlob, setImgBlob] = useState<string>("")
+    const [imgRatio, setImgRatio] = useState<number>(1)
     const { UpdateQuestionErrorMessage } = useCustomHooks()
     const [questionData, setQuestionData] = useState<StandardQuestion>(
         schemaData.pages.find(page => page.id === questionId)!
@@ -62,6 +65,14 @@ export default function SchemaQuestionBuilder()
         if (questionData.correctAnswer === "" && questionData.choices.length > 0)
             setQuestionData(prev => ({ ...prev, correctAnswer: prev.choices[0] }))
     }, [questionData.correctAnswer, questionData.choices])
+    useEffect(() =>
+    {
+        if (!imgBlob) return
+        const img = document.createElement("img")
+        img.src = imgBlob
+        img.onload = () => setImgRatio(img.naturalWidth / img.naturalHeight)
+        img.remove()
+    }, [imgBlob])
     return <Box
         display="flex"
         flexDirection="column"
@@ -138,6 +149,76 @@ export default function SchemaQuestionBuilder()
                             </Select>
                         </FormControl>
                     </Box>
+                    <Stack display="flex" direction="row" justifyContent="center" alignItems="center" gap={2}>
+                        <Button
+                            variant="contained"
+                            size="small"
+                            color="primary"
+                            onClick={() =>
+                            {
+                                if (imgPicker !== undefined || imgPicker !== null)
+                                    imgPicker.current!.click()
+                            }}
+                            startIcon={<div className="aspect-square relative h-[16px] whiteOverlay">
+                                <Image alt="" fill src={require("@/public/images/Upload.svg")} />
+                            </div>}
+                            sx={{ minWidth: "max-content" }}
+                        >
+                            <input ref={imgPicker} hidden type="file" accept="image/*" onChange={(element) =>
+                            {
+                                const img = element.target.files
+                                if (!img || img.length < 1) return
+                                const reader = new FileReader()
+                                reader.onloadend = () =>
+                                {
+                                    const blob = reader.result! as string
+                                    setImgBlob(blob)
+                                }
+                                reader.readAsDataURL(img[0])
+                            }} />
+                            Upload
+                        </Button>
+                        {imgBlob && <Tooltip placement="top"
+                            title={<div className="relative h-[240px] p-[16px] overflow-hidden" style={{ aspectRatio: imgRatio }}>
+                                <Image alt="" fill src={imgBlob} />
+                            </div>}
+                            slotProps={{
+                                tooltip: {
+                                    sx: {
+                                        aspectRatio: imgRatio,
+                                        padding: "8px",
+                                        maxWidth: "none"
+                                    }
+                                }
+                            }}
+                        >
+                            <Chip
+                                label="Preview"
+                                size="small"
+                                icon={<div className="aspect-square relative h-[12px]">
+                                    <Image alt="" fill src={require("@/public/images/Search.svg")} />
+                                </div>}
+                                sx={{ paddingX: "8px", cursor: "help" }}
+                            />
+                        </Tooltip>}
+                        {imgBlob && <Button
+                            variant="contained"
+                            size="small"
+                            color="error"
+                            onClick={() =>
+                            {
+                                if (imgPicker)
+                                    imgPicker.current!.files = null
+                                setImgBlob("")
+                            }}
+                            startIcon={<div className="aspect-square relative h-[12px] whiteOverlay">
+                                <Image alt="" fill src={require("@/public/images/Close 2.svg")} />
+                            </div>}
+                            sx={{ minWidth: "max-content" }}
+                        >
+                            Remove
+                        </Button>}
+                    </Stack>
                     <Divider>
                         CHOICES
                     </Divider>
