@@ -1,6 +1,6 @@
 "use client"
 import { Question, StandardQuestion } from "@/types/Exam.types"
-import { Card, CardHeader, Avatar, Collapse, CardContent, CardActions, Button, RadioGroup, FormControlLabel, Radio, Typography, Divider } from "@mui/material"
+import { Card, CardHeader, Avatar, Collapse, CardContent, CardActions, Button, RadioGroup, FormControlLabel, Radio, Typography, Divider, Stack } from "@mui/material"
 import { useSchema } from "../hooks/useSchema"
 import Image from "next/image"
 import { useState } from "react"
@@ -9,8 +9,9 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
 {
     const { schemaErrors, setSchemaData, setBuilderPage, setQuestionId, setSchemaErrors } = useSchema()
     const [hover, setHover] = useState<boolean>(false)
-    const element = elements.find(element => element.type === "radiogroup")! as StandardQuestion
-    const questionError = schemaErrors.QuestionsError.find(question => question.id === id)
+    const [imgElement] = useState(elements.find(element => element.type === "image"))
+    const [element] = useState(elements.find(element => element.type === "radiogroup")! as StandardQuestion)
+    const [questionError] = useState(schemaErrors.QuestionsError.find(question => question.id === id))
     const DeleteQuestion = () => setSchemaData(
         prev =>
         {
@@ -60,8 +61,16 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
             in={hover} timeout="auto" unmountOnExit
         >
             <CardContent sx={{ paddingY: 0 }}>
+                {imgElement && <Stack gap={2} sx={{ paddingTop: "8px" }}>
+                    <Divider sx={{ fontWeight: 500, fontSize: "10pt" }}>
+                        Image
+                    </Divider>
+                    <div className="aspect-video w-full max-h-[240px] relative">
+                        <Image alt="" fill src={imgElement.imageLink} style={{ objectFit: "contain" }} />
+                    </div>
+                </Stack>}
                 {element.choices.length > 0 && <CardContent sx={{ paddingY: 0, paddingTop: "16px" }}>
-                    <Divider>
+                    <Divider sx={{ fontWeight: 500, fontSize: "10pt" }}>
                         Choices
                     </Divider>
                     <RadioGroup sx={{
