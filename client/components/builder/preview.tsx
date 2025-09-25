@@ -13,12 +13,26 @@ export default function SchemaPreview()
     survey.timerInfoMode = "combined"
     survey.css.clockTimerRoot = "sd-timer my-sd-timer"
     survey.css.clockTimerMinorText = "sd-timer__text--minor myclockTimerMinorText"
-    survey.onStarted.add((sender, options) => sender.startTimer())
-    survey.onCurrentPageChanged.add((sender, options) => sender.startTimer())
-    survey.onShowingPreview.add((sender, options) => sender.stopTimer())
-    survey.onCompleting.add((sender, options) => sender.stopTimer())
-    survey.onComplete.add((sender, options) =>
+    survey.onStarted.add((sender) => sender.startTimer())
+    survey.onCurrentPageChanged.add((sender) => sender.startTimer())
+    survey.onShowingPreview.add((sender) => sender.stopTimer())
+    survey.onCompleting.add((sender) => sender.stopTimer())
+    survey.onComplete.add((sender) =>
     {
+        const output: Record<string, string | number> = {
+            points: 0
+        }
+        sender.pages.forEach(page =>
+            page.questions.forEach(question =>
+            {
+                if (question.getType() !== "radiogroup") return
+                const q = question.title
+                const a = question.value
+                const correct = question.correctAnswer === a
+                output[`${correct ? '✔️' : '❌'} ${q}`] = a
+                output["points"] = (output["points"] as number) + (correct ? 1 : 0);
+            })
+        )
         sender.stopTimer()
         sender.showTimerPanel = "none"
         setTimeout(() => survey.clear(), 3000)
