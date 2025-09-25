@@ -208,7 +208,7 @@ export default function SchemaQuestionBuilder()
                             onClick={() =>
                             {
                                 if (imgPicker)
-                                    imgPicker.current!.files = null
+                                    imgPicker.current!.value = ""
                                 setImgBlob("")
                             }}
                             startIcon={<div className="aspect-square relative h-[12px] whiteOverlay">
