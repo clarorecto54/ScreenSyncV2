@@ -32,7 +32,7 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
     >
         <CardHeader
             className="transition-all duration-300"
-            title={element.title || element.name}
+            title={element.title || "Question"}
             subheader={questionError?.error}
             avatar={<Avatar
                 sx={{

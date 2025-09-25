@@ -7,7 +7,7 @@ export default function AddQuestion(id: string): Element
         type: "panel",
         questionOrder: "initial",
         elements: [{
-            name: "Question",
+            name: id,
             title: "",
             type: "radiogroup",
             isRequired: false,
