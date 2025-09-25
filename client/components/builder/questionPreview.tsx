@@ -81,10 +81,7 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
                                         style: { whiteSpace: "normal", wordBreak: "break-word" }
                                     }
                                 }}
-                                sx={{
-                                    alignItems: "flex-start",
-                                    width: "100%"
-                                }}
+                                sx={{ width: "100%" }}
                                 control={
                                     <Radio
                                         checked={element.correctAnswer === choice}
