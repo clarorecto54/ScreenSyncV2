@@ -19,7 +19,7 @@ export default function useCustomHooks()
         updatedErrors.error = ""
         if (!data.title)
         {
-            updatedErrors.error ||= "A question has missing fields"
+            updatedErrors.error ||= "This question has missing fields"
             updatedErrors.fieldErrors.push({
                 fieldType: data.type,
                 fieldName: "title",
@@ -29,7 +29,7 @@ export default function useCustomHooks()
         else
             updatedErrors.fieldErrors = updatedErrors.fieldErrors.filter(error => error.fieldName !== "title")
         if (data.choices.length < 2)
-            updatedErrors.error ||= "A question don't have enough choices"
+            updatedErrors.error ||= "This question don't have enough choices"
         setSchemaErrors(prev =>
         {
             let updatedQuestionErrors = [...prev.QuestionsError]
