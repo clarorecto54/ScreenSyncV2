@@ -24,6 +24,8 @@ export default function GenerateBaseSchema(): ExamProp
         pages: [
             {
                 id: "start",
+                type: "panel",
+                questionOrder: "initial",
                 elements: [
                     {
                         type: "html",

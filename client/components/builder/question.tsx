@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Card, CardContent, CardHeader, Chip, Divider, FormControl, InputAdornment, InputLabel, List, MenuItem, Select, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import Image from "next/image";
 import { useSchema } from "../hooks/useSchema";
-import { StandardQuestion } from "@/types/Exam.types";
+import { ImageQuestion, Question, StandardQuestion } from "@/types/Exam.types";
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import ChoiceElement from "./choice";
 import { QuestionErrors } from "@/types/Schema.types";
@@ -14,6 +14,7 @@ export default function SchemaQuestionBuilder()
     const [imgBlob, setImgBlob] = useState<string>("")
     const [imgRatio, setImgRatio] = useState<number>(1)
     const { UpdateQuestionErrorMessage } = useCustomHooks()
+    const [imageElement, setImageElement] = useState<ImageQuestion>()
     const [questionData, setQuestionData] = useState<StandardQuestion>(
         schemaData.pages.find(page => page.id === questionId)!
             .elements.find(element => element.type === "radiogroup")! as StandardQuestion
@@ -55,11 +56,13 @@ export default function SchemaQuestionBuilder()
                 const dataIndex = page.elements.findIndex(element => element.type === "radiogroup")
                 const updatedElements = [...page.elements]
                 updatedElements[dataIndex] = questionData
-                return { ...page, elements: updatedElements }
+                let finalElements: Question[] = updatedElements.filter(element => element.type !== "image")
+                if (imageElement) finalElements = [imageElement, ...finalElements]
+                return { ...page, elements: finalElements }
             })
             return { ...prev, timeLimitPerPage: totalTime / (updatedData.length - 1), pages: updatedData }
         })
-    }, [questionData])
+    }, [questionData, imageElement])
     useEffect(() =>
     {
         if (questionData.correctAnswer === "" && questionData.choices.length > 0)
@@ -172,6 +175,14 @@ export default function SchemaQuestionBuilder()
                                 reader.onloadend = () =>
                                 {
                                     const blob = reader.result! as string
+                                    setImageElement({
+                                        type: "image",
+                                        name: "ImagePanel",
+                                        imageLink: blob,
+                                        imageHeight: 320,
+                                        imageWidth: "auto",
+                                        imageFit: "contain"
+                                    })
                                     setImgBlob(blob)
                                 }
                                 reader.readAsDataURL(img[0])
@@ -209,6 +220,7 @@ export default function SchemaQuestionBuilder()
                             {
                                 if (imgPicker)
                                     imgPicker.current!.value = ""
+                                setImageElement(undefined)
                                 setImgBlob("")
                             }}
                             startIcon={<div className="aspect-square relative h-[12px] whiteOverlay">

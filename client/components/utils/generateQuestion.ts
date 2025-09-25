@@ -4,6 +4,8 @@ export default function AddQuestion(id: string): Element
 {
     return {
         id,
+        type: "panel",
+        questionOrder: "initial",
         elements: [{
             name: "Question",
             title: "",

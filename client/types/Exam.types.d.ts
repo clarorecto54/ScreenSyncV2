@@ -49,6 +49,8 @@ export type ImageQuestion = {
     name: string,
     imageLink: string,
     imageHeight: number,
+    imageWidth: "auto" | number
+    imageFit: "contain"
 }
 
 export type StandardQuestion = {
@@ -62,10 +64,12 @@ export type StandardQuestion = {
     titleLocation: "default" | "top" | "bottom" | "left" | "hidden"
 }
 
-export type Question = StandardQuestion | HtmlElement | ImageQuestion
+export type Question = StandardQuestion | HtmlElement | ImageQuestion | Element
 
 export type Element = {
     id: string
+    type: "panel"
+    questionOrder: "initial"
     elements: Question[]
 }
 
