@@ -1,5 +1,5 @@
 "use client"
-import { Question } from "@/types/Exam.types"
+import { Question, StandardQuestion } from "@/types/Exam.types"
 import { Card, CardHeader, Avatar, Collapse, CardContent, CardActions, Button, RadioGroup, FormControlLabel, Radio, Typography, Divider } from "@mui/material"
 import { useSchema } from "../hooks/useSchema"
 import Image from "next/image"
@@ -9,7 +9,7 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
 {
     const { schemaErrors, setSchemaData, setBuilderPage, setQuestionId, setSchemaErrors } = useSchema()
     const [hover, setHover] = useState<boolean>(false)
-    const element = elements.find(element => element.type === "radiogroup")!
+    const element = elements.find(element => element.type === "radiogroup")! as StandardQuestion
     const questionError = schemaErrors.QuestionsError.find(question => question.id === id)
     const DeleteQuestion = () => setSchemaData(
         prev =>
@@ -94,7 +94,7 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
                                         {
                                             const updatedPages = [...prev.pages]
                                             const element = updatedPages.find(page => page.id === id)!
-                                            const question = element.elements.find(question => question.type === "radiogroup")!
+                                            const question = element.elements.find(question => question.type === "radiogroup")! as StandardQuestion
                                             question.correctAnswer = choice
                                             return { ...prev, pages: updatedPages }
                                         })}

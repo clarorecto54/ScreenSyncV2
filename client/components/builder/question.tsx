@@ -13,7 +13,7 @@ export default function SchemaQuestionBuilder()
     const { UpdateQuestionErrorMessage } = useCustomHooks()
     const [questionData, setQuestionData] = useState<StandardQuestion>(
         schemaData.pages.find(page => page.id === questionId)!
-            .elements.find(element => element.type === "radiogroup")!
+            .elements.find(element => element.type === "radiogroup")! as StandardQuestion
     )
     const [choiceData, setChoiceData] = useState<string>("")
     const [choiceError, setChoiceError] = useState<string>("")
