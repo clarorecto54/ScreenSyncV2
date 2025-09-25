@@ -10,6 +10,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.2",
     "@types/react-color": "^3.0.10",
     "@types/sdp-transform": "^2.4.9",
     "@types/uuid": "^9.0.7",
@@ -23,7 +26,9 @@
     "react-dom": "^18",
     "sdp-transform": "^2.14.1",
     "sharp": "^0.33.0",
-    "socket.io-client": "^4.7.2",
+    "socket.io-client": "^4.8.1",
+    "survey-core": "^2.3.6",
+    "survey-react-ui": "^2.3.6",
     "tw-merge": "^0.0.1-alpha.3",
     "utf-8-validate": "^5.0.10",
     "uuid": "^9.0.1"
