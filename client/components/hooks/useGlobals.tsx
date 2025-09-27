@@ -63,7 +63,6 @@ export function GlobalContextProvider({ children }: { children: ReactNode })
         const socketInstance = io(`https://${window.location.hostname}:3001`)
         function AcceptReq(targetRoom: string)
         {
-            console.log(myInfoRef.current)
             setsystemPopup(null) //? Close popup
             socket.emit("join-room", targetRoom, myInfoRef.current) //? Join meeting
         }
@@ -98,8 +97,8 @@ export function GlobalContextProvider({ children }: { children: ReactNode })
         socketInstance.on("room-list", RoomList)
         const OnSocketConnect = () =>
         {
-            setmyInfo(prev => ({ ...prev, id: socketInstance.id, IPv4: window.location.hostname }))
-            setpeer(ConnectPeer(socketInstance.id))
+            setmyInfo(prev => ({ ...prev, id: socketInstance.id!, IPv4: window.location.hostname }))
+            setpeer(ConnectPeer(socketInstance.id!))
         }
         socketInstance.on("connect", OnSocketConnect)
         const OnSocketDisconnect = () => setmyInfo(prev => ({ ...prev, id: "" }))

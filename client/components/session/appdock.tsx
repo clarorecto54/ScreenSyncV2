@@ -10,6 +10,7 @@ import { UserProps } from "@/types/session.types"
 import { transformSDP } from "../utils/sdp.transform"
 import Inactives from "./interactive/inactives"
 import Whitelist from "../whitelist"
+import { useExam } from "../hooks/useExam"
 
 export default function AppDock()
 {
@@ -61,6 +62,7 @@ function Dock()
         socket, peer, myInfo, setsystemPopup,
         meetingCode, setmeetingCode,
     } = useGlobals()
+    const { builderMode, setBuilderMode } = useExam()
     const [requestCooldown, setRequestCooldown] = useState<boolean>(false)
     const [noRequest, setNoRequest] = useState<boolean>(false)
     /* ------ EVENT HANDLER ----- */
@@ -339,6 +341,9 @@ function Dock()
                 "bg-[#525252]", //? Background
                 "hover:bg-[#646464]", //? Hover
             )} />}
+        {host && <Button circle useIcon iconOverlay iconSrc={require("@/public/images/Exam.svg")} //* EXAM BUTTON
+            className="bg-[#525252] hover:bg-[#646464]"
+            onClick={() => setBuilderMode(!builderMode)} />}
         <Button //* END CALL
             circle useIcon iconOverlay iconSrc={require("@/public/images/End Call.svg")}
             onClick={() =>
