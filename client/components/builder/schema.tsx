@@ -5,10 +5,14 @@ import SchemaPropBuilder from "./schemaProps"
 import SchemaQuestionBuilder from "./question"
 import SchemaQuestionList from "./questionList"
 import useCustomHooks from "@/components/utils/customHooks"
+import { useGlobals } from "@/components/hooks/useGlobals"
+import { Socket } from "socket.io-client"
+import { ExamSocketMapping } from "@/types/Exam.types"
 
 export default function SchemaBuilder()
 {
-    const { builderPage } = useSchema()
+    const { socket } = useGlobals()
+    const { builderPage, setBuilderPage, schemaData } = useSchema()
     const { hasSchemaErrors } = useCustomHooks()
     return <Box className="pt-[8px] w-full" display="flex" flexDirection="column" gap="8px" overflow="hidden" height="100%" px={"8px"}>
         <SchemaHeader />
@@ -22,7 +26,11 @@ export default function SchemaBuilder()
                 variant="contained"
                 size="medium"
                 sx={{ borderRadius: "100px" }}
-                onClick={() => { }}>
+                onClick={() =>
+                {
+                    const mappedSocket: Socket<ExamSocketMapping> = socket
+                    mappedSocket.emit("SaveSchema", schemaData)
+                }}>
                 Save Schema
             </Button>
         </Box>
