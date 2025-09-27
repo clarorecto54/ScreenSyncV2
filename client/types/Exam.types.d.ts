@@ -8,6 +8,16 @@ export interface ExamTypes
     setSchemaList: Dispatch<SetStateAction<ExamProp[]>>
 }
 
+export interface ExamSocketMapping
+{
+    SaveSchema: (schema: ExamProp) => void
+    DeleteSchema: (schema: ExamProp) => void
+    GetSchema: (
+        SendSchema: (schemaList: ExamProp[]) => void
+    ) => void
+    UpdatedSchema: () => void
+}
+
 export type ExamProp = {
     id: string
     lock: boolean
