@@ -1,8 +1,9 @@
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { ExamProp, ExamSocketMapping, SchemaSavefile } from "./exam.types";
 import { Decrypt, Encrypt } from "../../utils/crypto";
 import { readFileSync, writeFileSync } from "fs-extra";
 import { ServerLog } from "../log";
+import { io } from "../../server";
 
 export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
 {
@@ -46,13 +47,13 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
         saveList = saveList.filter(save => save.id !== schema.id)
         UpdateSavefile(path, saveList)
     })
-    socket.on("GetSchema", (sendData) =>
+    socket.on("GetSchema", (SendSchema) =>
     {
         ServerLog("socket", `${socket.id} is requesting for the list of schema...`)
         const list: ExamProp[] = []
         for (const save of saveList)
             list.push(Decrypt(save.data))
-        sendData(list)
+        SendSchema(list)
         ServerLog("socket", `${socket.id} has recevied the updated list of schema`)
     })
 }
@@ -74,5 +75,7 @@ function UpdateSavefile(path: string, saveList: SchemaSavefile[])
         JSON.stringify(saveList, null, 1),
         "utf-8"
     )
+    const mappedServer: Server<ExamSocketMapping> = io
+    mappedServer.emit("UpdatedSchema")
     ServerLog("server", `Schema has been saved`)
 }

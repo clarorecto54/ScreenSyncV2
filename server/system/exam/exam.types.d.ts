@@ -5,8 +5,9 @@ export interface ExamSocketMapping
     SaveSchema: (schema: ExamProp) => void
     DeleteSchema: (schema: ExamProp) => void
     GetSchema: (
-        sendData: (schemaList: ExamProp[]) => void
+        SendSchema: (schemaList: ExamProp[]) => void
     ) => void
+    UpdatedSchema: () => void
 }
 
 export interface SchemaSavefile
