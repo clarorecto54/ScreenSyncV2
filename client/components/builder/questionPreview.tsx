@@ -1,5 +1,5 @@
 "use client"
-import { Question, StandardQuestion } from "@/types/Exam.types"
+import { ImageQuestion, Question, StandardQuestion } from "@/types/Exam.types"
 import { Card, CardHeader, Avatar, Collapse, CardContent, CardActions, Button, RadioGroup, FormControlLabel, Radio, Typography, Divider, Stack } from "@mui/material"
 import { useSchema } from "../hooks/useSchema"
 import Image from "next/image"
@@ -9,8 +9,8 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
 {
     const { schemaErrors, setSchemaData, setBuilderPage, setQuestionId, setSchemaErrors } = useSchema()
     const [hover, setHover] = useState<boolean>(false)
-    const [imgElement] = useState(elements.find(element => element.type === "image"))
-    const [element] = useState(elements.find(element => element.type === "radiogroup")! as StandardQuestion)
+    const [imgElement] = useState<ImageQuestion>(elements.find(element => element.type === "image")! as ImageQuestion)
+    const [element] = useState<StandardQuestion>(elements.find(element => element.type === "radiogroup")! as StandardQuestion)
     const [questionError] = useState(schemaErrors.QuestionsError.find(question => question.id === id))
     const DeleteQuestion = () => setSchemaData(
         prev =>

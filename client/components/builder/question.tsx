@@ -15,7 +15,7 @@ export default function SchemaQuestionBuilder()
     const { UpdateQuestionErrorMessage } = useCustomHooks()
     const [targetElement] = useState<Element>(schemaData.pages.find(page => page.id === questionId)!)
     const [imageElement, setImageElement] = useState<ImageQuestion | undefined>(
-        targetElement.elements.find(element => element.type === "image")
+        targetElement.elements.find(element => element.type === "image") as ImageQuestion
     )
     const [imgBlob, setImgBlob] = useState<string>(() =>
     {
