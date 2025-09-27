@@ -9,7 +9,7 @@ import useCustomHooks from "@/components/utils/customHooks";
 
 export default function SchemaPropBuilder()
 {
-    const { schemaData, setSchemaData, schemaErrors, schemaKey, setschemaKey } = useSchema()
+    const { schemaData, setSchemaData, schemaErrors, schemaKey, setSchemaKey } = useSchema()
     const { UpdateSchemaErrorMessage } = useCustomHooks()
     const HandleSwitch = ({ target }: ChangeEvent<HTMLInputElement>) =>
         setSchemaData(prev =>
@@ -31,7 +31,7 @@ export default function SchemaPropBuilder()
                     return Number(value)
                 case "password":
                     UpdateSchemaErrorMessage(key, value.length < 4, "Key must have a minimum of 3 characters")
-                    setschemaKey(value)
+                    setSchemaKey(value)
                     const final = value.length < 4 ? "" : HashData(value)
                     return final
                 default:

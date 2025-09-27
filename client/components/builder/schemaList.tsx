@@ -2,11 +2,13 @@ import { Box, Button, Typography } from "@mui/material"
 import { useExam } from "../hooks/useExam"
 import { useSchema } from "../hooks/useSchema"
 import SchemaHeader from "@/components/builder/schemaHeader"
+import GenerateBaseSchema from "@/components/utils/generateBaseSchema"
+import GenerateSchemaErrorList from "@/components/utils/generateSchemaErrorList"
 
 export default function SchemaList()
 {
     const { schemaList } = useExam()
-    const { builderMode, setBuilderMode, setBuilderPage } = useSchema()
+    const { builderMode, setBuilderMode, setBuilderPage, setSchemaData, setSchemaErrors } = useSchema()
     return <>
         <SchemaHeader />
         <Box
@@ -26,6 +28,8 @@ export default function SchemaList()
                 {
                     setBuilderPage("Schema Properties")
                     setBuilderMode(true)
+                    setSchemaErrors(GenerateSchemaErrorList())
+                    setSchemaData(GenerateBaseSchema())
                 }}>
                 Create Schema
             </Button>

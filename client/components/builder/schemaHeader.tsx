@@ -4,10 +4,12 @@ import AddQuestion from "../utils/generateQuestion"
 import { QuestionErrors, SchemaValidableKeys } from "@/types/Schema.types"
 import { useEffect, useState } from "react"
 import GenerateRandomBytes from "@/components/utils/randomBytes"
+import GenerateBaseSchema from "@/components/utils/generateBaseSchema"
+import GenerateSchemaErrorList from "@/components/utils/generateSchemaErrorList"
 
 export default function SchemaHeader()
 {
-    const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId } = useSchema()
+    const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId, setSchemaErrors } = useSchema()
     const [globalError, setGlobalError] = useState<string | undefined>(undefined)
     const hasSchemaErrors = () => (
         schemaErrors.password ||
@@ -50,7 +52,9 @@ export default function SchemaHeader()
                             return setBuilderPage("Questions")
                         case "Schema Properties":
                             setBuilderPage("Schema List")
-                            return setBuilderMode(false)
+                            setBuilderMode(false)
+                            setSchemaErrors(GenerateSchemaErrorList())
+                            return setSchemaData(GenerateBaseSchema())
                     }
                 }}
             >
@@ -70,7 +74,9 @@ export default function SchemaHeader()
                     {
                         case "Schema List":
                             setBuilderMode(true)
-                            return setBuilderPage("Schema Properties")
+                            setBuilderPage("Schema Properties")
+                            setSchemaErrors(GenerateSchemaErrorList())
+                            return setSchemaData(GenerateBaseSchema())
                         case "Schema Properties": return setBuilderPage("Questions")
                         case "Questions":
                             const questionId = GenerateRandomBytes()

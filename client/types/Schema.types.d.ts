@@ -9,7 +9,7 @@ export interface SchemaTypes
     builderMode: boolean
     setBuilderMode: Dispatch<SetStateAction<boolean>>
     schemaKey: string
-    setschemaKey: Dispatch<SetStateAction<string>>
+    setSchemaKey: Dispatch<SetStateAction<string>>
     schemaData: ExamProp
     setSchemaData: Dispatch<SetStateAction<ExamProp>>
     schemaErrors: SchemaErrors
@@ -25,6 +25,11 @@ export type SchemaValidableKeys = Extract<keyof SchemaErrors, keyof ExamProp>
 export type SchemaDataListenerTypes = (
     setSchemaData: Dispatch<SetStateAction<ExamProp>>,
     schemaData: ExamProp,
+) => void
+
+export type BuilderPageListenerTypes = (
+    builderPage: SchemaPage,
+    setSchemaKey: Dispatch<SetStateAction<string>>
 ) => void
 
 export interface CustomListItemProps extends ListItemProps
