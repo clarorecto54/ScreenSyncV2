@@ -6,19 +6,13 @@ import { useEffect, useState } from "react"
 import GenerateRandomBytes from "@/components/utils/randomBytes"
 import GenerateBaseSchema from "@/components/utils/generateBaseSchema"
 import GenerateSchemaErrorList from "@/components/utils/generateSchemaErrorList"
+import useCustomHooks from "@/components/utils/customHooks"
 
 export default function SchemaHeader()
 {
     const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId, setSchemaErrors } = useSchema()
+    const { hasSchemaErrors } = useCustomHooks()
     const [globalError, setGlobalError] = useState<string | undefined>(undefined)
-    const hasSchemaErrors = () => (
-        schemaErrors.password ||
-        schemaErrors.title ||
-        schemaErrors.description ||
-        schemaErrors.SchemaStartingDisplayError ||
-        schemaErrors.timeLimitPerPage ||
-        schemaErrors.QuestionsError.length > 0
-    )
     useEffect(() => setGlobalError((Object.keys(schemaErrors ?? {}) as SchemaValidableKeys[])
         .map(key =>
         {

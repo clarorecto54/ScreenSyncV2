@@ -9,13 +9,15 @@ import useCustomHooks from "@/components/utils/customHooks";
 
 export default function SchemaPropBuilder()
 {
-    const { schemaData, setSchemaData, schemaErrors, schemaKey, setSchemaKey } = useSchema()
+    const { schemaData, setSchemaData, schemaErrors, setSchemaErrors, schemaKey, setSchemaKey } = useSchema()
     const { UpdateSchemaErrorMessage } = useCustomHooks()
     const HandleSwitch = ({ target }: ChangeEvent<HTMLInputElement>) =>
         setSchemaData(prev =>
         {
-            const key = target.name as "showTimer" | "showProgressBar" | "showPreviewBeforeComplete" | "questionOrder"
+            const key = target.name as "showTimer" | "showProgressBar" | "showPreviewBeforeComplete" | "questionOrder" | "lock"
             const value = target.checked
+            if (key === "lock" && !value)
+                setSchemaErrors(prev => ({ ...prev, password: "" }))
             return { ...prev, [key]: key !== "questionOrder" ? value : value ? "random" : "initial" }
         })
     function HandleTextField(element: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)

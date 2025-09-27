@@ -4,7 +4,15 @@ import { QuestionErrors } from "@/types/Schema.types"
 
 export default function useCustomHooks()
 {
-    const { setSchemaErrors } = useSchema()
+    const { schemaErrors, setSchemaErrors, schemaData } = useSchema()
+    const hasSchemaErrors: () => boolean = () => (
+        (schemaData.lock && !!schemaErrors.password) ||
+        !!schemaErrors.title ||
+        !!schemaErrors.description ||
+        !!schemaErrors.SchemaStartingDisplayError ||
+        !!schemaErrors.timeLimitPerPage ||
+        schemaErrors.QuestionsError.length > 0
+    )
     const UpdateSchemaErrorMessage = (key: string, condition: boolean, message: string | null = null) =>
     {
         if (condition) setSchemaErrors(prev => ({ ...prev, [key]: message ?? `${key.toUpperCase()} is invalid/empty` }))
@@ -47,7 +55,7 @@ export default function useCustomHooks()
         })
         return updatedErrors
     }
-    return { UpdateSchemaErrorMessage, UpdateQuestionErrorMessage }
+    return { hasSchemaErrors, UpdateSchemaErrorMessage, UpdateQuestionErrorMessage }
 }
 
 const hasQuestionError = (errors: QuestionErrors) => (errors.error || errors.fieldErrors.length > 0)
