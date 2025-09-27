@@ -1,21 +1,34 @@
-import { Button } from "@mui/material"
+import { Box, Button, Typography } from "@mui/material"
 import { useExam } from "../hooks/useExam"
 import { useSchema } from "../hooks/useSchema"
+import SchemaHeader from "@/components/builder/schemaHeader"
 
 export default function SchemaList()
 {
     const { schemaList } = useExam()
-    const { builderMode, setBuilderMode } = useSchema()
+    const { builderMode, setBuilderMode, setBuilderPage } = useSchema()
     return <>
-        <label className="font-[Montserrat] text-[16pt] font-[600] Unselectable"
-        >Quiz Schema</label>
-        <div className="w-full h-full text-[Montserrat]
-    flex flex-col gap-[8px] items-center">
-            {(schemaList.length === 0 && !builderMode) && "No quiz schema found. Create a new one?"}
+        <SchemaHeader />
+        <Box
+            width="100%"
+            height="100%"
+            display="flex"
+            flexDirection="column"
+            gap="8px"
+            alignItems="center"
+            justifyContent="center"
+        >
+            {(schemaList.length === 0 && !builderMode) && <Typography color="textPrimary">
+                No quiz schema found. Create a new one?
+            </Typography>}
             <Button color="success" variant="contained" sx={{ borderRadius: "100px" }}
-                onClick={() => setBuilderMode(true)}>
+                onClick={() =>
+                {
+                    setBuilderPage("Schema Properties")
+                    setBuilderMode(true)
+                }}>
                 Create Schema
             </Button>
-        </div>
+        </Box>
     </>
 }

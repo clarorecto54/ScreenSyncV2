@@ -36,7 +36,7 @@ export default function SchemaHeader()
         .find(Boolean)), [schemaErrors])
     return <CardHeader
         avatar={
-            <Button
+            builderPage !== "Schema List" && <Button
                 size="small"
                 variant="contained"
                 onClick={() =>
@@ -49,6 +49,7 @@ export default function SchemaHeader()
                             setQuestionId("")
                             return setBuilderPage("Questions")
                         case "Schema Properties":
+                            setBuilderPage("Schema List")
                             return setBuilderMode(false)
                     }
                 }}
@@ -67,6 +68,9 @@ export default function SchemaHeader()
                 {
                     switch (builderPage)
                     {
+                        case "Schema List":
+                            setBuilderMode(true)
+                            return setBuilderPage("Schema Properties")
                         case "Schema Properties": return setBuilderPage("Questions")
                         case "Questions":
                             const questionId = GenerateRandomBytes()
@@ -80,6 +84,7 @@ export default function SchemaHeader()
                             return setBuilderPage("Edit Question")
                     }
                 }}>
+                {builderPage === "Schema List" && "Add Schema"}
                 {builderPage === "Schema Properties" && "Questions"}
                 {builderPage === "Questions" && "Add Question"}
             </Button>
@@ -99,7 +104,7 @@ export default function SchemaHeader()
             },
             root: {
                 style: {
-                    justifyContent: "space-between",
+                    justifyContent: builderPage !== "Schema List" ? "space-between" : "end",
                     position: "relative",
                     margin: 0,
                     padding: 0,
@@ -123,6 +128,7 @@ export default function SchemaHeader()
                     fontSize: "16pt",
                     textAlign: "center",
                     fontWeight: 600,
+                    color: "black"
                 }
             }
         }}

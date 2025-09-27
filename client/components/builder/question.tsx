@@ -238,7 +238,9 @@ export default function SchemaQuestionBuilder()
                         </Button>}
                     </Stack>
                     <Divider>
-                        CHOICES
+                        <Typography color="textPrimary" fontSize="14px">
+                            CHOICES
+                        </Typography>
                     </Divider>
                     <form autoComplete="off" onSubmit={HandleAddChoice}>
                         <TextField

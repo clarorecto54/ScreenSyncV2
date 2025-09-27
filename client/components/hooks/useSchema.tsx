@@ -11,7 +11,7 @@ export function useSchema(): SchemaTypes { return useContext(context)! }
 
 export function SchemaContextProvider({ children }: { children: ReactNode })
 {
-    const [builderPage, setBuilderPage] = useState<SchemaPage>("Schema Properties")
+    const [builderPage, setBuilderPage] = useState<SchemaPage>("Schema List")
     const [schemaKey, setschemaKey] = useState<string>("")
     const [builderMode, setBuilderMode] = useState<boolean>(false)
     const [schemaData, setSchemaData] = useState<ExamProp>(GenerateBaseSchema())

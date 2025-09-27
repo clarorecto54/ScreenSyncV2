@@ -74,7 +74,7 @@ export default function SchemaPreview()
             });
         });
 
-        doc.save("survey-results.pdf");
+        doc.save("test-exam-results.pdf");
         setTimeout(() => survey.clear(), 3000)
     })
     return <Box height="100%" sx={{ borderRadius: "24px", overflow: "hidden" }}>

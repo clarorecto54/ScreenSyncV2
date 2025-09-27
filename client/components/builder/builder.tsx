@@ -11,30 +11,24 @@ export default function ExamBuilder()
 {
     const { builderMode } = useSchema()
     const [panelStyling] = useState<SxProps<Theme>>({
+        display: "flex",
+        flexDirection: "column",
         height: "100%",
         width: "100%",
         maxWidth: "600px",
         borderRadius: "32px",
         padding: "24px",
-        background: "hsl(0,0%,95%)"
+        background: "hsl(0,0%,95%)",
+        overflowY: "hidden"
     })
     return <ThemeProvider theme={ExamBuilderTheme()}>
-        <Box display="flex" gap="32px" justifyContent="center" alignItems="center"
-            sx={{
-                height: "670px",
-                width: "1600px",
-                padding: "32px",
-                borderRadius: "24px",
-                backgroundColor: "#242424",
-            }}>
-            <Box sx={panelStyling}>
-                {!builderMode && <SchemaList />}
-                {builderMode && <SchemaBuilder />}
-            </Box>
-            {builderMode && <Box sx={panelStyling} >
-                <SchemaPreview />
-            </Box>}
+        <Box sx={panelStyling}>
+            {!builderMode && <SchemaList />}
+            {builderMode && <SchemaBuilder />}
         </Box>
+        {builderMode && <Box sx={panelStyling} >
+            <SchemaPreview />
+        </Box>}
     </ThemeProvider>
 }
 

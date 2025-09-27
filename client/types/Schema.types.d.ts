@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react"
 import { ExamProp, StandardQuestion } from "./Exam.types"
 import { ChipProps, ListItemProps } from "@mui/material"
 
-export type SchemaPage = "Schema Properties" | "Questions" | "Edit Question"
+export type SchemaPage = "Schema List" | "Schema Properties" | "Questions" | "Edit Question"
 
 export interface SchemaTypes
 {
