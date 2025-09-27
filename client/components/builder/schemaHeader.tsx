@@ -1,10 +1,8 @@
 import { Button, CardHeader } from "@mui/material"
 import { useSchema } from "../hooks/useSchema"
-import Image from "next/image"
 import AddQuestion from "../utils/generateQuestion"
 import { QuestionErrors, SchemaValidableKeys } from "@/types/Schema.types"
 import { useEffect, useState } from "react"
-import { randomBytes } from "crypto"
 import GenerateRandomBytes from "@/components/utils/randomBytes"
 
 export default function SchemaHeader()
@@ -30,7 +28,7 @@ export default function SchemaHeader()
                 if (typeof value === "object")
                 {
                     const firstError = (value as QuestionErrors[]).find(err => !!err.name);
-                    return `${firstError?.name} : ${firstError?.error}`;
+                    return `${firstError?.name ?? "Question"} : ${firstError?.error}`;
                 }
             }
             return undefined;

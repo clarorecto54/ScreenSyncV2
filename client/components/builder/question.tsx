@@ -29,7 +29,7 @@ export default function SchemaQuestionBuilder()
     const [choiceError, setChoiceError] = useState<string>("")
     const [questionError, setQuestionError] = useState<QuestionErrors>({
         id: questionId,
-        name: questionData.name,
+        name: "Question",
         error: "",
         fieldErrors: []
     })
