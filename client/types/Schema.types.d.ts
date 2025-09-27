@@ -1,8 +1,18 @@
-import { Dispatch, SetStateAction } from "react"
+import React, { Dispatch, SetStateAction } from "react"
 import { ExamProp, StandardQuestion } from "./Exam.types"
 import { ChipProps, ListItemProps } from "@mui/material"
 
 export type SchemaPage = "Schema List" | "Schema Properties" | "Questions" | "Edit Question"
+
+export type SchemaCardType = (
+    {
+        lock: boolean,
+        id: string,
+        title: string,
+        description: string,
+        password: string
+    }
+) => React.ReactNode
 
 export interface SchemaTypes
 {
