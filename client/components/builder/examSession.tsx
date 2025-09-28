@@ -12,12 +12,22 @@ export default function ExamSession()
 {
     const { socket, meetingCode } = useGlobals()
     const { schemaData } = useSchema()
+    const [timer, setTimer] = useState<NodeJS.Timeout>()
     const [mappedSocket] = useState<Socket<ExamSocketMapping>>(socket)
     const [sendingOut, setSendingOut] = useState<boolean>(false)
     const SendOutExam = () =>
     {
         setSendingOut(true)
-        setTimeout(() => StopExam(), schemaData.timeLimit * 1000)
+        if (timer)
+        {
+            setTimer(undefined)
+            clearTimeout(timer)
+        }
+        setTimer(setTimeout(() =>
+        {
+            StopExam()
+            setTimer(undefined)
+        }, schemaData.timeLimit * 1000))
         mappedSocket.emit("SendOutExam", meetingCode, Encrypt(schemaData))
     }
     const StopExam = () =>
