@@ -6,6 +6,7 @@ import Pending from "../pending/pending";
 import DefaultDisplay from "./displays/default";
 import StreamDisplay from "./displays/stream";
 import ExamDisplay from "./displays/exam";
+import { ExamContextProvider } from "@/components/hooks/useExam";
 
 export default function MainDisplay() {
     /* ----- STATES & HOOKS ----- */
@@ -54,6 +55,8 @@ export default function MainDisplay() {
         </div>}
         <DefaultDisplay />
         <StreamDisplay />
-        <ExamDisplay />
+        <ExamContextProvider>
+            <ExamDisplay />
+        </ExamContextProvider>
     </div>
 }

@@ -2,6 +2,8 @@ import { Dispatch, SetStateAction } from "react"
 
 export interface ExamTypes
 {
+    consumerMode: boolean
+    setConsumerMode: Dispatch<SetStateAction<boolean>>
     builderMode: boolean
     setBuilderMode: Dispatch<SetStateAction<boolean>>
     schemaList: ExamProp[]
