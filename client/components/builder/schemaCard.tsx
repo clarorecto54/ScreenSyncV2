@@ -166,14 +166,14 @@ const SchemaCard: SchemaCardType = ({ createdOn, lock, id, title, description, p
                     </Stack>
                 </Collapse>
                 <CardActions sx={{ paddingTop: "8px", paddingX: 0 }}>
-                    {(["Start", "Edit", "Delete"] as ("Start" | "Edit" | "Delete")[]).map((value, index) => <Button
+                    {(["Send Out", "Edit", "Delete"] as ("Send Out" | "Edit" | "Delete")[]).map((value, index) => <Button
                         key={index}
                         size="small"
                         color={((): OverridableStringUnion<'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning', ButtonPropsColorOverrides> =>
                         {
                             switch (value)
                             {
-                                case "Start":
+                                case "Send Out":
                                     return "success";
                                 case "Edit":
                                     return "primary";
@@ -187,7 +187,7 @@ const SchemaCard: SchemaCardType = ({ createdOn, lock, id, title, description, p
                         {
                             switch (value)
                             {
-                                case "Start":
+                                case "Send Out":
                                     return StartExam()
                                 case "Edit":
                                     if (lock)
@@ -204,7 +204,7 @@ const SchemaCard: SchemaCardType = ({ createdOn, lock, id, title, description, p
                             {
                                 switch (value)
                                 {
-                                    case "Start":
+                                    case "Send Out":
                                         return require(`@/public/images/Exam.svg`)
                                     case "Edit":
                                         return require(`@/public/images/Paint.svg`)
