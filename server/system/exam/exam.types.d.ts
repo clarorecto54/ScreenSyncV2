@@ -8,6 +8,18 @@ export interface ExamSocketMapping
         SendSchema: (schemaList: ExamProp[]) => void
     ) => void
     UpdatedSchema: () => void
+    SendOutExam: (
+        targetRoom: string,
+        encryptedSchema: string
+    ) => void
+    StopExam: (
+        targetRoom: string
+    ) => void
+    ExamAvailable: (targetRoom: string) => void
+    TakeExam: (
+        targetRoom: string,
+        SendExam: (encryptedSchema: string) => void
+    ) => void
 }
 
 export interface SchemaSavefile

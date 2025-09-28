@@ -4,6 +4,7 @@ import { Decrypt, Encrypt } from "../../utils/crypto";
 import { readFileSync, writeFileSync } from "fs-extra";
 import { ServerLog } from "../log";
 import { io } from "../../server";
+import { RoomList } from "../cleanups";
 
 export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
 {
@@ -55,6 +56,29 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
             list.push(Decrypt(save.data))
         SendSchema(list)
         ServerLog("socket", `${socket.id} has recevied the updated list of schema`)
+    })
+    socket.on("SendOutExam", (targetRoom, encryptedSchema) =>
+    {
+        const room = RoomList.find(room => room.id === targetRoom)!
+        room.exam = {
+            active: true,
+            encryptedSchema
+        }
+        socket.to(targetRoom).emit("ExamAvailable", targetRoom)
+    })
+    socket.on("TakeExam", (targetRoom, SendExam) =>
+    {
+        const room = RoomList.find(room => room.id === targetRoom)!
+        SendExam(room.exam.encryptedSchema)
+    })
+    socket.on("StopExam", (targetRoom) =>
+    {
+        const room = RoomList.find(room => room.id === targetRoom)!
+        room.exam = {
+            active: false,
+            encryptedSchema: ""
+        }
+        socket.to(targetRoom).emit("StopExam", targetRoom)
     })
 }
 

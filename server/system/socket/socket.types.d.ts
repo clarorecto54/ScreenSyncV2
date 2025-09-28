@@ -15,6 +15,11 @@ export interface StreamProps {
     streamer: UserProps | undefined
     presenting: boolean
 }
+export interface ExamState
+{
+    active: boolean
+    encryptedSchema: string
+}
 export interface AttendanceProps {
     id: string
     name: string
@@ -29,6 +34,7 @@ export interface RoomProps {
     pending: UserProps[]
     chatlog: MessageProps[]
     stream: StreamProps
+    exam: ExamState
     entries: AttendanceProps[]
     inactive: UserProps[]
     strict: boolean
