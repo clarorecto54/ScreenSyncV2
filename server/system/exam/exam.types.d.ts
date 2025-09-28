@@ -20,6 +20,23 @@ export interface ExamSocketMapping
         targetRoom: string,
         SendExam: (encryptedSchema: string) => void
     ) => void
+    SendResult: (
+        targetRoom: string,
+        result: ExamResult
+    ) => void
+    ReceiveResult: (
+        result: ExamResult
+    ) => void
+}
+
+export interface ExamResult
+{
+    id: string
+    name: string
+    score: number
+    examName: string
+    subDesc: string
+    pdf: ArrayBuffer
 }
 
 export interface SchemaSavefile

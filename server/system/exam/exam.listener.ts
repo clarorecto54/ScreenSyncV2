@@ -1,10 +1,11 @@
 import { Server, Socket } from "socket.io";
 import { ExamProp, ExamSocketMapping, SchemaSavefile } from "./exam.types";
-import { Decrypt, Encrypt } from "../../utils/crypto";
 import { readFileSync, writeFileSync } from "fs-extra";
 import { ServerLog } from "../log";
 import { io } from "../../server";
 import { RoomList } from "../cleanups";
+import { existsSync, mkdirSync } from "fs";
+import { DecryptSchema, EncryptSchema } from "../../utils/crypto";
 
 export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
 {
@@ -36,7 +37,7 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
             name: schema.title,
             subject: schema.description,
             date: new Date(),
-            data: Encrypt(schema)
+            data: EncryptSchema(schema)
         }
         saveList.push(savefile)
         UpdateSavefile(path, saveList)
@@ -53,7 +54,7 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
         ServerLog("socket", `${socket.id} is requesting for the list of schema...`)
         const list: ExamProp[] = []
         for (const save of saveList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()))
-            list.push(Decrypt(save.data))
+            list.push(DecryptSchema(save.data))
         SendSchema(list)
         ServerLog("socket", `${socket.id} has recevied the updated list of schema`)
     })
@@ -79,6 +80,16 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
             encryptedSchema: ""
         }
         socket.to(targetRoom).emit("StopExam", targetRoom)
+    })
+    socket.on("SendResult", (targetRoom, result) =>
+    {
+        const room = RoomList.find(room => room.id === targetRoom)!
+        socket.to(room.host.id).emit("ReceiveResult", result)
+        const folderPath = `../Exam Results/${result.examName}/${result.subDesc}`
+        const filename = `${(result.name ?? "unkown").toUpperCase()}.pdf`
+        if (!existsSync(folderPath))
+            mkdirSync(folderPath, { recursive: true })
+        writeFileSync(`${folderPath}/${filename}`, Buffer.from(result.pdf))
     })
 }
 
