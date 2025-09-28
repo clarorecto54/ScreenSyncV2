@@ -1,7 +1,7 @@
 import { Button, CardHeader } from "@mui/material"
 import { useSchema } from "../hooks/useSchema"
 import AddQuestion from "../utils/generateQuestion"
-import { QuestionErrors, SchemaValidableKeys } from "@/types/Schema.types"
+import { QuestionErrors, SchemaPage, SchemaValidableKeys } from "@/types/Schema.types"
 import { useEffect, useState } from "react"
 import GenerateRandomBytes from "@/components/utils/randomBytes"
 import GenerateBaseSchema from "@/components/utils/generateBaseSchema"
@@ -10,7 +10,7 @@ import useCustomHooks from "@/components/utils/customHooks"
 
 export default function SchemaHeader()
 {
-    const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId, setSchemaErrors } = useSchema()
+    const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId, setSchemaErrors, setSessionMode } = useSchema()
     const { hasSchemaErrors } = useCustomHooks()
     const [globalError, setGlobalError] = useState<string | undefined>(undefined)
     useEffect(() => setGlobalError((Object.keys(schemaErrors ?? {}) as SchemaValidableKeys[])
@@ -39,6 +39,10 @@ export default function SchemaHeader()
                 {
                     switch (builderPage)
                     {
+                        case "Exam Session":
+                            setSchemaData(GenerateBaseSchema())
+                            setSessionMode(false)
+                            return setBuilderPage("Schema List")
                         case "Questions":
                             return setBuilderPage("Schema Properties")
                         case "Edit Question":
@@ -58,7 +62,7 @@ export default function SchemaHeader()
         title={builderPage}
         subheader={globalError}
         action={
-            builderPage !== "Edit Question" && <Button
+            !(["Edit Question", "Exam Session"] as SchemaPage[]).some(page => page === builderPage) && <Button
                 sx={{ background: "#9333ea" }}
                 variant="contained"
                 size="small"

@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction } from "react"
 import { ExamProp, StandardQuestion } from "./Exam.types"
 import { ChipProps, ListItemProps } from "@mui/material"
 
-export type SchemaPage = "Schema List" | "Schema Properties" | "Questions" | "Edit Question"
+export type SchemaPage = "Schema List" | "Schema Properties" | "Questions" | "Edit Question" | "Exam Session"
 
 export type SchemaCardType = (
     {
@@ -29,6 +29,8 @@ export type SchemaCardType = (
 
 export interface SchemaTypes
 {
+    sessionMode: boolean
+    setSessionMode: Dispatch<SetStateAction<boolean>>
     builderMode: boolean
     setBuilderMode: Dispatch<SetStateAction<boolean>>
     schemaKey: string

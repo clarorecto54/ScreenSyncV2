@@ -11,6 +11,7 @@ export function useSchema(): SchemaTypes { return useContext(context)! }
 
 export function SchemaContextProvider({ children }: { children: ReactNode })
 {
+    const [sessionMode, setSessionMode] = useState<boolean>(false)
     const [builderPage, setBuilderPage] = useState<SchemaPage>("Schema List")
     const [schemaKey, setSchemaKey] = useState<string>("")
     const [builderMode, setBuilderMode] = useState<boolean>(false)
@@ -20,6 +21,7 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
     useEffect(() => BuilderPageListener(builderPage, setSchemaKey), [builderPage])
     useEffect(() => SchemaDataListener(setSchemaData, schemaData), [schemaData])
     const defaultValues: SchemaTypes = {
+        sessionMode, setSessionMode,
         builderMode, setBuilderMode,
         builderPage, setBuilderPage,
         schemaKey, setSchemaKey,

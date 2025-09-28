@@ -6,10 +6,11 @@ import SchemaPreview from "./preview"
 import { Box, createTheme, SxProps, ThemeProvider } from "@mui/material"
 import { useState } from "react"
 import { Theme } from "@emotion/react"
+import ExamSession from "@/components/builder/examSession"
 
 export default function ExamBuilder()
 {
-    const { builderMode } = useSchema()
+    const { builderMode, sessionMode } = useSchema()
     const [panelStyling] = useState<SxProps<Theme>>({
         display: "flex",
         flexDirection: "column",
@@ -23,8 +24,9 @@ export default function ExamBuilder()
     })
     return <ThemeProvider theme={ExamBuilderTheme()}>
         <Box sx={panelStyling}>
-            {!builderMode && <SchemaList />}
+            {!builderMode && !sessionMode && <SchemaList />}
             {builderMode && <SchemaBuilder />}
+            {sessionMode && <ExamSession />}
         </Box>
         {builderMode && <Box sx={panelStyling} >
             <SchemaPreview />

@@ -1,5 +1,5 @@
 import { SchemaCardType } from "@/types/Schema.types";
-import { Button, Card, CardActions, CardContent, CardHeader, Chip, Collapse, InputAdornment, Stack, TextField } from "@mui/material";
+import { Button, ButtonPropsColorOverrides, Card, CardActions, CardContent, CardHeader, Chip, Collapse, InputAdornment, Stack, TextField } from "@mui/material";
 import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { useSchema } from "@/components/hooks/useSchema";
@@ -9,18 +9,26 @@ import { ExamProp, ExamSocketMapping } from "@/types/Exam.types";
 import { useGlobals } from "@/components/hooks/useGlobals";
 import { Socket } from "socket.io-client";
 import HashData from "@/components/utils/crypto";
+import { OverridableStringUnion } from "@mui/types";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 const SchemaCard: SchemaCardType = ({ createdOn, lock, id, title, description, password, questions, timeLimit }) =>
 {
     const { socket } = useGlobals()
     const { schemaList } = useExam()
-    const { setBuilderMode, setBuilderPage, setSchemaErrors, setSchemaData } = useSchema()
+    const { setBuilderMode, setBuilderPage, setSchemaErrors, setSchemaData, setSessionMode } = useSchema()
     const [unlock, setUnlock] = useState<boolean>(false)
     const [key, setKey] = useState<string>("")
     const [wrongKey, setWrongKey] = useState<boolean>(false)
     const [schema, setSchema] = useState<ExamProp>({} as ExamProp)
     const [hover, setHover] = useState<boolean>(false)
     useEffect(() => setSchema(schemaList.find(schema => schema.id === id)! as ExamProp), [schemaList])
+    const StartExam = () =>
+    {
+        setSessionMode(true)
+        setSchemaData(schema)
+        setBuilderPage("Exam Session")
+    }
     const EditSchema = () =>
     {
         setBuilderMode(true)
@@ -158,14 +166,29 @@ const SchemaCard: SchemaCardType = ({ createdOn, lock, id, title, description, p
                     </Stack>
                 </Collapse>
                 <CardActions sx={{ paddingTop: "8px", paddingX: 0 }}>
-                    {(["Edit", "Delete"] as ("Edit" | "Delete")[]).map((value, index) => <Button
+                    {(["Start", "Edit", "Delete"] as ("Start" | "Edit" | "Delete")[]).map((value, index) => <Button
                         key={index}
                         size="small"
-                        color={value === "Edit" ? "primary" : "error"}
+                        color={((): OverridableStringUnion<'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning', ButtonPropsColorOverrides> =>
+                        {
+                            switch (value)
+                            {
+                                case "Start":
+                                    return "success";
+                                case "Edit":
+                                    return "primary";
+                                case "Delete":
+                                    return "error";
+                                default:
+                                    return "info";
+                            }
+                        })()}
                         onClick={() =>
                         {
                             switch (value)
                             {
+                                case "Start":
+                                    return StartExam()
                                 case "Edit":
                                     if (lock)
                                         return setUnlock(true)
@@ -177,7 +200,18 @@ const SchemaCard: SchemaCardType = ({ createdOn, lock, id, title, description, p
                             }
                         }}
                         startIcon={<div className="aspect-square h-[12px] relative whiteOverlay">
-                            <Image alt="" fill src={require(`@/public/images/${value === "Edit" ? "Paint" : "Close 2"}.svg`)} />
+                            <Image alt="" fill src={((): StaticImport =>
+                            {
+                                switch (value)
+                                {
+                                    case "Start":
+                                        return require(`@/public/images/Exam.svg`)
+                                    case "Edit":
+                                        return require(`@/public/images/Paint.svg`)
+                                    case "Delete":
+                                        return require(`@/public/images/Close 2.svg`)
+                                }
+                            })()} />
                         </div>}
                         variant="contained"
                         sx={{ borderRadius: "100px", paddingX: "16px", paddingY: "4px" }}
