@@ -6,8 +6,10 @@ import Pending from "../pending/pending";
 import DefaultDisplay from "./displays/default";
 import StreamDisplay from "./displays/stream";
 import ExamDisplay from "./displays/exam";
+import { ExamContextProvider } from "@/components/hooks/useExam";
 
-export default function MainDisplay() {
+export default function MainDisplay()
+{
     /* ----- STATES & HOOKS ----- */
     const { socket, meetingCode } = useGlobals()
     const { host, pendingList } = useSession()
@@ -27,15 +29,19 @@ export default function MainDisplay() {
                 circle useIcon iconSrc={require("@/public/images/Participants.svg")}
                 onClick={() => setsystemPopup({
                     message: <Pending />,
-                    action() { //? Accept All
-                        pendingList.forEach(client => {
+                    action()
+                    { //? Accept All
+                        pendingList.forEach(client =>
+                        {
                             socket.emit("accept-req", meetingCode, client) //? Update the user on their request
                             socket.emit("cancel-entry", meetingCode, client) //? Remove the user on the pending list
                         })
                     },
                     actionText: "Accept All",
-                    closeAction() { //? Reject All
-                        pendingList.forEach(client => {
+                    closeAction()
+                    { //? Reject All
+                        pendingList.forEach(client =>
+                        {
                             socket.emit("cancel-req", client) //? Update the user on his request
                             socket.emit("cancel-entry", meetingCode, client) //? Remove the user on the pending list
                         })

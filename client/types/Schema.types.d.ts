@@ -1,15 +1,59 @@
-import { Dispatch, SetStateAction } from "react"
+import React, { Dispatch, SetStateAction } from "react"
 import { ExamProp, StandardQuestion } from "./Exam.types"
 import { ChipProps, ListItemProps } from "@mui/material"
 
-export type SchemaPage = "Schema Properties" | "Questions" | "Edit Question"
+export type SchemaPage = "Schema List" | "Schema Properties" | "Questions" | "Edit Question" | "Exam Session"
+
+export type SchemaCardType = (
+    {
+        createdOn,
+        lock,
+        id,
+        title,
+        description,
+        password,
+        questions,
+        timeLimit,
+    }:
+        {
+            createdOn: Date,
+            lock: boolean,
+            id: string,
+            title: string,
+            description: string,
+            password: string,
+            questions: number,
+            timeLimit: number
+        }
+) => React.ReactNode
+
+export type GeneratePDFResultType = (
+    { name, schemaData, points, totalPoints, output }: {
+        name: string,
+        schemaData: ExamProp,
+        points: number,
+        totalPoints: number,
+        output: Record<string, OutputType>
+    }
+) => ArrayBuffer
+
+export interface OutputType
+{
+    answer: string
+    correct: string
+    score: boolean
+}
 
 export interface SchemaTypes
 {
+    output: Record<string, OutputType>
+    setOutput: Dispatch<SetStateAction<Record<string, OutputType>>>
+    sessionMode: boolean
+    setSessionMode: Dispatch<SetStateAction<boolean>>
     builderMode: boolean
     setBuilderMode: Dispatch<SetStateAction<boolean>>
     schemaKey: string
-    setschemaKey: Dispatch<SetStateAction<string>>
+    setSchemaKey: Dispatch<SetStateAction<string>>
     schemaData: ExamProp
     setSchemaData: Dispatch<SetStateAction<ExamProp>>
     schemaErrors: SchemaErrors
@@ -25,6 +69,11 @@ export type SchemaValidableKeys = Extract<keyof SchemaErrors, keyof ExamProp>
 export type SchemaDataListenerTypes = (
     setSchemaData: Dispatch<SetStateAction<ExamProp>>,
     schemaData: ExamProp,
+) => void
+
+export type BuilderPageListenerTypes = (
+    builderPage: SchemaPage,
+    setSchemaKey: Dispatch<SetStateAction<string>>
 ) => void
 
 export interface CustomListItemProps extends ListItemProps

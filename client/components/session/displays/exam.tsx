@@ -1,17 +1,20 @@
+import ExamBuilder from "@/components/builder/builder";
+import SchemaConsumer from "@/components/builder/schemaConsumer";
 import { useExam } from "@/components/hooks/useExam";
+import { SchemaContextProvider } from "@/components/hooks/useSchema";
+import { Box } from "@mui/material";
 
 export default function ExamDisplay()
 {
-    const { builderMode, setBuilderMode } = useExam()
-    return <div className={`
+    const { builderMode, consumerMode } = useExam()
+    return <Box className={`
     h-full w-full p-[32px] absolute backdrop-blur-md backdrop-brightness-50
-    flex flex-col gap-[16px] justify-center items-center
-    ${!builderMode ? "opacity-0" : "opacity-100"}
+    flex gap-[16px] justify-center items-center
+    ${builderMode || consumerMode ? "opacity-100" : "opacity-0"}
     transition-[opacity] duration-1000`}>
-        <div className={`
-            h-full w-full max-w-[600px] rounded-[32px] p-[16px] bg-[hsl(0,0%,95%)]`} >
-            <label className="text-black"
-            >Exam Templates</label>
-        </div>
-    </div>
+        <SchemaContextProvider>
+            {builderMode && <ExamBuilder />}
+            {consumerMode && <SchemaConsumer />}
+        </SchemaContextProvider>
+    </Box>
 }

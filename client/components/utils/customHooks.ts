@@ -1,10 +1,26 @@
 import { useSchema } from "@/components/hooks/useSchema"
-import { StandardQuestion } from "@/types/Exam.types"
+import { HtmlElement, StandardQuestion } from "@/types/Exam.types"
 import { QuestionErrors } from "@/types/Schema.types"
 
 export default function useCustomHooks()
 {
-    const { setSchemaErrors } = useSchema()
+    const { schemaErrors, setSchemaErrors, schemaData } = useSchema()
+    const hasMissingfields: () => boolean = () => (
+        (schemaData.lock && !schemaData.password) ||
+        !schemaData.title ||
+        !schemaData.description ||
+        schemaData.timeLimitPerPage < 10 ||
+        !(schemaData.pages[0].elements.find(element => element.type === "html")! as HtmlElement).html ||
+        schemaData.pages.length < 2
+    )
+    const hasSchemaErrors: () => boolean = () => (
+        (schemaData.lock && !!schemaErrors.password) ||
+        !!schemaErrors.title ||
+        !!schemaErrors.description ||
+        !!schemaErrors.SchemaStartingDisplayError ||
+        !!schemaErrors.timeLimitPerPage ||
+        schemaErrors.QuestionsError.length > 0
+    )
     const UpdateSchemaErrorMessage = (key: string, condition: boolean, message: string | null = null) =>
     {
         if (condition) setSchemaErrors(prev => ({ ...prev, [key]: message ?? `${key.toUpperCase()} is invalid/empty` }))
@@ -47,7 +63,7 @@ export default function useCustomHooks()
         })
         return updatedErrors
     }
-    return { UpdateSchemaErrorMessage, UpdateQuestionErrorMessage }
+    return { hasMissingfields, hasSchemaErrors, UpdateSchemaErrorMessage, UpdateQuestionErrorMessage }
 }
 
 const hasQuestionError = (errors: QuestionErrors) => (errors.error || errors.fieldErrors.length > 0)

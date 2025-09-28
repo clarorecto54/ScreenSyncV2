@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import classMerge from "../utils/classMerge";
 import { useGlobals } from "../hooks/useGlobals";
-import { useSession } from "../hooks/useSession";
 /* ----- MEETING HEADER ----- */
 export default function Header() {
     /* ----- STATES & HOOKS ----- */
@@ -10,11 +9,15 @@ export default function Header() {
     const [ping, setPing] = useState<number>(0)
     const [roomName, setRoomName] = useState<string>("")
     /* ------ EVENT HANDLER ----- */
-    useEffect(() => {
-        if (socket) {
-            setInterval(() => {
+    useEffect(() =>
+    {
+        try
+        {
+            setInterval(() =>
+            {
                 const start = Date.now();
-                socket.emit("ping", () => {
+                socket.emit("ping", () =>
+                {
                     const duration = Date.now() - start
                     setPing(duration)
                 })
@@ -22,12 +25,15 @@ export default function Header() {
             socket.on("get-server-time", (time: string) => setServerTime(time))
             socket.on("host-name", (hostname: string) => setRoomName(hostname))
             socket.emit("get-host-name", meetingCode)
-        }
-        return () => {
-            if (socket) {
+            return () =>
+            {
                 socket.off("get-server-time", (time: string) => setServerTime(time))
                 socket.off("host-name", (hostname: string) => setRoomName(hostname))
             }
+        }
+        catch
+        {
+            window.location.href = `https://${window.location.hostname}:3000`
         }
     }, [])
     /* -------- RENDERING ------- */

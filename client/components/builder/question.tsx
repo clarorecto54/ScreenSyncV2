@@ -29,7 +29,7 @@ export default function SchemaQuestionBuilder()
     const [choiceError, setChoiceError] = useState<string>("")
     const [questionError, setQuestionError] = useState<QuestionErrors>({
         id: questionId,
-        name: questionData.name,
+        name: "Question",
         error: "",
         fieldErrors: []
     })
@@ -238,7 +238,9 @@ export default function SchemaQuestionBuilder()
                         </Button>}
                     </Stack>
                     <Divider>
-                        CHOICES
+                        <Typography color="textPrimary" fontSize="14px">
+                            CHOICES
+                        </Typography>
                     </Divider>
                     <form autoComplete="off" onSubmit={HandleAddChoice}>
                         <TextField

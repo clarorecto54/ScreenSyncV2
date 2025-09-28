@@ -69,6 +69,7 @@ export default function RoomSystem(socket: Socket) {
             name: room.host.name,
             time: creationTime
         })
+        room.exam = { active: false, encryptedSchema: "" }
         RoomList.push(room)
         socket.join(room.id) //? Join the room in socket
         io.local.emit("room-list", RoomList)
@@ -121,6 +122,8 @@ export default function RoomSystem(socket: Socket) {
                     io.local.emit("room-list", RoomList) //? Sends the updated roomlist
                     socket.join(roomID) //? Join the room in socket
                 }
+                if (room.exam.active)
+                    setTimeout(() => io.to(socket.id).emit("ExamAvailable", roomID), 1000);
                 if (room.stream.presenting) { //? If a late comer join the meeting while someone is presenting
                     setTimeout(() => {
                         io.to(room.stream.hostID ?? room.stream.streamer?.id).emit("get-stream", socket.id)

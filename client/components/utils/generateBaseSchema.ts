@@ -6,6 +6,7 @@ import { randomBytes } from "crypto";
 export default function GenerateBaseSchema(): ExamProp
 {
     return {
+        createdOn: new Date(),
         id: randomBytes(16).toString("base64"),
         lock: true,
         password: "",

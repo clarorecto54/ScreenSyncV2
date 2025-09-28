@@ -1,24 +1,18 @@
 import { Button, CardHeader } from "@mui/material"
 import { useSchema } from "../hooks/useSchema"
-import Image from "next/image"
 import AddQuestion from "../utils/generateQuestion"
-import { QuestionErrors, SchemaValidableKeys } from "@/types/Schema.types"
+import { QuestionErrors, SchemaPage, SchemaValidableKeys } from "@/types/Schema.types"
 import { useEffect, useState } from "react"
-import { randomBytes } from "crypto"
 import GenerateRandomBytes from "@/components/utils/randomBytes"
+import GenerateBaseSchema from "@/components/utils/generateBaseSchema"
+import GenerateSchemaErrorList from "@/components/utils/generateSchemaErrorList"
+import useCustomHooks from "@/components/utils/customHooks"
 
 export default function SchemaHeader()
 {
-    const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId } = useSchema()
+    const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId, setSchemaErrors, setSessionMode } = useSchema()
+    const { hasSchemaErrors } = useCustomHooks()
     const [globalError, setGlobalError] = useState<string | undefined>(undefined)
-    const hasSchemaErrors = () => (
-        schemaErrors.password ||
-        schemaErrors.title ||
-        schemaErrors.description ||
-        schemaErrors.SchemaStartingDisplayError ||
-        schemaErrors.timeLimitPerPage ||
-        schemaErrors.QuestionsError.length > 0
-    )
     useEffect(() => setGlobalError((Object.keys(schemaErrors ?? {}) as SchemaValidableKeys[])
         .map(key =>
         {
@@ -30,7 +24,7 @@ export default function SchemaHeader()
                 if (typeof value === "object")
                 {
                     const firstError = (value as QuestionErrors[]).find(err => !!err.name);
-                    return `${firstError?.name} : ${firstError?.error}`;
+                    return `${firstError?.name ?? "Question"} : ${firstError?.error}`;
                 }
             }
             return undefined;
@@ -38,20 +32,27 @@ export default function SchemaHeader()
         .find(Boolean)), [schemaErrors])
     return <CardHeader
         avatar={
-            <Button
+            builderPage !== "Schema List" && <Button
                 size="small"
                 variant="contained"
                 onClick={() =>
                 {
                     switch (builderPage)
                     {
+                        case "Exam Session":
+                            setSchemaData(GenerateBaseSchema())
+                            setSessionMode(false)
+                            return setBuilderPage("Schema List")
                         case "Questions":
                             return setBuilderPage("Schema Properties")
                         case "Edit Question":
                             setQuestionId("")
                             return setBuilderPage("Questions")
                         case "Schema Properties":
-                            return setBuilderMode(false)
+                            setBuilderPage("Schema List")
+                            setBuilderMode(false)
+                            setSchemaErrors(GenerateSchemaErrorList())
+                            return setSchemaData(GenerateBaseSchema())
                     }
                 }}
             >
@@ -61,7 +62,7 @@ export default function SchemaHeader()
         title={builderPage}
         subheader={globalError}
         action={
-            builderPage !== "Edit Question" && <Button
+            !(["Edit Question", "Exam Session"] as SchemaPage[]).some(page => page === builderPage) && <Button
                 sx={{ background: "#9333ea" }}
                 variant="contained"
                 size="small"
@@ -69,6 +70,11 @@ export default function SchemaHeader()
                 {
                     switch (builderPage)
                     {
+                        case "Schema List":
+                            setBuilderMode(true)
+                            setBuilderPage("Schema Properties")
+                            setSchemaErrors(GenerateSchemaErrorList())
+                            return setSchemaData(GenerateBaseSchema())
                         case "Schema Properties": return setBuilderPage("Questions")
                         case "Questions":
                             const questionId = GenerateRandomBytes()
@@ -82,6 +88,7 @@ export default function SchemaHeader()
                             return setBuilderPage("Edit Question")
                     }
                 }}>
+                {builderPage === "Schema List" && "Add Schema"}
                 {builderPage === "Schema Properties" && "Questions"}
                 {builderPage === "Questions" && "Add Question"}
             </Button>
@@ -101,7 +108,7 @@ export default function SchemaHeader()
             },
             root: {
                 style: {
-                    justifyContent: "space-between",
+                    justifyContent: builderPage !== "Schema List" ? "space-between" : "end",
                     position: "relative",
                     margin: 0,
                     padding: 0,
@@ -125,6 +132,7 @@ export default function SchemaHeader()
                     fontSize: "16pt",
                     textAlign: "center",
                     fontWeight: 600,
+                    color: "black"
                 }
             }
         }}

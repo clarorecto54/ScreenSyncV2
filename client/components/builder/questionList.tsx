@@ -1,4 +1,4 @@
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { useSchema } from "../hooks/useSchema";
 import AddQuestion from "../utils/generateQuestion";
 import { useEffect, useState } from "react";
@@ -19,7 +19,9 @@ export default function SchemaQuestionList()
             gap="8px"
             justifyContent="center"
             alignItems="center">
-            No questions found on this schema
+            <Typography color="textPrimary">
+                No questions found on this schema
+            </Typography>
             <Button
                 sx={{ background: "#9333ea" }}
                 variant="contained"

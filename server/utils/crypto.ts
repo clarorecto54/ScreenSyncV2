@@ -1,12 +1,4 @@
-import { ExamProp } from "@/types/Exam.types";
-import { createHash } from "crypto";
-
-export default function HashData(data: string)
-{
-    return createHash("SHA512", { outputLength: 64 })
-        .update(data)
-        .digest("base64");
-}
+import { ExamProp } from "../system/exam/exam.types"
 
 export function EncryptSchema(data: ExamProp): string
 {

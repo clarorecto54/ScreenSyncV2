@@ -1,15 +1,5 @@
 import { Dispatch, SetStateAction } from "react"
 
-export interface ExamTypes
-{
-    consumerMode: boolean
-    setConsumerMode: Dispatch<SetStateAction<boolean>>
-    builderMode: boolean
-    setBuilderMode: Dispatch<SetStateAction<boolean>>
-    schemaList: ExamProp[]
-    setSchemaList: Dispatch<SetStateAction<ExamProp[]>>
-}
-
 export interface ExamSocketMapping
 {
     SaveSchema: (schema: ExamProp) => void
@@ -47,6 +37,23 @@ export interface ExamResult
     examName: string
     subDesc: string
     pdf: ArrayBuffer
+}
+
+export interface SchemaSavefile
+{
+    id: string
+    name: string
+    subject: string
+    date: Date
+    data: string
+}
+
+export interface ExamTypes
+{
+    builderMode: boolean
+    setBuilderMode: Dispatch<SetStateAction<boolean>>
+    schemaList: ExamProp[]
+    setSchemaList: Dispatch<SetStateAction<ExamProp[]>>
 }
 
 export type ExamProp = {
