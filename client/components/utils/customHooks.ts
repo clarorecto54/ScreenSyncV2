@@ -1,5 +1,5 @@
 import { useSchema } from "@/components/hooks/useSchema"
-import { StandardQuestion } from "@/types/Exam.types"
+import { HtmlElement, StandardQuestion } from "@/types/Exam.types"
 import { QuestionErrors } from "@/types/Schema.types"
 
 export default function useCustomHooks()
@@ -10,7 +10,7 @@ export default function useCustomHooks()
         !schemaData.title ||
         !schemaData.description ||
         schemaData.timeLimitPerPage < 10 ||
-        !schemaData.pages[0].elements.find(element => element.type === "html")!.html ||
+        !(schemaData.pages[0].elements.find(element => element.type === "html")! as HtmlElement).html ||
         schemaData.pages.length < 2
     )
     const hasSchemaErrors: () => boolean = () => (
