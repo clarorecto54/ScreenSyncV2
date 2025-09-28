@@ -16,9 +16,13 @@ export default function SchemaPropBuilder()
         {
             const key = target.name as "showTimer" | "showProgressBar" | "showPreviewBeforeComplete" | "questionOrder" | "lock"
             const value = target.checked
+            const updated = { ...prev, [key]: key !== "questionOrder" ? value : value ? "random" : "initial" }
             if (key === "lock" && !value)
+            {
+                updated.password = ""
                 setSchemaErrors(prev => ({ ...prev, password: "" }))
-            return { ...prev, [key]: key !== "questionOrder" ? value : value ? "random" : "initial" }
+            }
+            return updated
         })
     function HandleTextField(element: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)
     {
