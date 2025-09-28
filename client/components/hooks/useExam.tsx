@@ -9,7 +9,7 @@ export function useExam(): ExamTypes { return useContext(context)! }
 export function ExamContextProvider({ children }: { children: ReactNode })
 {
     const { socket } = useGlobals()
-    const [consumerMode, setConsumerMode] = useState<boolean>(true)
+    const [consumerMode, setConsumerMode] = useState<boolean>(false)
     const [builderMode, setBuilderMode] = useState<boolean>(false)
     const [schemaList, setSchemaList] = useState<ExamProp[]>([])
     useEffect(() =>
