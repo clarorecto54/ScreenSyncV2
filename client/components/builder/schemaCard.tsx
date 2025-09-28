@@ -1,6 +1,6 @@
 import { SchemaCardType } from "@/types/Schema.types";
-import { Button, Card, CardActions, CardContent, CardHeader, Collapse, Stack } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Button, Card, CardActions, CardContent, CardHeader, Collapse, IconButton, InputAdornment, Stack, TextField } from "@mui/material";
+import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { useSchema } from "@/components/hooks/useSchema";
 import { useExam } from "@/components/hooks/useExam";
@@ -8,12 +8,16 @@ import GenerateSchemaErrorList from "@/components/utils/generateSchemaErrorList"
 import { ExamProp, ExamSocketMapping } from "@/types/Exam.types";
 import { useGlobals } from "@/components/hooks/useGlobals";
 import { Socket } from "socket.io-client";
+import HashData from "@/components/utils/crypto";
 
 const SchemaCard: SchemaCardType = ({ lock, id, title, description, password }) =>
 {
     const { socket } = useGlobals()
     const { schemaList } = useExam()
     const { setBuilderMode, setBuilderPage, setSchemaErrors, setSchemaData } = useSchema()
+    const [unlock, setUnlock] = useState<boolean>(false)
+    const [key, setKey] = useState<string>("")
+    const [wrongKey, setWrongKey] = useState<boolean>(false)
     const [schema, setSchema] = useState<ExamProp>({} as ExamProp)
     const [hover, setHover] = useState<boolean>(false)
     useEffect(() => setSchema(schemaList.find(schema => schema.id === id)! as ExamProp), [schemaList])
@@ -29,11 +33,68 @@ const SchemaCard: SchemaCardType = ({ lock, id, title, description, password }) 
         const mappedSocket: Socket<ExamSocketMapping> = socket
         mappedSocket.emit("DeleteSchema", schema)
     }
+    const HandleSubmit = (element: FormEvent<HTMLFormElement>) =>
+    {
+        element.preventDefault()
+        if (!(HashData(key) === password)) return setWrongKey(true)
+        setKey("")
+        setWrongKey(false)
+        setUnlock(false)
+        EditSchema()
+    }
     return <Card
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
-        sx={{ display: "flex", flexDirection: "column" }}
+        sx={{ display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}
     >
+        {unlock && <div className={`
+            h-full w-full absolute z-[99] backdrop-blur-md backdrop-brightness-75
+            flex gap-[16px] justify-center items-center rounded-[4px]
+            ${unlock ? "opacity-100" : "opacity-0"}
+            transition-[opacity] duration-1000
+            `}>
+            <Stack display="flex" flexDirection="column" gap={1} sx={{ background: "white", padding: "8px", borderRadius: "8px" }}>
+                <form autoComplete="off" onSubmit={HandleSubmit}>
+                    <TextField
+                        variant="filled"
+                        size="small"
+                        name="unlock"
+                        label="Type the key here"
+                        value={key}
+                        onChange={(element) =>
+                        {
+                            const thisElement = element.target
+                            setKey(thisElement.value)
+                        }}
+                        // fullWidth
+                        error={wrongKey}
+                        slotProps={{
+                            htmlInput: { maxLength: 128 },
+                            input: {
+                                endAdornment: key.length > 3 && <InputAdornment position="end" sx={{ cursor: "pointer" }}>
+                                    <button className="aspect-square h-[16px] relative" type="submit">
+                                        <Image alt="" fill src={require("@/public/images/Key.svg")} />
+                                    </button>
+                                </InputAdornment>
+                            }
+                        }}
+                    />
+                </form>
+                <Button
+                    size="small"
+                    variant="contained"
+                    color="error"
+                    onClick={() =>
+                    {
+                        setKey("")
+                        setWrongKey(false)
+                        setUnlock(false)
+                    }}
+                >
+                    Cancel
+                </Button>
+            </Stack>
+        </div>}
         <CardHeader
             className="transition-all duration-300"
             title={<Stack flexDirection="row" gap={1} alignItems="center" >
@@ -53,11 +114,11 @@ const SchemaCard: SchemaCardType = ({ lock, id, title, description, password }) 
                 }
             }}
             sx={{
-                paddingBottom: hover ? 0 : "16px",
+                paddingBottom: hover || unlock ? 0 : "16px",
                 cursor: "pointer"
             }}
         />
-        <Collapse in={hover} timeout="auto" unmountOnExit>
+        <Collapse in={hover || unlock} timeout="auto" unmountOnExit>
             <CardContent
                 sx={{ paddingY: 0 }}
                 style={{ paddingTop: 0, paddingBottom: "8px" }}
@@ -72,6 +133,8 @@ const SchemaCard: SchemaCardType = ({ lock, id, title, description, password }) 
                             switch (value)
                             {
                                 case "Edit":
+                                    if (lock)
+                                        return setUnlock(true)
                                     return EditSchema()
                                 case "Delete":
                                     return DeleteSchema()
@@ -89,7 +152,6 @@ const SchemaCard: SchemaCardType = ({ lock, id, title, description, password }) 
                     </Button>)}
                 </CardActions>
             </CardContent>
-
         </Collapse>
     </Card>
 }
