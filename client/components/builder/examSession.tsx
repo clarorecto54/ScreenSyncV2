@@ -1,13 +1,30 @@
 import SchemaHeader from "@/components/builder/schemaHeader";
+import { useGlobals } from "@/components/hooks/useGlobals";
 import { useSchema } from "@/components/hooks/useSchema";
-import { Avatar, Box, Card, CardHeader, Chip, Divider, Stack } from "@mui/material";
+import { Encrypt } from "@/components/utils/crypto";
+import { ExamSocketMapping } from "@/types/Exam.types";
+import { Avatar, Box, Card, CardHeader, Chip, Button, Stack } from "@mui/material";
 import Image from "next/image";
 import { useState } from "react";
+import { Socket } from "socket.io-client";
 
 export default function ExamSession()
 {
+    const { socket, meetingCode } = useGlobals()
     const { schemaData } = useSchema()
+    const [mappedSocket] = useState<Socket<ExamSocketMapping>>(socket)
     const [sendingOut, setSendingOut] = useState<boolean>(false)
+    const SendOutExam = () =>
+    {
+        setSendingOut(true)
+        setTimeout(() => StopExam(), schemaData.timeLimit * 1000)
+        mappedSocket.emit("SendOutExam", meetingCode, Encrypt(schemaData))
+    }
+    const StopExam = () =>
+    {
+        setSendingOut(false)
+        mappedSocket.emit("StopExam", meetingCode)
+    }
     return <>
         <SchemaHeader />
         <Box
@@ -70,6 +87,20 @@ export default function ExamSession()
                     />
                 </Box>
             </Card>
+        </Box>
+        <Box display={"flex"} alignItems={"center"} justifyContent={"center"} paddingTop={"16px"}>
+            <Button
+                color={!sendingOut ? "success" : "error"}
+                variant="contained"
+                size="medium"
+                startIcon={<div className="aspect-square h-[12px] relative whiteOverlay">
+                    <Image alt="" fill src={require(`@/public/images/Exam.svg`)} />
+                </div>}
+                sx={{ borderRadius: "100px" }}
+                onClick={!sendingOut ? SendOutExam : StopExam}>
+                {!sendingOut && "Start Exam"}
+                {sendingOut && "Stop Exam"}
+            </Button>
         </Box>
     </>
 }
