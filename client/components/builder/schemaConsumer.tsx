@@ -5,6 +5,8 @@ import { PlainDark } from "survey-core/themes";
 import { Box } from "@mui/material";
 import { Survey } from "survey-react-ui";
 import { useExam } from "@/components/hooks/useExam";
+import jsPDF from "jspdf";
+import WrapLongText from "@/components/utils/pdfTextWrapper";
 
 export default function SchemaConsumer()
 {
@@ -22,6 +24,68 @@ export default function SchemaConsumer()
     survey.onComplete.add((sender) =>
     {
         sender.stopTimer()
+        let points: number = 0
+        let totalPoints: number = 0
+        const output: Record<string, {
+            answer: string
+            correct: string
+            score: boolean
+        }> = {}
+        sender.showTimerPanel = "none"
+        sender.pages.forEach(page =>
+            page.questions.forEach(question =>
+            {
+                if (question.getType() !== "radiogroup") return
+                const q = question.title
+                const answer = question.value
+                const correct = question.correctAnswer
+                const score = question.correctAnswer === answer
+                output[q] = {
+                    answer,
+                    correct,
+                    score
+                }
+                points += score ? 1 : 0
+                totalPoints++
+            })
+        )
+
+        const doc = new jsPDF();
+        let y = 10;
+
+        doc.setFontSize(16);
+        doc.text(`Name: HOST`, 10, y);
+        y += 10;
+
+        doc.setFontSize(14);
+        doc.text(`Total points: ${points} / ${totalPoints}      [ ${((points / totalPoints) * 100)}% ]`, 10, y);
+        y += 10;
+
+        Object.entries(output).forEach(([question, info], index) =>
+        {
+            doc.setFontSize(14)
+            doc.text(`Question ${index + 1} : ${info.score ? "CORRECT" : "WRONG"}`, 10, y)
+            y += 8
+
+            doc.setFontSize(12);
+            doc.text("Question:", 15, y)
+            y += 5
+            WrapLongText(doc, question, 20, y)
+            y += 10
+
+            doc.text("Answer:", 15, y)
+            y += 5
+            WrapLongText(doc, info.answer, 20, y)
+            y += 10
+
+            if (!info.score)
+            {
+                doc.text("Correct Answer:", 15, y)
+                y += 5
+                WrapLongText(doc, info.correct, 20, y)
+                y += 10
+            }
+        });
         setConsumerMode(false)
     })
     return <Box sx={{

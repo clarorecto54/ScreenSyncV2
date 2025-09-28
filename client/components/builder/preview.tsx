@@ -5,6 +5,7 @@ import { useSchema } from "../hooks/useSchema"
 import "survey-core/survey-core.min.css"
 import { Box } from "@mui/material"
 import { jsPDF } from 'jspdf'
+import WrapLongText from "@/components/utils/pdfTextWrapper"
 
 export default function SchemaPreview()
 {
@@ -89,22 +90,4 @@ export default function SchemaPreview()
     return <Box height="100%" sx={{ borderRadius: "24px", overflow: "hidden" }}>
         <Survey model={survey} />
     </Box>
-}
-
-function WrapLongText(doc: jsPDF, text: string, x: number = 10, y: number)
-{
-    const pageHeight = doc.internal.pageSize.height || 297; // A4 height in mm
-    const lineHeight = 7;
-    const pageMargin = 10;
-    const lines: string[] = doc.splitTextToSize(text, 180);
-    lines.forEach(line =>
-    {
-        if (y + lineHeight > pageHeight - pageMargin)
-        {
-            doc.addPage();
-            y = pageMargin;
-        }
-        doc.text(line, x, y);
-        y += lineHeight;
-    });
 }
