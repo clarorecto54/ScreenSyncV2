@@ -51,7 +51,7 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
     {
         ServerLog("socket", `${socket.id} is requesting for the list of schema...`)
         const list: ExamProp[] = []
-        for (const save of saveList)
+        for (const save of saveList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()))
             list.push(Decrypt(save.data))
         SendSchema(list)
         ServerLog("socket", `${socket.id} has recevied the updated list of schema`)
