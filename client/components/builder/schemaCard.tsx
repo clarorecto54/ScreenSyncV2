@@ -123,7 +123,7 @@ const SchemaCard: SchemaCardType = ({ createdOn, lock, id, title, description, p
                 sx={{ paddingY: 0 }}
                 style={{ paddingTop: 0, paddingBottom: "8px" }}
             >
-                <Collapse in={hover} timeout="auto" unmountOnExit sx={{ paddingY: "4px" }}>
+                <Collapse in={hover && !unlock} timeout="auto" unmountOnExit sx={{ paddingY: "4px" }}>
                     <Stack className="Unselectable" flexDirection="row" gap={1} >
                         <Chip
                             className="bg-lime-800"
