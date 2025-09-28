@@ -5,6 +5,14 @@ import { QuestionErrors } from "@/types/Schema.types"
 export default function useCustomHooks()
 {
     const { schemaErrors, setSchemaErrors, schemaData } = useSchema()
+    const hasMissingfields: () => boolean = () => (
+        (schemaData.lock && !schemaData.password) ||
+        !schemaData.title ||
+        !schemaData.description ||
+        schemaData.timeLimitPerPage < 10 ||
+        !schemaData.pages[0].elements.find(element => element.type === "html")!.html ||
+        schemaData.pages.length < 2
+    )
     const hasSchemaErrors: () => boolean = () => (
         (schemaData.lock && !!schemaErrors.password) ||
         !!schemaErrors.title ||
@@ -55,7 +63,7 @@ export default function useCustomHooks()
         })
         return updatedErrors
     }
-    return { hasSchemaErrors, UpdateSchemaErrorMessage, UpdateQuestionErrorMessage }
+    return { hasMissingfields, hasSchemaErrors, UpdateSchemaErrorMessage, UpdateQuestionErrorMessage }
 }
 
 const hasQuestionError = (errors: QuestionErrors) => (errors.error || errors.fieldErrors.length > 0)
