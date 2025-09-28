@@ -1,5 +1,5 @@
 import { SchemaCardType } from "@/types/Schema.types";
-import { Button, Card, CardActions, CardContent, CardHeader, Collapse, IconButton, InputAdornment, Stack, TextField } from "@mui/material";
+import { Button, Card, CardActions, CardContent, CardHeader, Chip, Collapse, InputAdornment, Stack, TextField } from "@mui/material";
 import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { useSchema } from "@/components/hooks/useSchema";
@@ -10,7 +10,7 @@ import { useGlobals } from "@/components/hooks/useGlobals";
 import { Socket } from "socket.io-client";
 import HashData from "@/components/utils/crypto";
 
-const SchemaCard: SchemaCardType = ({ lock, id, title, description, password }) =>
+const SchemaCard: SchemaCardType = ({ createdOn, lock, id, title, description, password, questions, timeLimit }) =>
 {
     const { socket } = useGlobals()
     const { schemaList } = useExam()
@@ -53,10 +53,10 @@ const SchemaCard: SchemaCardType = ({ lock, id, title, description, password }) 
             ${unlock ? "opacity-100" : "opacity-0"}
             transition-[opacity] duration-1000
             `}>
-            <Stack display="flex" flexDirection="column" gap={1} sx={{ background: "white", padding: "8px", borderRadius: "8px" }}>
+            <Stack display="flex" flexDirection="row" gap={1} justifyContent="center" alignItems="center" sx={{ background: "white", padding: "12px", borderRadius: "8px" }}>
                 <form autoComplete="off" onSubmit={HandleSubmit}>
                     <TextField
-                        variant="filled"
+                        variant="outlined"
                         size="small"
                         name="unlock"
                         label="Type the key here"
@@ -66,7 +66,6 @@ const SchemaCard: SchemaCardType = ({ lock, id, title, description, password }) 
                             const thisElement = element.target
                             setKey(thisElement.value)
                         }}
-                        // fullWidth
                         error={wrongKey}
                         slotProps={{
                             htmlInput: { maxLength: 128 },
@@ -90,6 +89,7 @@ const SchemaCard: SchemaCardType = ({ lock, id, title, description, password }) 
                         setWrongKey(false)
                         setUnlock(false)
                     }}
+                    sx={{ maxHeight: "fit-content" }}
                 >
                     Cancel
                 </Button>
@@ -123,7 +123,41 @@ const SchemaCard: SchemaCardType = ({ lock, id, title, description, password }) 
                 sx={{ paddingY: 0 }}
                 style={{ paddingTop: 0, paddingBottom: "8px" }}
             >
-                <CardActions sx={{ paddingTop: "8px" }}>
+                <Collapse in={hover} timeout="auto" unmountOnExit sx={{ paddingY: "4px" }}>
+                    <Stack className="Unselectable" flexDirection="row" gap={1} >
+                        <Chip
+                            className="bg-lime-800"
+                            size="small"
+                            label={new Date(createdOn).toLocaleString()}
+                            sx={{
+                                padding: "4px",
+                                background: "#3f6212",
+                                color: "white"
+                            }}
+                        />
+                        <Chip
+                            className="bg-gray-200"
+                            size="small"
+                            label={`${questions} Question`}
+                            sx={{
+                                padding: "4px",
+                                background: "#4b5563",
+                                color: "white"
+                            }}
+                        />
+                        <Chip
+                            className="bg-orange-600"
+                            size="small"
+                            label={`${timeLimit}s Time`}
+                            sx={{
+                                padding: "4px",
+                                background: "#ea580c",
+                                color: "white"
+                            }}
+                        />
+                    </Stack>
+                </Collapse>
+                <CardActions sx={{ paddingTop: "8px", paddingX: 0 }}>
                     {(["Edit", "Delete"] as ("Edit" | "Delete")[]).map((value, index) => <Button
                         key={index}
                         size="small"

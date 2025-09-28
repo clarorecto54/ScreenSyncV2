@@ -42,14 +42,17 @@ export default function SchemaList()
                     spacing={2}
                 >
                     {schemaList.map(
-                        ({ id, lock, title, description, password }, index) =>
+                        ({ createdOn, lock, id, title, description, password, pages, timeLimit }, index) =>
                             <SchemaCard
+                                createdOn={createdOn}
                                 key={index}
                                 lock={lock}
                                 id={id}
                                 title={title}
                                 description={description}
                                 password={password}
+                                questions={pages.length - 1}
+                                timeLimit={timeLimit}
                             />
                     )}
                 </Stack>

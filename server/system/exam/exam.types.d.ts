@@ -28,6 +28,7 @@ export interface ExamTypes
 }
 
 export type ExamProp = {
+    createdOn: Date
     id: string
     lock: boolean
     password: string

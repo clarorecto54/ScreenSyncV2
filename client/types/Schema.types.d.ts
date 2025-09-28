@@ -6,12 +6,25 @@ export type SchemaPage = "Schema List" | "Schema Properties" | "Questions" | "Ed
 
 export type SchemaCardType = (
     {
-        lock: boolean,
-        id: string,
-        title: string,
-        description: string,
-        password: string
-    }
+        createdOn,
+        lock,
+        id,
+        title,
+        description,
+        password,
+        questions,
+        timeLimit,
+    }:
+        {
+            createdOn: Date,
+            lock: boolean,
+            id: string,
+            title: string,
+            description: string,
+            password: string,
+            questions: number,
+            timeLimit: number
+        }
 ) => React.ReactNode
 
 export interface SchemaTypes
