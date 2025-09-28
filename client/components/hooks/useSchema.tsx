@@ -8,7 +8,7 @@ import GenerateSchemaErrorList from "@/components/utils/generateSchemaErrorList"
 import { useGlobals } from "@/components/hooks/useGlobals";
 import { Socket } from "socket.io-client";
 import { useExam } from "@/components/hooks/useExam";
-import { Decrypt } from "@/components/utils/crypto";
+import { DecryptSchema } from "@/components/utils/crypto";
 
 const context = createContext<SchemaTypes | undefined>(undefined)
 export function useSchema(): SchemaTypes { return useContext(context)! }
@@ -30,7 +30,7 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
         const ExamAvailable: ExamSocketMapping["ExamAvailable"] = (targetRoom) =>
             mappedSocket.emit("TakeExam", targetRoom, (schema) =>
             {
-                setSchemaData(Decrypt(schema))
+                setSchemaData(DecryptSchema(schema))
                 setConsumerMode(true)
             })
         const StopExam: ExamSocketMapping["StopExam"] = () =>

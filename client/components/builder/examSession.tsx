@@ -1,11 +1,11 @@
 import SchemaHeader from "@/components/builder/schemaHeader";
 import { useGlobals } from "@/components/hooks/useGlobals";
 import { useSchema } from "@/components/hooks/useSchema";
-import { Encrypt } from "@/components/utils/crypto";
-import { ExamSocketMapping } from "@/types/Exam.types";
-import { Avatar, Box, Card, CardHeader, Chip, Button, Stack } from "@mui/material";
+import { EncryptSchema } from "@/components/utils/crypto";
+import { ExamResult, ExamSocketMapping } from "@/types/Exam.types";
+import { Avatar, Box, Card, CardHeader, Chip, Button, Stack, List, ListItem, Divider, ListItemButton, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 
 export default function ExamSession()
@@ -14,7 +14,9 @@ export default function ExamSession()
     const { schemaData } = useSchema()
     const [timer, setTimer] = useState<NodeJS.Timeout>()
     const [mappedSocket] = useState<Socket<ExamSocketMapping>>(socket)
+    const [savePath] = useState<string>("../")
     const [sendingOut, setSendingOut] = useState<boolean>(false)
+    const [results, setResults] = useState<ExamResult[]>([])
     const SendOutExam = () =>
     {
         setSendingOut(true)
@@ -28,13 +30,23 @@ export default function ExamSession()
             StopExam()
             setTimer(undefined)
         }, schemaData.timeLimit * 1000))
-        mappedSocket.emit("SendOutExam", meetingCode, Encrypt(schemaData))
+        mappedSocket.emit("SendOutExam", meetingCode, EncryptSchema(schemaData))
     }
     const StopExam = () =>
     {
         setSendingOut(false)
         mappedSocket.emit("StopExam", meetingCode)
     }
+    useEffect(() =>
+    {
+        const ReceiveResult: ExamSocketMapping["ReceiveResult"] = (result) =>
+            setResults(prev => [...prev, result])
+        mappedSocket.on("ReceiveResult", ReceiveResult)
+        return () =>
+        {
+            mappedSocket.off("ReceiveResult", ReceiveResult)
+        }
+    }, [])
     return <>
         <SchemaHeader />
         <Box
@@ -93,8 +105,41 @@ export default function ExamSession()
                                 src={require("@/public/images/Exam.svg")}
                             />
                         </Avatar>}
-                        sx={{ paddingBottom: 0 }}
+                        sx={{ paddingBottom: "16px" }}
                     />
+                </Box>
+                <Divider sx={{ fontFamily: "Montserrat", fontWeight: 500, fontSize: "10pt" }}>Results</Divider>
+                <Box paddingX="16px" display="flex" flexDirection="column" overflow="scroll">
+                    <Stack>
+                        {results.map(({ name, score, pdf }, index) => <ListItem key={index}
+                            secondaryAction={
+                                <IconButton
+                                    onClick={() =>
+                                    {
+                                        const blob = new Blob([pdf], { type: "application/pdf" })
+                                        const url = URL.createObjectURL(blob)
+                                        window.open(url, "_blank")
+                                    }}
+                                    edge="end"
+                                >
+                                    <Image alt="" fill src={require("@/public/images/[Icon] PDF.svg")} />
+                                </IconButton>
+                            }
+                            sx={{ fontFamily: "Montserrat", fontWeight: 500 }}
+                        >
+                            <Stack flexDirection="row" gap={2}>
+                                <Typography width="64px" overflow="hidden" textAlign="center">
+                                    {(Math.round(((score / (schemaData.pages.length - 1)) * 100) * 10) / 10)} %
+                                </Typography>
+                                <Typography>
+                                    {name.toUpperCase()}
+                                </Typography>
+                            </Stack>
+                        </ListItem>)}
+                        {/* {results.map(({ name, score, encryptedPDF }, index) => <List>
+
+                    </List>)} */}
+                    </Stack>
                 </Box>
             </Card>
         </Box>
