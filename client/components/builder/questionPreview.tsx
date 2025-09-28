@@ -60,7 +60,10 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
         <Collapse
             in={hover} timeout="auto" unmountOnExit
         >
-            <CardContent sx={{ paddingY: 0 }}>
+            <CardContent
+                sx={{ paddingY: 0 }}
+                style={{ paddingTop: 0, paddingBottom: "8px" }}
+            >
                 {imgElement && <Stack gap={2} sx={{ paddingTop: "8px" }}>
                     <Divider sx={{ fontWeight: 500, fontSize: "10pt" }}>
                         <Typography color="textPrimary" fontSize="14px">
