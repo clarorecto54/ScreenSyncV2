@@ -19,6 +19,7 @@ export interface ExamSocketMapping
 }
 
 export type ExamProp = {
+    createdOn: Date
     id: string
     lock: boolean
     password: string
