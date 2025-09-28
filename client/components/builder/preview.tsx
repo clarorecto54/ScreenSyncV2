@@ -53,13 +53,22 @@ export default function SchemaPreview()
 
         doc.setFontSize(16);
         doc.text(`Name: HOST`, 10, y);
-        y += 10;
+        y += 8;
 
-        doc.setFontSize(14);
+        doc.text("Exam: " + schemaData.title, 10, y)
+        y += 8
+
+        doc.text("Subject / Description: " + schemaData.description, 10, y)
+        y += 8
+
+        doc.text("Date: " + new Date().toLocaleString(), 10, y)
+        y += 8
+
         let percentage = (Math.round(((points / totalPoints) * 100) * 10) / 10)
         doc.text(`Total points: ${points} / ${totalPoints}      [ ${percentage}% ]`, 10, y);
         y += 10;
 
+        doc.setFontSize(14);
         Object.entries(output).forEach(([question, info], index) =>
         {
             doc.setFontSize(14)
