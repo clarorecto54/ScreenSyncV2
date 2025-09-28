@@ -19,6 +19,7 @@ export default function SchemaList()
             flexDirection="column"
             gap="8px"
             alignItems="center"
+            overflow="hidden"
             justifyContent={schemaList.length > 0 ? "start" : "center"}
         >
             {(schemaList.length === 0 && !builderMode) && <Typography color="textPrimary">
@@ -34,28 +35,30 @@ export default function SchemaList()
                 }}>
                 Create Schema
             </Button>}
-            {schemaList.length > 0 && <Box height="100%" width="100%" display="flex">
-                <Stack
-                    height="100%"
-                    width="100%"
-                    padding={0.5}
-                    spacing={2}
-                >
-                    {schemaList.map(
-                        ({ createdOn, lock, id, title, description, password, pages, timeLimit }, index) =>
-                            <SchemaCard
-                                createdOn={createdOn}
-                                key={index}
-                                lock={lock}
-                                id={id}
-                                title={title}
-                                description={description}
-                                password={password}
-                                questions={pages.length - 1}
-                                timeLimit={timeLimit}
-                            />
-                    )}
-                </Stack>
+            {schemaList.length > 0 && <Box height="100%" width="100%" sx={{ overflowY: "scroll" }}>
+                <Box display="flex">
+                    <Stack
+                        height="100%"
+                        width="100%"
+                        padding={0.5}
+                        spacing={2}
+                    >
+                        {schemaList.map(
+                            ({ createdOn, lock, id, title, description, password, pages, timeLimit }, index) =>
+                                <SchemaCard
+                                    createdOn={createdOn}
+                                    key={index}
+                                    lock={lock}
+                                    id={id}
+                                    title={title}
+                                    description={description}
+                                    password={password}
+                                    questions={pages.length - 1}
+                                    timeLimit={timeLimit}
+                                />
+                        )}
+                    </Stack>
+                </Box>
             </Box>}
         </Box>
     </>
