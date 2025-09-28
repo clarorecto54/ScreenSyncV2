@@ -27,8 +27,27 @@ export type SchemaCardType = (
         }
 ) => React.ReactNode
 
+export type GeneratePDFResultType = (
+    { name, schemaData, points, totalPoints, output }: {
+        name: string,
+        schemaData: ExamProp,
+        points: number,
+        totalPoints: number,
+        output: Record<string, OutputType>
+    }
+) => ArrayBuffer
+
+export interface OutputType
+{
+    answer: string
+    correct: string
+    score: boolean
+}
+
 export interface SchemaTypes
 {
+    output: Record<string, OutputType>
+    setOutput: Dispatch<SetStateAction<Record<string, OutputType>>>
     sessionMode: boolean
     setSessionMode: Dispatch<SetStateAction<boolean>>
     builderMode: boolean
