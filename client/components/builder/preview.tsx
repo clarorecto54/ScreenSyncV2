@@ -22,9 +22,11 @@ export default function SchemaPreview()
     {
         sender.stopTimer()
         let points: number = 0
+        let totalPoints: number = 0
         const output: Record<string, {
             answer: string
-            correct: boolean
+            correct: string
+            score: boolean
         }> = {}
         sender.showTimerPanel = "none"
         sender.pages.forEach(page =>
@@ -33,51 +35,76 @@ export default function SchemaPreview()
                 if (question.getType() !== "radiogroup") return
                 const q = question.title
                 const answer = question.value
-                const correct = question.correctAnswer === answer
+                const correct = question.correctAnswer
+                const score = question.correctAnswer === answer
                 output[q] = {
                     answer,
-                    correct
+                    correct,
+                    score
                 }
-                points += correct ? 1 : 0
+                points += score ? 1 : 0
+                totalPoints++
             })
         )
 
         const doc = new jsPDF();
-        const pageHeight = doc.internal.pageSize.height || 297; // A4 height in mm
         let y = 10;
 
         doc.setFontSize(16);
-        doc.text("Survey Results", 10, y);
+        doc.text(`Name: HOST`, 10, y);
         y += 10;
 
-        doc.text(`Total points: ${points}`, 10, y);
+        doc.setFontSize(14);
+        doc.text(`Total points: ${points} / ${totalPoints}      [ ${((points / totalPoints) * 100)}% ]`, 10, y);
         y += 10;
 
-        const lineHeight = 7;
-        const pageMargin = 10;
-
-        Object.entries(output).forEach(([question, info]) =>
+        Object.entries(output).forEach(([question, info], index) =>
         {
-            doc.setFontSize(12);
-            const text = `${question} (${info.correct ? "Correct" : "Wrong"}): ${info.answer}`;
+            doc.setFontSize(14)
+            doc.text(`Question ${index + 1} : ${info.score ? "CORRECT" : "WRONG"}`, 10, y)
+            y += 8
 
-            const lines: string[] = doc.splitTextToSize(text, 180);
-            lines.forEach(line =>
+            doc.setFontSize(12);
+            doc.text("Question:", 15, y)
+            y += 5
+            WrapLongText(doc, question, 20, y)
+            y += 10
+
+            doc.text("Answer:", 15, y)
+            y += 5
+            WrapLongText(doc, info.answer, 20, y)
+            y += 10
+
+            if (!info.score)
             {
-                if (y + lineHeight > pageHeight - pageMargin)
-                {
-                    doc.addPage();
-                    y = pageMargin;
-                }
-                doc.text(line, 10, y);
-                y += lineHeight;
-            });
+                doc.text("Correct Answer:", 15, y)
+                y += 5
+                WrapLongText(doc, info.correct, 20, y)
+                y += 10
+            }
         });
 
         doc.save("test-exam-results.pdf");
-        setTimeout(() => survey.clear(), 3000)
     })
     return <Box height="100%" sx={{ borderRadius: "24px", overflow: "hidden" }}>
         <Survey model={survey} />
     </Box>
+}
+
+function WrapLongText(doc: jsPDF, text: string, x: number = 10, y: number)
+{
+    const pageHeight = doc.internal.pageSize.height || 297; // A4 height in mm
+    const lineHeight = 7;
+    const pageMargin = 10;
+    const lines: string[] = doc.splitTextToSize(text, 180);
+    lines.forEach(line =>
+    {
+        if (y + lineHeight > pageHeight - pageMargin)
+        {
+            doc.addPage();
+            y = pageMargin;
+        }
+        doc.text(line, x, y);
+        y += lineHeight;
+    });
 }
