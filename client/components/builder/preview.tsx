@@ -56,7 +56,8 @@ export default function SchemaPreview()
         y += 10;
 
         doc.setFontSize(14);
-        doc.text(`Total points: ${points} / ${totalPoints}      [ ${((points / totalPoints) * 100)}% ]`, 10, y);
+        let percentage = (Math.round(((points / totalPoints) * 100) * 10) / 10)
+        doc.text(`Total points: ${points} / ${totalPoints}      [ ${percentage}% ]`, 10, y);
         y += 10;
 
         Object.entries(output).forEach(([question, info], index) =>
