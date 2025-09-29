@@ -13,23 +13,32 @@ export default function ExamSession()
     const { socket, meetingCode } = useGlobals()
     const { schemaData } = useSchema()
     const [timer, setTimer] = useState<NodeJS.Timeout>()
+    const [countdown, setCountdown] = useState<NodeJS.Timeout>()
     const [mappedSocket] = useState<Socket<ExamSocketMapping>>(socket)
     const [savePath] = useState<string>("../")
     const [sendingOut, setSendingOut] = useState<boolean>(false)
     const [results, setResults] = useState<ExamResult[]>([])
+    const [timeRemaining, setTimeRemaining] = useState<number>(0)
     const SendOutExam = () =>
     {
         setSendingOut(true)
         if (timer)
         {
-            setTimer(undefined)
             clearTimeout(timer)
+            setTimer(undefined)
         }
+        if (countdown)
+        {
+            clearTimeout(countdown)
+            setCountdown(undefined)
+        }
+        setTimeRemaining(schemaData.timeLimit)
         setTimer(setTimeout(() =>
         {
             StopExam()
             setTimer(undefined)
         }, schemaData.timeLimit * 1000))
+        setInterval(() => setTimeRemaining(prev => prev - 1), 1000);
         mappedSocket.emit("SendOutExam", meetingCode, EncryptSchema(schemaData))
     }
     const StopExam = () =>
@@ -154,7 +163,7 @@ export default function ExamSession()
                 sx={{ borderRadius: "100px" }}
                 onClick={!sendingOut ? SendOutExam : StopExam}>
                 {!sendingOut && "Start Exam"}
-                {sendingOut && "Stop Exam"}
+                {sendingOut && `Stop Exam [ ${timeRemaining} ]`}
             </Button>
         </Box>
     </>
