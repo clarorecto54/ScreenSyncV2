@@ -36,6 +36,7 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
     }, [output, schemaData])
     useEffect(() =>
     {
+        socket.emit("session-loaded", meetingCode)
         const ExamAvailable: ExamSocketMapping["ExamAvailable"] = (targetRoom) =>
             mappedSocket.emit("TakeExam", targetRoom, (schema) =>
             {
