@@ -1,4 +1,4 @@
-import SchemaHeader from "@/components/builder/schemaHeader";
+﻿import SchemaHeader from "@/components/builder/schemaHeader";
 import { useGlobals } from "@/components/hooks/useGlobals";
 import { useSchema } from "@/components/hooks/useSchema";
 import { EncryptSchema } from "@/components/utils/crypto";
@@ -8,8 +8,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 
-export default function ExamSession()
-{
+export default function ExamSession() {
     const { socket, meetingCode } = useGlobals()
     const { schemaData } = useSchema()
     const [timer, setTimer] = useState<NodeJS.Timeout>()
@@ -19,40 +18,33 @@ export default function ExamSession()
     const [sendingOut, setSendingOut] = useState<boolean>(false)
     const [results, setResults] = useState<ExamResult[]>([])
     const [timeRemaining, setTimeRemaining] = useState<number>(0)
-    const SendOutExam = () =>
-    {
+    const SendOutExam = () => {
         setSendingOut(true)
-        if (timer)
-        {
+        if (timer) {
             clearTimeout(timer)
             setTimer(undefined)
         }
-        if (countdown)
-        {
+        if (countdown) {
             clearTimeout(countdown)
             setCountdown(undefined)
         }
         setTimeRemaining(schemaData.timeLimit)
-        setTimer(setTimeout(() =>
-        {
+        setTimer(setTimeout(() => {
             StopExam()
             setTimer(undefined)
         }, schemaData.timeLimit * 1000))
-        setInterval(() => setTimeRemaining(prev => prev - 1), 1000);
+        setCountdown(setInterval(() => setTimeRemaining(prev => prev - 1), 1000));
         mappedSocket.emit("SendOutExam", meetingCode, EncryptSchema(schemaData))
     }
-    const StopExam = () =>
-    {
+    const StopExam = () => {
         setSendingOut(false)
         mappedSocket.emit("StopExam", meetingCode)
     }
-    useEffect(() =>
-    {
+    useEffect(() => {
         const ReceiveResult: ExamSocketMapping["ReceiveResult"] = (result) =>
             setResults(prev => [...prev, result])
         mappedSocket.on("ReceiveResult", ReceiveResult)
-        return () =>
-        {
+        return () => {
             mappedSocket.off("ReceiveResult", ReceiveResult)
         }
     }, [])
@@ -67,7 +59,7 @@ export default function ExamSession()
             alignItems="center"
             overflow="hidden"
         >
-            <Card className="h-full w-full Unselectable flex flex-col" variant="elevation" elevation={2} sx={{ overflow: "hidden" }}>
+            <Card className="Unselectable flex h-full w-full flex-col" variant="elevation" elevation={2} sx={{ overflow: "hidden" }}>
                 <Box>
                     <CardHeader
                         className="transition-all duration-300"
@@ -123,8 +115,7 @@ export default function ExamSession()
                         {results.map(({ name, score, pdf }, index) => <ListItem key={index}
                             secondaryAction={
                                 <IconButton
-                                    onClick={() =>
-                                    {
+                                    onClick={() => {
                                         const blob = new Blob([pdf], { type: "application/pdf" })
                                         const url = URL.createObjectURL(blob)
                                         window.open(url, "_blank")
@@ -157,7 +148,7 @@ export default function ExamSession()
                 color={!sendingOut ? "success" : "error"}
                 variant="contained"
                 size="medium"
-                startIcon={<div className="aspect-square h-[12px] relative whiteOverlay">
+                startIcon={<div className="whiteOverlay relative aspect-square h-[12px]">
                     <Image alt="" fill src={require(`@/public/images/Exam.svg`)} />
                 </div>}
                 sx={{ borderRadius: "100px" }}
