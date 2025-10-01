@@ -1,4 +1,4 @@
-import AnimatedLogo from "@/components/animated.logo"
+﻿import AnimatedLogo from "@/components/animated.logo"
 import classMerge from "@/components/utils/classMerge"
 
 function DefaultDisplay() {
@@ -7,14 +7,13 @@ function DefaultDisplay() {
         className={classMerge(
             "h-full w-full", //? Sizing
             "bg-[#525252]", //? Background presenting ? "bg-[#]" : 
-            "flex flex-col gap-[32px] justify-center items-center Unselectable", //? Display
+            "flex flex-col gap-[8px] justify-center items-center Unselectable", //? Display
             "transition-[background-color] duration-500", //? Animation
         )}>
         <AnimatedLogo size={16} />
         <label //* SCHOOL NAME
-            className="text-center font-[500] text-[20px] font-[Montserrat] leading-[40px]">
-            Technological University of the Philippines <br />
-            Cavite Campus
+            className="font-[500] font-[Montserrat] leading-[40px] text-center text-[20px]">
+            Welcome to Screensync!
         </label>
     </div>
 }
