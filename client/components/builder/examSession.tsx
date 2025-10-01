@@ -122,7 +122,7 @@ export default function ExamSession() {
                                     }}
                                     edge="end"
                                 >
-                                    <Image alt="" fill src={require("@/public/images/[Icon] PDF.svg")} />
+                                    <Image alt="" fill src={require("@/public/images/pdf.svg")} />
                                 </IconButton>
                             }
                             sx={{ fontFamily: "Montserrat", fontWeight: 500 }}
