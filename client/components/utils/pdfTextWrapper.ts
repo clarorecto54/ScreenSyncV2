@@ -8,7 +8,7 @@ export default function WrapLongText(doc: jsPDF, text: string, x: number = 10, y
     const lines: string[] = doc.splitTextToSize(text, 180);
     lines.forEach(line =>
     {
-        if (y + lineHeight > pageHeight - pageMargin)
+        if ((y + lineHeight) > (pageHeight - pageMargin))
         {
             doc.addPage();
             y = pageMargin;
@@ -16,4 +16,5 @@ export default function WrapLongText(doc: jsPDF, text: string, x: number = 10, y
         doc.text(line, x, y);
         y += lineHeight;
     });
+    return y
 }
