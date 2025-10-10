@@ -2,7 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
+@font-face
+{
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-VariableFont_wght.ttf") format("truetype");
+}
+
+@font-face
+{
+  font-family: "Gotham";
+  src: url("/fonts/Gotham/Gotham Light/Gotham Light.otf") format("truetype");
+}
+
+*
+{
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -10,7 +23,8 @@
   padding: 0;
 }
 
-body {
+body
+{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -18,7 +32,8 @@ body {
   width: 100vw;
 }
 
-input {
+input
+{
   outline: none;
 }
 
@@ -34,17 +49,21 @@ input {
   font-size: small !important;
 }
 
-@keyframes spin {
-  to {
+@keyframes spin
+{
+  to
+  {
     transform: rotate(360deg);
   }
 }
 
-.animate-spin {
+.animate-spin
+{
   animation: spin 10s linear infinite;
 }
 
-.Unselectable {
+.Unselectable
+{
   user-select: none;
   -moz-user-select: none;
   -khtml-user-select: none;
@@ -52,20 +71,24 @@ input {
   -o-user-select: none;
 }
 
-.shadow {
+.shadow
+{
   box-shadow: 0px 4px 32px 0px rgba(0, 0, 0, 0.10);
 }
 
-input {
+input
+{
   outline: none;
 }
 
-textarea {
+textarea
+{
   resize: none;
   outline: none;
 }
 
-.panelStyle {
+.panelStyle
+{
   background: hsla(0, 0%, 96%, 0.8);
   /* HOVER COLOR */
   /* background: #f5f5f580; */
@@ -73,29 +96,35 @@ textarea {
 }
 
 /* ----- Custom Overlays ---- */
-.redOverlay {
+.redOverlay
+{
   filter: invert(30%) sepia(46%) saturate(3382%) hue-rotate(343deg) brightness(86%) contrast(91%)
 }
 
-.blueOverlay {
+.blueOverlay
+{
   filter: invert(54%) sepia(34%) saturate(6726%) hue-rotate(163deg) brightness(96%) contrast(101%);
 }
 
-.yellowOverlay {
+.yellowOverlay
+{
   filter: invert(72%) sepia(36%) saturate(2705%) hue-rotate(348deg) brightness(99%) contrast(91%)
 }
 
-.whiteOverlay {
+.whiteOverlay
+{
   filter: invert(99%) sepia(0%) saturate(2703%) hue-rotate(317deg) brightness(107%) contrast(100%)
 }
 
 /* --- SCROLL BAR STYLING --- */
-::-webkit-scrollbar {
+::-webkit-scrollbar
+{
   width: 0.5vw;
   max-width: 4px;
 }
 
-::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb
+{
   border-radius: 999px;
   background-color: gray;
 }
@@ -103,18 +132,22 @@ textarea {
 /* ------ DEBUG STYLING ----- */
 .debug1,
 .debug2,
-.debug3 {
+.debug3
+{
   border: 1px solid;
 }
 
-.debug1 {
+.debug1
+{
   border-color: red;
 }
 
-.debug2 {
+.debug2
+{
   border-color: green;
 }
 
-.debug3 {
+.debug3
+{
   border-color: blue;
 }
