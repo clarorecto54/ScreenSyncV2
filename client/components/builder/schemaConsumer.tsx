@@ -21,6 +21,7 @@ export default function SchemaConsumer()
     const [mappedSocket] = useState<Socket<ExamSocketMapping>>(socket)
     const [points, setPoints] = useState<number>(0)
     const [totalPoints, setTotalPoints] = useState<number>(0)
+    const [autoScrollTimeout, setAutoScrollTimeout] = useState<NodeJS.Timeout>()
     const survey = useMemo(() => new Model(JSON.stringify(schemaData)), [schemaData])
     survey.applyTheme(PlainDark)
     survey.timerInfoMode = "combined"
@@ -28,7 +29,23 @@ export default function SchemaConsumer()
     survey.css.clockTimerMinorText = "sd-timer__text--minor myclockTimerMinorText"
     survey.onStarted.add((sender) => sender.startTimer())
     survey.onCurrentPageChanged.add((sender) => sender.startTimer())
-    survey.onShowingPreview.add((sender) => sender.stopTimer())
+    survey.onShowingPreview.add((sender) =>
+    {
+        sender.stopTimer()
+        setAutoScrollTimeout(
+            setTimeout(() =>
+            {
+                const container = document.querySelector(".sv-scroll__scroller")
+                if (container)
+                {
+                    container.scrollTo({
+                        top: container.scrollHeight,
+                        behavior: "smooth"
+                    })
+                }
+            }, 500)
+        )
+    })
     survey.onCompleting.add((sender) => sender.stopTimer())
     survey.onValueChanged.add((options) =>
     {
@@ -55,6 +72,8 @@ export default function SchemaConsumer()
     {
         sender.stopTimer()
         sender.showTimerPanel = "none"
+        clearTimeout(autoScrollTimeout)
+        setAutoScrollTimeout(undefined)
         setDone(true)
     })
     useEffect(() =>
