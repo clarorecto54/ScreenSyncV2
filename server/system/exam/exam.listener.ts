@@ -86,10 +86,15 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
         const room = RoomList.find(room => room.id === targetRoom)!
         socket.to(room.host.id).emit("ReceiveResult", result)
         const folderPath = `../Exam Results/${result.examName}/${result.subDesc}`
-        const filename = `${(result.name ?? "unkown").toUpperCase()}.pdf`
+        const filename = `${(result.name ?? "unkown").toUpperCase()}`
+        const ext = ".pdf"
+        let filePath = `${folderPath}/${filename}${ext}`
+        let takeCount = 1
         if (!existsSync(folderPath))
             mkdirSync(folderPath, { recursive: true })
-        writeFileSync(`${folderPath}/${filename}`, Buffer.from(result.pdf))
+        while (existsSync(filePath))
+            filePath = `${folderPath}/${filename}_${takeCount++}${ext}`
+        writeFileSync(filePath, Buffer.from(result.pdf))
     })
 }
 
