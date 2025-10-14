@@ -91,6 +91,7 @@ export default function SchemaConsumer()
         if (!done) return
         mappedSocket.emit("SendResult", meetingCode, {
             id: mappedSocket.id!,
+            examId: schemaData.id,
             name: myInfo.name,
             score: points,
             examName: schemaData.title,

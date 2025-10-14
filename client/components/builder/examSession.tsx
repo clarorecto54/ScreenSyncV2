@@ -2,13 +2,14 @@
 import { useGlobals } from "@/components/hooks/useGlobals";
 import { useSchema } from "@/components/hooks/useSchema";
 import { EncryptSchema } from "@/components/utils/crypto";
-import { ExamResult, ExamSocketMapping } from "@/types/Exam.types";
+import { ExamResult, ExamSocketMapping, SchemaMetrics } from "@/types/Exam.types";
 import { Avatar, Box, Card, CardHeader, Chip, Button, Stack, List, ListItem, Divider, ListItemButton, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 
-export default function ExamSession() {
+export default function ExamSession()
+{
     const { socket, meetingCode } = useGlobals()
     const { schemaData } = useSchema()
     const [timer, setTimer] = useState<NodeJS.Timeout>()
@@ -16,37 +17,57 @@ export default function ExamSession() {
     const [mappedSocket] = useState<Socket<ExamSocketMapping>>(socket)
     const [sendingOut, setSendingOut] = useState<boolean>(false)
     const [results, setResults] = useState<ExamResult[]>([])
+    const [metric, setMetric] = useState<SchemaMetrics>({
+        totalTakers: 0,
+        totalScores: 0,
+        avgScore: 0,
+        maxScore: 0,
+        minScore: 0
+    })
     const [timeRemaining, setTimeRemaining] = useState<number>(0)
     const [studentCount, setStudentCount] = useState<number>(0)
-    const SendOutExam = () => {
+    const SendOutExam = () =>
+    {
         setSendingOut(true)
-        if (timer) {
+        if (timer)
+        {
             clearTimeout(timer)
             setTimer(undefined)
         }
-        if (countdown) {
+        if (countdown)
+        {
             clearTimeout(countdown)
             setCountdown(undefined)
         }
         setTimeRemaining(schemaData.timeLimit)
-        setTimer(setTimeout(() => {
+        setTimer(setTimeout(() =>
+        {
             StopExam()
             setTimer(undefined)
         }, schemaData.timeLimit * 1000))
         setCountdown(setInterval(() => setTimeRemaining(prev => prev - 1), 1000));
         mappedSocket.emit("SendOutExam", meetingCode, EncryptSchema(schemaData))
     }
-    const StopExam = () => {
+    const StopExam = () =>
+    {
         setSendingOut(false)
         mappedSocket.emit("StopExam", meetingCode)
     }
-    useEffect(() => {
-        const ReceiveResult: ExamSocketMapping["ReceiveResult"] = (result) =>
-            setResults(prev => [...prev, result])
-        mappedSocket.on("ReceiveResult", ReceiveResult)
-        mappedSocket.on("SendExamStatus", (takersCount) => setStudentCount(takersCount))
-        return () => {
-            mappedSocket.off("ReceiveResult", ReceiveResult)
+    useEffect(() =>
+    {
+        const GetSchemaMetricsCb = (_results: ExamResult[], _metric: SchemaMetrics) =>
+        {
+            setResults(_results)
+            setMetric(_metric)
+        }
+        const SendExamStatus = (takersCount: number) => setStudentCount(takersCount)
+        mappedSocket.emit("GetSchemaMetrics", schemaData.id, GetSchemaMetricsCb)
+        mappedSocket.on("UpdatedSchemaMetrics", GetSchemaMetricsCb)
+        mappedSocket.on("SendExamStatus", SendExamStatus)
+        return () =>
+        {
+        mappedSocket.off("UpdatedSchemaMetrics", GetSchemaMetricsCb)
+        mappedSocket.off("SendExamStatus", SendExamStatus)
         }
     }, [])
     return <>
@@ -80,7 +101,7 @@ export default function ExamSession() {
                                 |
                                 <Chip
                                     size="small"
-                                    label={`${schemaData.pages.length - 1} Question`}
+                                    label={`${schemaData.pages.length - 1} Items`}
                                     sx={{
                                         padding: "4px",
                                         background: "#4b5563",
@@ -93,6 +114,24 @@ export default function ExamSession() {
                                     sx={{
                                         padding: "4px",
                                         background: "#ea580c",
+                                        color: "white"
+                                    }}
+                                />
+                                <Chip
+                                    size="small"
+                                    label={`${metric.totalTakers} Results`}
+                                    sx={{
+                                        padding: "4px",
+                                        background: "#1ab42fff",
+                                        color: "white"
+                                    }}
+                                />
+                                <Chip
+                                    size="small"
+                                    label={`Avg: ${(Math.round(((metric.avgScore / (schemaData.pages.length - 1)) * 100) * 10) / 10)}%`}
+                                    sx={{
+                                        padding: "4px",
+                                        background: "#361ab4ff",
                                         color: "white"
                                     }}
                                 />
@@ -116,7 +155,8 @@ export default function ExamSession() {
                         {results.map(({ name, score, pdf }, index) => <ListItem key={index}
                             secondaryAction={
                                 <IconButton
-                                    onClick={() => {
+                                    onClick={() =>
+                                    {
                                         const blob = new Blob([pdf], { type: "application/pdf" })
                                         const url = URL.createObjectURL(blob)
                                         window.open(url, "_blank")
@@ -137,9 +177,6 @@ export default function ExamSession() {
                                 </Typography>
                             </Stack>
                         </ListItem>)}
-                        {/* {results.map(({ name, score, encryptedPDF }, index) => <List>
-
-                    </List>)} */}
                     </Stack>
                 </Box>
             </Card>
