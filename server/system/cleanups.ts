@@ -20,6 +20,8 @@ export function SocketCleanup() {
     RoomList.forEach(room => {
         room.participants = room.participants.filter(client => activeSockets.includes(client.id))
         room.inactive = room.inactive.filter(client => activeSockets.includes(client.id))
+        room.exam.studentIds = room.exam.studentIds.filter(id => activeSockets.includes(id))
+        io.to(room.host.id).emit("SendExamStatus", room.exam.studentIds.length)
         io.to(room.id).emit("participant-list", room.participants)
         io.to(room.id).emit("inactive-list", room.inactive)
         if (room.pending) {

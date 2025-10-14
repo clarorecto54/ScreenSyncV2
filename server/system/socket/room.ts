@@ -91,7 +91,7 @@ export default function RoomSystem(socket: Socket)
             name: room.host.name,
             time: creationTime
         })
-        room.exam = { active: false, encryptedSchema: "" }
+        room.exam = { active: false, encryptedSchema: "", studentIds: [] }
         RoomList.push(room)
         socket.join(room.id) //? Join the room in socket
         io.local.emit("room-list", RoomList)

@@ -63,13 +63,16 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
         const room = RoomList.find(room => room.id === targetRoom)!
         room.exam = {
             active: true,
-            encryptedSchema
+            encryptedSchema,
+            studentIds: []
         }
         socket.to(targetRoom).emit("ExamAvailable", targetRoom)
     })
     socket.on("TakeExam", (targetRoom, SendExam) =>
     {
         const room = RoomList.find(room => room.id === targetRoom)!
+        room.exam.studentIds.push(socket.id)
+        socket.to(room.host.id).emit("SendExamStatus", room.exam.studentIds.length)
         SendExam(room.exam.encryptedSchema)
     })
     socket.on("StopExam", (targetRoom) =>
@@ -77,13 +80,17 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
         const room = RoomList.find(room => room.id === targetRoom)!
         room.exam = {
             active: false,
-            encryptedSchema: ""
+            encryptedSchema: "",
+            studentIds: []
         }
+        socket.to(room.host.id).emit("SendExamStatus", room.exam.studentIds.length)
         socket.to(targetRoom).emit("StopExam", targetRoom)
     })
     socket.on("SendResult", (targetRoom, result) =>
     {
         const room = RoomList.find(room => room.id === targetRoom)!
+        room.exam.studentIds = room.exam.studentIds.filter(id => id !== socket.id)
+        socket.to(room.host.id).emit("SendExamStatus", room.exam.studentIds.length)
         socket.to(room.host.id).emit("ReceiveResult", result)
         const folderPath = `../Exam Results/${result.examName}/${result.subDesc}`
         const filename = `${(result.name ?? "unkown").toUpperCase()}`

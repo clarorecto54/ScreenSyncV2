@@ -19,6 +19,7 @@ export interface ExamState
 {
     active: boolean
     encryptedSchema: string
+    studentIds: string[]
 }
 export interface AttendanceProps {
     id: string

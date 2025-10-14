@@ -27,6 +27,9 @@ export interface ExamSocketMapping
     ReceiveResult: (
         result: ExamResult
     ) => void
+    SendExamStatus:(
+        studentCount: number
+    )=>void
 }
 
 export interface ExamResult
