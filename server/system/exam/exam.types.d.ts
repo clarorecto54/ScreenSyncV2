@@ -27,14 +27,26 @@ export interface ExamSocketMapping
     ReceiveResult: (
         result: ExamResult
     ) => void
-    SendExamStatus:(
+    SendExamStatus: (
         studentCount: number
-    )=>void
+    ) => void
+    GetSchemaMetrics: (
+        schemaId: string,
+        cb: (
+            results: ExamResult[],
+            metric: SchemaMetrics
+        ) => void
+    ) => void
+    UpdatedSchemaMetrics: (
+        results: ExamResult[],
+        metric: SchemaMetrics
+    ) => void
 }
 
 export interface ExamResult
 {
     id: string
+    examId: string
     name: string
     score: number
     examName: string
@@ -47,8 +59,18 @@ export interface SchemaSavefile
     id: string
     name: string
     subject: string
+    metric: SchemaMetrics
+    results: ExamResult[]
     date: Date
     data: string
+}
+
+export interface SchemaMetrics{
+    totalTakers: number
+    totalScores: number
+    minScore: number
+    avgScore: number
+    maxScore: number
 }
 
 export interface ExamTypes
