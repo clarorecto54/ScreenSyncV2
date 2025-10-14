@@ -14,10 +14,10 @@ export default function ExamSession() {
     const [timer, setTimer] = useState<NodeJS.Timeout>()
     const [countdown, setCountdown] = useState<NodeJS.Timeout>()
     const [mappedSocket] = useState<Socket<ExamSocketMapping>>(socket)
-    const [savePath] = useState<string>("../")
     const [sendingOut, setSendingOut] = useState<boolean>(false)
     const [results, setResults] = useState<ExamResult[]>([])
     const [timeRemaining, setTimeRemaining] = useState<number>(0)
+    const [studentCount, setStudentCount] = useState<number>(0)
     const SendOutExam = () => {
         setSendingOut(true)
         if (timer) {
@@ -44,6 +44,7 @@ export default function ExamSession() {
         const ReceiveResult: ExamSocketMapping["ReceiveResult"] = (result) =>
             setResults(prev => [...prev, result])
         mappedSocket.on("ReceiveResult", ReceiveResult)
+        mappedSocket.on("SendExamStatus", (takersCount) => setStudentCount(takersCount))
         return () => {
             mappedSocket.off("ReceiveResult", ReceiveResult)
         }
@@ -69,7 +70,7 @@ export default function ExamSession() {
                                 <Chip
                                     className="bg-red-500"
                                     size="small"
-                                    label={sendingOut ? "In Session" : "Waiting..."}
+                                    label={sendingOut ? `${studentCount} In Session` : "Waiting..."}
                                     sx={{
                                         padding: "4px",
                                         background: sendingOut ? "#3f6212" : "#ef4444",
