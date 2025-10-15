@@ -1,9 +1,11 @@
 "use client"
-import { ImageQuestion, Question, StandardQuestion } from "@/types/Exam.types"
-import { Card, CardHeader, Avatar, Collapse, CardContent, CardActions, Button, RadioGroup, FormControlLabel, Radio, Typography, Divider, Stack } from "@mui/material"
+import { Element, ImageQuestion, Question, StandardQuestion } from "@/types/Exam.types"
+import { Card, CardHeader, Avatar, Collapse, CardContent, CardActions, Button, RadioGroup, FormControlLabel, Radio, Typography, Divider, Stack, ButtonPropsColorOverrides, ButtonOwnProps } from "@mui/material"
 import { useSchema } from "../hooks/useSchema"
 import Image from "next/image"
 import { useState } from "react"
+import AddQuestion from "@/components/utils/generateQuestion"
+import GenerateRandomBytes from "@/components/utils/randomBytes"
 
 export default function SchemaQuestionPreview({ id, elements, index }: { id: string, elements: Question[], index: number })
 {
@@ -19,6 +21,14 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
             return { ...prev, pages: prev.pages.filter(question => question.id !== id) }
         }
     )
+    const DuplicateQuestion = () => setSchemaData(prev =>
+    {
+        const updatedPages = prev.pages
+        const duplicatedQuestion: Element = AddQuestion(GenerateRandomBytes())
+        duplicatedQuestion.elements = elements
+        updatedPages.push(duplicatedQuestion)
+        return { ...prev, pages: updatedPages }
+    })
     const EditQuestion = () => setQuestionId(() =>
     {
         setBuilderPage("Edit Question")
@@ -116,19 +126,43 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
                     </RadioGroup>
                 </CardContent>}
                 <CardActions sx={{ paddingTop: "16px" }}>
-                    {["Edit", "Delete"].map((value, index) => <Button
-                        key={index}
-                        size="small"
-                        color={value === "Edit" ? "primary" : "error"}
-                        onClick={() => value === "Edit" ? EditQuestion() : DeleteQuestion()}
-                        startIcon={<div className="aspect-square h-[12px] relative whiteOverlay">
-                            <Image alt="" fill src={require(`@/public/images/${value === "Edit" ? "Paint" : "Close 2"}.svg`)} />
-                        </div>}
-                        variant="contained"
-                        sx={{ borderRadius: "100px", paddingX: "16px", paddingY: "4px" }}
-                    >
-                        {value}
-                    </Button>)}
+                    {["Edit", "Duplicate", "Delete"].map((value, index) =>
+                    {
+                        let buttonColor: ButtonOwnProps["color"] = undefined
+                        let buttonIcon: string = ""
+                        let onClickHandler: () => void = () => { }
+                        switch (value)
+                        {
+                            case "Edit":
+                                buttonColor = "primary"
+                                buttonIcon = "Paint"
+                                onClickHandler = EditQuestion
+                                break
+                            case "Duplicate":
+                                buttonColor = "secondary"
+                                buttonIcon = "Copy"
+                                onClickHandler = DuplicateQuestion
+                                break
+                            case "Delete":
+                                buttonColor = "error"
+                                buttonIcon = "Close 2"
+                                onClickHandler = DeleteQuestion
+                                break
+                        }
+                        return <Button
+                            key={index}
+                            size="small"
+                            color={buttonColor}
+                            onClick={onClickHandler}
+                            startIcon={<div className="aspect-square h-[12px] relative whiteOverlay">
+                                <Image alt="" fill src={require(`@/public/images/${buttonIcon}.svg`)} />
+                            </div>}
+                            variant="contained"
+                            sx={{ borderRadius: "100px", paddingX: "16px", paddingY: "4px" }}
+                        >
+                            {value}
+                        </Button>
+                    })}
                 </CardActions>
             </CardContent>
         </Collapse>
