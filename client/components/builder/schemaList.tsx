@@ -1,17 +1,47 @@
-import { Box, Button, Stack, Typography } from "@mui/material"
+import { Box, Button, Stack, TextField, Typography } from "@mui/material"
 import { useExam } from "../hooks/useExam"
 import { useSchema } from "../hooks/useSchema"
 import SchemaHeader from "@/components/builder/schemaHeader"
 import GenerateBaseSchema from "@/components/utils/generateBaseSchema"
 import GenerateSchemaErrorList from "@/components/utils/generateSchemaErrorList"
 import SchemaCard from "@/components/builder/schemaCard"
+import { useEffect, useState } from "react"
+import { ExamProp } from "@/types/Exam.types"
 
 export default function SchemaList()
 {
     const { schemaList } = useExam()
     const { builderMode, setBuilderMode, setBuilderPage, setSchemaData, setSchemaErrors } = useSchema()
+    const [filteredList, setFilteredList] = useState<ExamProp[]>([])
+    const [filter, setFilter] = useState<string>("")
+    useEffect(() =>
+    {
+        if (!filter) return setFilteredList([])
+        setFilteredList(schemaList.filter(schema =>
+        {
+            const words = filter.split(" ").filter(Boolean)
+            const target = schema.title.toLowerCase()
+            if (!target) return false
+            return words.every(word => target.includes(word.toLowerCase()))
+        }))
+    }, [filter, schemaList])
     return <>
         <SchemaHeader />
+        <form
+            autoComplete="off"
+            onSubmit={(element) => element.preventDefault()}
+        >
+            <TextField
+                variant="filled"
+                size="small"
+                name="filter"
+                label="Find schema here..."
+                value={filter}
+                onChange={(element) => setFilter(element.target.value)}
+                fullWidth
+                slotProps={{ htmlInput: { maxLength: 256 } }}
+            />
+        </form>
         <Box
             width="100%"
             height="100%"
@@ -43,11 +73,11 @@ export default function SchemaList()
                         padding={0.5}
                         spacing={2}
                     >
-                        {schemaList.map(
+                        {(filter ? filteredList : schemaList).map(
                             ({ createdOn, lock, id, title, description, password, pages, timeLimit }, index) =>
                                 <SchemaCard
                                     createdOn={createdOn}
-                                    key={index}
+                                    key={id}
                                     lock={lock}
                                     id={id}
                                     title={title}
