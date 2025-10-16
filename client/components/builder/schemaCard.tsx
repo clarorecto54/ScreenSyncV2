@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useSchema } from "@/components/hooks/useSchema";
 import { useExam } from "@/components/hooks/useExam";
 import GenerateSchemaErrorList from "@/components/utils/generateSchemaErrorList";
-import { ExamProp, ExamSocketMapping } from "@/types/Exam.types";
+import { ExamProp, ExamResult, ExamSocketMapping, SchemaMetrics } from "@/types/Exam.types";
 import { useGlobals } from "@/components/hooks/useGlobals";
 import { Socket } from "socket.io-client";
 import HashData from "@/components/utils/crypto";
@@ -22,6 +22,14 @@ const SchemaCard: SchemaCardType = ({ createdOn, lock, id, title, description, p
     const [wrongKey, setWrongKey] = useState<boolean>(false)
     const [schema, setSchema] = useState<ExamProp>({} as ExamProp)
     const [hover, setHover] = useState<boolean>(false)
+    const [results, setResults] = useState<ExamResult[]>([])
+    const [metric, setMetric] = useState<SchemaMetrics>({
+        totalTakers: 0,
+        totalScores: 0,
+        avgScore: 0,
+        maxScore: 0,
+        minScore: 0
+    })
     useEffect(() => setSchema(schemaList.find(schema => schema.id === id)! as ExamProp), [schemaList])
     const StartExam = () =>
     {
@@ -50,6 +58,22 @@ const SchemaCard: SchemaCardType = ({ createdOn, lock, id, title, description, p
         setUnlock(false)
         EditSchema()
     }
+    const GetSchemaMetricsCb = (_results: ExamResult[], _metric: SchemaMetrics) =>
+    {
+        setResults(_results)
+        setMetric({
+            totalTakers: _metric.totalTakers,
+            totalScores: _metric.totalScores,
+            avgScore: (Math.round(((_metric.avgScore / (questions)) * 100) * 10) / 10),
+            minScore: (Math.round(((_metric.minScore / (questions)) * 100) * 10) / 10),
+            maxScore: (Math.round(((_metric.maxScore / (questions)) * 100) * 10) / 10)
+        })
+    }
+    useEffect(() =>
+    {
+        const mappedSocket: Socket<ExamSocketMapping> = socket
+        mappedSocket.emit("GetSchemaMetrics", id, GetSchemaMetricsCb)
+    }, [])
     return <Card
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
@@ -132,37 +156,61 @@ const SchemaCard: SchemaCardType = ({ createdOn, lock, id, title, description, p
                 style={{ paddingTop: 0, paddingBottom: "8px" }}
             >
                 <Collapse in={hover && !unlock} timeout="auto" unmountOnExit sx={{ paddingY: "4px" }}>
-                    <Stack className="Unselectable" flexDirection="row" gap={1} >
-                        <Chip
-                            className="bg-lime-800"
-                            size="small"
-                            label={new Date(createdOn).toLocaleString()}
-                            sx={{
-                                padding: "4px",
-                                background: "#3f6212",
-                                color: "white"
-                            }}
-                        />
-                        <Chip
-                            className="bg-gray-200"
-                            size="small"
-                            label={`${questions} Question`}
-                            sx={{
-                                padding: "4px",
-                                background: "#4b5563",
-                                color: "white"
-                            }}
-                        />
-                        <Chip
-                            className="bg-orange-600"
-                            size="small"
-                            label={`${timeLimit}s Time`}
-                            sx={{
-                                padding: "4px",
-                                background: "#ea580c",
-                                color: "white"
-                            }}
-                        />
+                    <Stack className="Unselectable" flexDirection="column" gap={1}>
+                        <Stack className="Unselectable" flexDirection="row" gap={1} >
+                            <Chip
+                                className="bg-blue-800"
+                                size="small"
+                                label={`${metric.totalTakers} Takers`}
+                                sx={{
+                                    padding: "4px",
+                                    background: "#1e40af",
+                                    color: "white"
+                                }}
+                            />
+                            <Chip
+                                className="bg-black"
+                                size="small"
+                                label={`Avg: ${metric.avgScore}% | Min: ${metric.minScore}% | Max: ${metric.maxScore}%`}
+                                sx={{
+                                    padding: "4px",
+                                    background: "#000000",
+                                    color: "white"
+                                }}
+                            />
+                        </Stack>
+                        <Stack className="Unselectable" flexDirection="row" gap={1} >
+                            <Chip
+                                className="bg-lime-800"
+                                size="small"
+                                label={new Date(createdOn).toLocaleString()}
+                                sx={{
+                                    padding: "4px",
+                                    background: "#3f6212",
+                                    color: "white"
+                                }}
+                            />
+                            <Chip
+                                className="bg-gray-200"
+                                size="small"
+                                label={`${questions} Question`}
+                                sx={{
+                                    padding: "4px",
+                                    background: "#4b5563",
+                                    color: "white"
+                                }}
+                            />
+                            <Chip
+                                className="bg-orange-600"
+                                size="small"
+                                label={`${timeLimit}s Time`}
+                                sx={{
+                                    padding: "4px",
+                                    background: "#ea580c",
+                                    color: "white"
+                                }}
+                            />
+                        </Stack>
                     </Stack>
                 </Collapse>
                 <CardActions sx={{ paddingTop: "8px", paddingX: 0 }}>
