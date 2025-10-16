@@ -2,7 +2,7 @@
 import { useGlobals } from "@/components/hooks/useGlobals";
 import { useSchema } from "@/components/hooks/useSchema";
 import { EncryptSchema } from "@/components/utils/crypto";
-import { ExamResult, ExamSocketMapping, SchemaMetrics } from "@/types/Exam.types";
+import { ExamResult, ExamSocketMapping, PDFBuffer, SchemaMetrics } from "@/types/Exam.types";
 import { Avatar, Box, Card, CardHeader, Chip, Button, Stack, List, ListItem, Divider, ListItemButton, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -66,8 +66,8 @@ export default function ExamSession()
         mappedSocket.on("SendExamStatus", SendExamStatus)
         return () =>
         {
-        mappedSocket.off("UpdatedSchemaMetrics", GetSchemaMetricsCb)
-        mappedSocket.off("SendExamStatus", SendExamStatus)
+            mappedSocket.off("UpdatedSchemaMetrics", GetSchemaMetricsCb)
+            mappedSocket.off("SendExamStatus", SendExamStatus)
         }
     }, [])
     return <>
@@ -157,6 +157,13 @@ export default function ExamSession()
                                 <IconButton
                                     onClick={() =>
                                     {
+                                        if (pdf && (pdf as any).data)
+                                        {
+                                            const uint8 = Uint8Array.from((pdf as any).data)
+                                            const blob = new Blob([uint8], { type: "application/pdf" })
+                                            const url = URL.createObjectURL(blob)
+                                            return window.open(url, "_blank")
+                                        }
                                         const blob = new Blob([pdf], { type: "application/pdf" })
                                         const url = URL.createObjectURL(blob)
                                         window.open(url, "_blank")
