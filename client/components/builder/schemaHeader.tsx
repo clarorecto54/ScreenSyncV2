@@ -1,4 +1,4 @@
-import { Button, CardHeader } from "@mui/material"
+import { Button, CardHeader, Menu, MenuItem } from "@mui/material"
 import { useSchema } from "../hooks/useSchema"
 import AddQuestion from "../utils/generateQuestion"
 import { QuestionErrors, SchemaPage, SchemaValidableKeys } from "@/types/Schema.types"
@@ -13,6 +13,19 @@ export default function SchemaHeader()
     const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId, setSchemaErrors, setSessionMode } = useSchema()
     const { hasSchemaErrors } = useCustomHooks()
     const [globalError, setGlobalError] = useState<string | undefined>(undefined)
+    const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null)
+    const AddQuestionHandler = () =>
+    {
+        const questionId = GenerateRandomBytes()
+        setQuestionId(questionId)
+        setSchemaData(prev =>
+        {
+            const updatedPages = prev.pages
+            updatedPages.push(AddQuestion(questionId))
+            return { ...prev, pages: updatedPages }
+        })
+        setBuilderPage("Edit Question")
+    }
     useEffect(() => setGlobalError((Object.keys(schemaErrors ?? {}) as SchemaValidableKeys[])
         .map(key =>
         {
@@ -62,36 +75,54 @@ export default function SchemaHeader()
         title={builderPage}
         subheader={globalError}
         action={
-            !(["Edit Question", "Exam Session"] as SchemaPage[]).some(page => page === builderPage) && <Button
-                sx={{ background: "#9333ea" }}
-                variant="contained"
-                size="small"
-                onClick={() =>
-                {
-                    switch (builderPage)
+            !(["Edit Question", "Exam Session"] as SchemaPage[]).some(page => page === builderPage) && <>
+                <Button
+                    sx={{ background: "#9333ea" }}
+                    variant="contained"
+                    size="small"
+                    onClick={(element) =>
                     {
-                        case "Schema List":
-                            setBuilderMode(true)
-                            setBuilderPage("Schema Properties")
-                            setSchemaErrors(GenerateSchemaErrorList())
-                            return setSchemaData(GenerateBaseSchema())
-                        case "Schema Properties": return setBuilderPage("Questions")
-                        case "Questions":
-                            const questionId = GenerateRandomBytes()
-                            setQuestionId(questionId)
-                            setSchemaData(prev =>
-                            {
-                                const updatedPages = prev.pages
-                                updatedPages.push(AddQuestion(questionId))
-                                return { ...prev, pages: updatedPages }
-                            })
-                            return setBuilderPage("Edit Question")
-                    }
-                }}>
-                {builderPage === "Schema List" && "Add Schema"}
-                {builderPage === "Schema Properties" && "Questions"}
-                {builderPage === "Questions" && "Add Question"}
-            </Button>
+                        switch (builderPage)
+                        {
+                            case "Schema List":
+                                setBuilderMode(true)
+                                setBuilderPage("Schema Properties")
+                                setSchemaErrors(GenerateSchemaErrorList())
+                                return setSchemaData(GenerateBaseSchema())
+                            case "Schema Properties": return setBuilderPage("Questions")
+                            case "Questions":
+                                return setAnchorElement(element.currentTarget)
+                        }
+                    }}>
+                    {builderPage === "Schema List" && "Add Schema"}
+                    {builderPage === "Schema Properties" && "Questions"}
+                    {builderPage === "Questions" && "Options"}
+                </Button>
+                <Menu
+                    anchorEl={anchorElement}
+                    open={Boolean(anchorElement)}
+                    onClose={() => setAnchorElement(null)}
+                    anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "center"
+                    }}
+                    transformOrigin={{
+                        vertical: "top",
+                        horizontal: "center"
+                    }}
+                >
+                    <MenuItem onClick={() =>
+                    {
+                        setAnchorElement(null)
+                        AddQuestionHandler()
+                    }} sx={{ fontSize: "11pt", py: "4px", px: "8px" }}>
+                        Add Question
+                    </MenuItem>
+                    <MenuItem onClick={() => setAnchorElement(null)} sx={{ fontSize: "11pt", py: "4px", px: "8px" }}>
+                        Import Question
+                    </MenuItem>
+                </Menu>
+            </>
         }
         slotProps={{
             avatar: {
