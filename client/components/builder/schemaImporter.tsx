@@ -5,16 +5,16 @@ import { Element } from "@/types/Exam.types"
 import { Box, TextField, Typography, Button, Stack } from "@mui/material"
 import { useEffect, useState } from "react"
 
-export default function SchemaImporter()
+export default function SchemaImporter({ confirmation = false }: { confirmation?: boolean })
 {
-    // TODO : Edit the SchemaQuestionPreview to accept import mode
     const { schemaList } = useExam()
-    const { schemaData } = useSchema()
+    const { schemaData, imports } = useSchema()
     const [questionList, setQuestionList] = useState<Element[]>([])
     const [filteredList, setFilteredList] = useState<Element[]>([])
     const [filter, setFilter] = useState<string>("")
     const GetAllQuestions = () =>
     {
+        if (confirmation) return
         let allQuestions: Element[] = []
         schemaList.forEach(schema =>
         {
@@ -23,10 +23,23 @@ export default function SchemaImporter()
         })
         setQuestionList(allQuestions)
     }
+    const ImportQuestions = () =>
+    {
+        if (!confirmation) return
+        const importedIds: string[] = Object.keys(imports)
+        let allQuestions: Element[] = []
+        schemaList.forEach(schema =>
+        {
+            const importedQuestion = schema.pages.find(page => importedIds.includes(page.id))
+            if (importedQuestion) allQuestions.push(importedQuestion)
+        })
+        setQuestionList(allQuestions)
+    }
     useEffect(() =>
     {
         GetAllQuestions()
     }, [])
+    useEffect(() => ImportQuestions(), [imports])
     useEffect(() =>
     {
         if (!filter) return setFilteredList([])

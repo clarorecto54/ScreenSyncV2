@@ -10,7 +10,7 @@ import useCustomHooks from "@/components/utils/customHooks"
 
 export default function SchemaHeader()
 {
-    const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId, setSchemaErrors, setSessionMode, setImports } = useSchema()
+    const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId, setSchemaErrors, setSessionMode, imports, setImports } = useSchema()
     const { hasSchemaErrors } = useCustomHooks()
     const [globalError, setGlobalError] = useState<string | undefined>(undefined)
     const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null)
@@ -67,8 +67,18 @@ export default function SchemaHeader()
                             setSchemaErrors(GenerateSchemaErrorList())
                             return setSchemaData(GenerateBaseSchema())
                         case "Import Question":
+                            setSchemaData(prevSchema =>
+                            {
+                                const imported = Object.values(imports)
+                                if (imported.length === 0) return prevSchema
+                                const updatedSchema = prevSchema
+                                updatedSchema.pages = updatedSchema.pages.filter(page => imported.some(element => element.id !== page.id))
+                                return updatedSchema
+                            })
                             setImports({})
                             return setBuilderPage("Questions")
+                        case "Confirm Import":
+                            return setBuilderPage("Import Question")
                     }
                 }}
             >
@@ -95,11 +105,19 @@ export default function SchemaHeader()
                             case "Schema Properties": return setBuilderPage("Questions")
                             case "Questions":
                                 return setAnchorElement(element.currentTarget)
+                            case "Import Question":
+                                if (Object.keys(imports).length < 1) return
+                                return setBuilderPage("Confirm Import")
+                            case "Confirm Import":
+                                setImports({})
+                                return setBuilderPage("Questions")
                         }
                     }}>
                     {builderPage === "Schema List" && "Add Schema"}
                     {builderPage === "Schema Properties" && "Questions"}
                     {builderPage === "Questions" && "Options"}
+                    {builderPage === "Import Question" && `${Object.keys(imports).length} Items`}
+                    {builderPage === "Confirm Import" && "APPLY"}
                 </Button>
                 <Menu
                     anchorEl={anchorElement}

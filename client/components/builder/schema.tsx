@@ -21,6 +21,7 @@ export default function SchemaBuilder()
         {builderPage === "Questions" && <SchemaQuestionList />}
         {builderPage === "Edit Question" && <SchemaQuestionBuilder />}
         {builderPage === "Import Question" && <SchemaImporter />}
+        {builderPage === "Confirm Import" && <SchemaImporter confirmation />}
         <Box display={"flex"} alignItems={"center"} justifyContent={"center"} paddingBottom={"4px"}>
             <Button
                 disabled={hasSchemaErrors() || hasMissingfields()}
