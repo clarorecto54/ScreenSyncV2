@@ -1,7 +1,7 @@
 import SchemaQuestionPreview from "@/components/builder/questionPreview"
 import { useExam } from "@/components/hooks/useExam"
 import { useSchema } from "@/components/hooks/useSchema"
-import { Element } from "@/types/Exam.types"
+import { Element, StandardQuestion } from "@/types/Exam.types"
 import { Box, TextField, Typography, Button, Stack } from "@mui/material"
 import { useEffect, useState } from "react"
 
@@ -46,7 +46,7 @@ export default function SchemaImporter({ confirmation = false }: { confirmation?
         setFilteredList(questionList.filter(question =>
         {
             const words = filter.split(" ").filter(Boolean)
-            const target = question.elements.find(element => element.type === "radiogroup")!
+            const target = question.elements.find(element => element.type === "radiogroup")! as StandardQuestion
             const quest = target.title
             if (!quest) return false
             return words.every(word => quest.includes(word))

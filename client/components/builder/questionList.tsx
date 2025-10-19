@@ -2,7 +2,7 @@ import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { useSchema } from "../hooks/useSchema";
 import AddQuestion from "../utils/generateQuestion";
 import { useEffect, useState } from "react";
-import { Element } from "@/types/Exam.types";
+import { Element, StandardQuestion } from "@/types/Exam.types";
 import SchemaQuestionPreview from "./questionPreview";
 import GenerateRandomBytes from "@/components/utils/randomBytes";
 
@@ -19,7 +19,7 @@ export default function SchemaQuestionList()
         setFilteredList(questionList.filter(question =>
         {
             const words = filter.split(" ").filter(Boolean)
-            const target = question.elements.find(element => element.type === "radiogroup")!
+            const target = question.elements.find(element => element.type === "radiogroup")! as StandardQuestion
             const quest = target.title
             if (!quest) return false
             return words.every(word => quest.includes(word))
