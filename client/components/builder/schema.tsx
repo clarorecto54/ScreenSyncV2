@@ -8,6 +8,7 @@ import useCustomHooks from "@/components/utils/customHooks"
 import { useGlobals } from "@/components/hooks/useGlobals"
 import { Socket } from "socket.io-client"
 import { ExamSocketMapping } from "@/types/Exam.types"
+import SchemaImporter from "@/components/builder/schemaImporter"
 
 export default function SchemaBuilder()
 {
@@ -19,6 +20,7 @@ export default function SchemaBuilder()
         {builderPage === "Schema Properties" && <SchemaPropBuilder />}
         {builderPage === "Questions" && <SchemaQuestionList />}
         {builderPage === "Edit Question" && <SchemaQuestionBuilder />}
+        {builderPage === "Import Question" && <SchemaImporter />}
         <Box display={"flex"} alignItems={"center"} justifyContent={"center"} paddingBottom={"4px"}>
             <Button
                 disabled={hasSchemaErrors() || hasMissingfields()}

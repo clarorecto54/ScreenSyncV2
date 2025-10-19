@@ -3,14 +3,25 @@ import { Element, ImageQuestion, Question, StandardQuestion } from "@/types/Exam
 import { Card, CardHeader, Avatar, Collapse, CardContent, CardActions, Button, RadioGroup, FormControlLabel, Radio, Typography, Divider, Stack, ButtonPropsColorOverrides, ButtonOwnProps } from "@mui/material"
 import { useSchema } from "../hooks/useSchema"
 import Image from "next/image"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import AddQuestion from "@/components/utils/generateQuestion"
 import GenerateRandomBytes from "@/components/utils/randomBytes"
+import { useExam } from "@/components/hooks/useExam"
 
-export default function SchemaQuestionPreview({ id, elements, index }: { id: string, elements: Question[], index: number })
+export default function SchemaQuestionPreview({
+    id, elements, index, isImport = false
+}: {
+    id: string
+    elements: Question[]
+    index: number
+    isImport?: boolean
+})
 {
-    const { schemaErrors, setSchemaData, setBuilderPage, setQuestionId, setSchemaErrors } = useSchema()
+    const { schemaList } = useExam()
+    const { schemaErrors, setSchemaData, setBuilderPage, setQuestionId, setSchemaErrors, imports, setImports } = useSchema()
     const [hover, setHover] = useState<boolean>(false)
+    const [sourceSchema, setSourceSchema] = useState<string>("")
+    const [sourceSubject, setSourceSubject] = useState<string>("")
     const [imgElement] = useState<ImageQuestion>(elements.find(element => element.type === "image")! as ImageQuestion)
     const [element] = useState<StandardQuestion>(elements.find(element => element.type === "radiogroup")! as StandardQuestion)
     const [questionError] = useState(schemaErrors.QuestionsError.find(question => question.id === id))
@@ -34,6 +45,17 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
         setBuilderPage("Edit Question")
         return id
     })
+    const GetSourceSchema = () =>
+    {
+        const target = schemaList.find(schema => schema.pages.find(page => page.id === id))!
+        setSourceSchema(target.title)
+        setSourceSubject(target.description)
+    }
+    useEffect(() =>
+    {
+        if (!isImport) return
+        GetSourceSchema()
+    }, [isImport])
     return <Card
         key={index}
         onMouseEnter={() => setHover(true)}
@@ -43,7 +65,7 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
         <CardHeader
             className="transition-all duration-300"
             title={element.title || "Question"}
-            subheader={questionError?.error}
+            subheader={(isImport ? `${sourceSchema} -> ${sourceSubject}` : questionError?.error)}
             avatar={<Avatar
                 sx={{
                     height: "24px", width: "24px", background: "none",
@@ -90,7 +112,7 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
                             CHOICES
                         </Typography>
                     </Divider>
-                    <RadioGroup sx={{
+                    {!isImport && <RadioGroup sx={{
                         paddingLeft: "8px",
                         maxHeight: "128px",
                         display: "flex",
@@ -124,9 +146,21 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
                                     />
                                 } />)}
                     </RadioGroup>
+                    }
+                    {isImport && <Stack
+                        display="flex"
+                        flexDirection="column"
+                        gap={1}
+                    >
+                        {element.choices.map((choice, index) => <label
+                            key={index}
+                        >
+                            {element.correctAnswer === choice && "✔"} {choice}
+                        </label>)}
+                    </Stack>}
                 </CardContent>}
                 <CardActions sx={{ paddingTop: "16px" }}>
-                    {["Edit", "Duplicate", "Delete"].map((value, index) =>
+                    {!isImport && ["Edit", "Duplicate", "Delete"].map((value, index) =>
                     {
                         let buttonColor: ButtonOwnProps["color"] = undefined
                         let buttonIcon: string = ""
@@ -163,6 +197,68 @@ export default function SchemaQuestionPreview({ id, elements, index }: { id: str
                             {value}
                         </Button>
                     })}
+                    {
+                        isImport && ["Import", "Remove"].map((value, index) =>
+                        {
+                            let buttonColor: ButtonOwnProps["color"] = undefined
+                            let buttonIcon: string = ""
+                            let onClickHandler: () => void = () => { }
+                            const imported = Object.keys(imports)
+                            switch (value)
+                            {
+                                case "Import":
+                                    if (imported.some(importId => importId === id)) return
+                                    buttonColor = "primary"
+                                    buttonIcon = "Check"
+                                    onClickHandler = () =>
+                                        setImports(prev =>
+                                        {
+                                            const updatedImports = { ...prev }
+                                            const question = AddQuestion(GenerateRandomBytes())
+                                            question.elements = elements
+                                            setSchemaData(prevSchema =>
+                                            {
+                                                const updatedSchema = prevSchema
+                                                updatedSchema.pages.push(question)
+                                                return updatedSchema
+                                            })
+                                            updatedImports[id] = question
+                                            return updatedImports
+                                        })
+                                    break
+                                case "Remove":
+                                    if (!imported.some(importId => importId === id)) return
+                                    buttonColor = "error"
+                                    buttonIcon = "Close 2"
+                                    onClickHandler = () => setImports(prev =>
+                                    {
+                                        const updatedImports = { ...prev }
+                                        setSchemaData(prevSchema =>
+                                        {
+                                            const updatedSchema = prevSchema
+                                            updatedSchema.pages = updatedSchema.pages.filter(page => page.id !== updatedImports[id].id)
+                                            return updatedSchema
+                                        })
+                                        delete updatedImports[id]
+                                        return updatedImports
+                                    })
+                                    break
+                            }
+                            return <Button
+                                key={index}
+                                size="small"
+                                color={buttonColor}
+                                onClick={onClickHandler}
+                                startIcon={<div className="aspect-square h-[12px] relative whiteOverlay">
+                                    <Image alt="" fill src={require(`@/public/images/${buttonIcon}.svg`)} />
+                                </div>}
+                                variant="contained"
+                                sx={{ borderRadius: "100px", paddingX: "16px", paddingY: "4px" }}
+                            >
+                                {value}
+                            </Button>
+                        })
+                    }
                 </CardActions>
             </CardContent>
         </Collapse>

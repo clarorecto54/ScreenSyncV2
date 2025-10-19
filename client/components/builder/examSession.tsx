@@ -2,7 +2,7 @@
 import { useGlobals } from "@/components/hooks/useGlobals";
 import { useSchema } from "@/components/hooks/useSchema";
 import { EncryptSchema } from "@/components/utils/crypto";
-import { ExamResult, ExamSocketMapping, PDFBuffer, SchemaMetrics } from "@/types/Exam.types";
+import { ExamResult, ExamSocketMapping, SchemaMetrics } from "@/types/Exam.types";
 import { Avatar, Box, Card, CardHeader, Chip, Button, Stack, List, ListItem, Divider, ListItemButton, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import { useEffect, useState } from "react";

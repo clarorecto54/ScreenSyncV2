@@ -1,8 +1,8 @@
 import React, { Dispatch, SetStateAction } from "react"
-import { ExamProp, StandardQuestion } from "./Exam.types"
+import { Element, ExamProp, StandardQuestion } from "./Exam.types"
 import { ChipProps, ListItemProps } from "@mui/material"
 
-export type SchemaPage = "Schema List" | "Schema Properties" | "Questions" | "Edit Question" | "Exam Session"
+export type SchemaPage = "Schema List" | "Schema Properties" | "Questions" | "Edit Question" | "Exam Session" | "Import Question"
 
 export type SchemaCardType = (
     {
@@ -62,6 +62,8 @@ export interface SchemaTypes
     setBuilderPage: Dispatch<SetStateAction<SchemaPage>>
     questionId: string
     setQuestionId: Dispatch<SetStateAction<string>>
+    imports: Record<string, Element>
+    setImports: Dispatch<SetStateAction<Record<string, Element>>>
 }
 
 export type SchemaValidableKeys = Extract<keyof SchemaErrors, keyof ExamProp>

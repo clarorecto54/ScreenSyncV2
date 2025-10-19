@@ -10,7 +10,7 @@ import useCustomHooks from "@/components/utils/customHooks"
 
 export default function SchemaHeader()
 {
-    const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId, setSchemaErrors, setSessionMode } = useSchema()
+    const { setBuilderMode, setBuilderPage, builderPage, schemaErrors, setSchemaData, setQuestionId, setSchemaErrors, setSessionMode, setImports } = useSchema()
     const { hasSchemaErrors } = useCustomHooks()
     const [globalError, setGlobalError] = useState<string | undefined>(undefined)
     const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null)
@@ -66,6 +66,9 @@ export default function SchemaHeader()
                             setBuilderMode(false)
                             setSchemaErrors(GenerateSchemaErrorList())
                             return setSchemaData(GenerateBaseSchema())
+                        case "Import Question":
+                            setImports({})
+                            return setBuilderPage("Questions")
                     }
                 }}
             >
@@ -111,14 +114,22 @@ export default function SchemaHeader()
                         horizontal: "center"
                     }}
                 >
-                    <MenuItem onClick={() =>
-                    {
-                        setAnchorElement(null)
-                        AddQuestionHandler()
-                    }} sx={{ fontSize: "11pt", py: "4px", px: "8px" }}>
+                    <MenuItem
+                        onClick={() =>
+                        {
+                            setAnchorElement(null)
+                            AddQuestionHandler()
+                        }}
+                        sx={{ fontSize: "11pt", py: "4px", px: "8px" }}>
                         Add Question
                     </MenuItem>
-                    <MenuItem onClick={() => setAnchorElement(null)} sx={{ fontSize: "11pt", py: "4px", px: "8px" }}>
+                    <MenuItem
+                        onClick={() =>
+                        {
+                            setAnchorElement(null)
+                            setBuilderPage("Import Question")
+                        }}
+                        sx={{ fontSize: "11pt", py: "4px", px: "8px" }}>
                         Import Question
                     </MenuItem>
                 </Menu>

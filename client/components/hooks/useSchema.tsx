@@ -1,5 +1,5 @@
 "use client"
-import { ExamProp, ExamSocketMapping } from "@/types/Exam.types";
+import { ExamProp, ExamSocketMapping, Element } from "@/types/Exam.types";
 import { OutputType, SchemaErrors, SchemaPage, SchemaTypes } from "@/types/Schema.types";
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { BuilderPageListener, SchemaDataListener } from "../utils/listeners";
@@ -29,6 +29,7 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
     const schemaDataRef = useRef(schemaData)
     const [questionId, setQuestionId] = useState<string>("")
     const [schemaErrors, setSchemaErrors] = useState<SchemaErrors>(GenerateSchemaErrorList())
+    const [imports, setImports] = useState<Record<string, Element>>({})
     useEffect(() =>
     {
         outputRef.current = output
@@ -93,6 +94,7 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
         schemaData, setSchemaData,
         questionId, setQuestionId,
         schemaErrors, setSchemaErrors,
+        imports, setImports,
     }
     return <context.Provider value={defaultValues}>
         {children}
