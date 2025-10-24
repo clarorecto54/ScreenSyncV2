@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useSchema } from "@/components/hooks/useSchema";
 import { useExam } from "@/components/hooks/useExam";
 import GenerateSchemaErrorList from "@/components/utils/generateSchemaErrorList";
-import { ExamProp, ExamResult, ExamSocketMapping, SchemaMetrics } from "@/types/Exam.types";
+import { ExamMetric, ExamProp, ExamResult, ExamSocketMapping, SchemaMetrics } from "@/types/Exam.types";
 import { useGlobals } from "@/components/hooks/useGlobals";
 import { Socket } from "socket.io-client";
 import HashData from "@/components/utils/crypto";
@@ -15,22 +15,29 @@ import { StaticImport } from "next/dist/shared/lib/get-img-props";
 const SchemaCard: SchemaCardType = ({ createdOn, lock, id, title, description, password, questions, timeLimit }) =>
 {
     const { socket } = useGlobals()
-    const { schemaList } = useExam()
+    const { schemaList, schemaResults, schemaMetrics } = useExam()
     const { setBuilderMode, setBuilderPage, setSchemaErrors, setSchemaData, setSessionMode } = useSchema()
     const [unlock, setUnlock] = useState<boolean>(false)
     const [key, setKey] = useState<string>("")
     const [wrongKey, setWrongKey] = useState<boolean>(false)
     const [schema, setSchema] = useState<ExamProp>({} as ExamProp)
     const [hover, setHover] = useState<boolean>(false)
-    const [results, setResults] = useState<ExamResult[]>([])
-    const [metric, setMetric] = useState<SchemaMetrics>({
-        totalTakers: 0,
-        totalScores: 0,
-        avgScore: 0,
-        maxScore: 0,
-        minScore: 0
-    })
     useEffect(() => setSchema(schemaList.find(schema => schema.id === id)! as ExamProp), [schemaList])
+    // const ApplyResults = () => schemaResults.find(target => target.id === id)!.result
+    // const [results] = useState<ExamResult[]>(ApplyResults)
+    const ApplyMetrics = () =>
+    {
+        const data: ExamMetric = schemaMetrics.find(target => target.id === id)!.metric
+        const res: ExamMetric = {
+            totalTakers: data.totalTakers,
+            totalScores: data.totalScores,
+            avgScore: (Math.round(((data.avgScore / (questions)) * 100) * 10) / 10),
+            minScore: (Math.round(((data.minScore / (questions)) * 100) * 10) / 10),
+            maxScore: (Math.round(((data.maxScore / (questions)) * 100) * 10) / 10)
+        }
+        return res
+    }
+    const [metric, setMetric] = useState<ExamMetric>(ApplyMetrics)
     const StartExam = () =>
     {
         setSessionMode(true)
@@ -58,22 +65,23 @@ const SchemaCard: SchemaCardType = ({ createdOn, lock, id, title, description, p
         setUnlock(false)
         EditSchema()
     }
-    const GetSchemaMetricsCb = (_results: ExamResult[], _metric: SchemaMetrics) =>
-    {
-        setResults(_results)
-        setMetric({
-            totalTakers: _metric.totalTakers,
-            totalScores: _metric.totalScores,
-            avgScore: (Math.round(((_metric.avgScore / (questions)) * 100) * 10) / 10),
-            minScore: (Math.round(((_metric.minScore / (questions)) * 100) * 10) / 10),
-            maxScore: (Math.round(((_metric.maxScore / (questions)) * 100) * 10) / 10)
-        })
-    }
+    // const GetSchemaMetricsCb = (_results: ExamResult[], _metric: ExamMetric) =>
+    // {
+    //     setResults(_results)
+    //     setMetric({
+    //         totalTakers: _metric.totalTakers,
+    //         totalScores: _metric.totalScores,
+    //         avgScore: (Math.round(((_metric.avgScore / (questions)) * 100) * 10) / 10),
+    //         minScore: (Math.round(((_metric.minScore / (questions)) * 100) * 10) / 10),
+    //         maxScore: (Math.round(((_metric.maxScore / (questions)) * 100) * 10) / 10)
+    //     })
+    // }
     useEffect(() =>
     {
         const mappedSocket: Socket<ExamSocketMapping> = socket
-        mappedSocket.emit("GetSchemaMetrics", id, GetSchemaMetricsCb)
+        // mappedSocket.emit("GetSchemaMetrics", id, GetSchemaMetricsCb)
     }, [])
+    useEffect(() => setMetric(ApplyMetrics), [schemaMetrics])
     return <Card
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}

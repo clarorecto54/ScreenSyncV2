@@ -8,6 +8,10 @@ export interface ExamTypes
     setBuilderMode: Dispatch<SetStateAction<boolean>>
     schemaList: ExamProp[]
     setSchemaList: Dispatch<SetStateAction<ExamProp[]>>
+    schemaResults: SchemaResults[]
+    setSchemaResults: Dispatch<SetStateAction<SchemaResults[]>>
+    schemaMetrics: SchemaMetrics[]
+    setSchemaMetrics: Dispatch<SetStateAction<SchemaMetrics[]>>
 }
 
 export interface ExamSocketMapping
@@ -15,7 +19,7 @@ export interface ExamSocketMapping
     SaveSchema: (schema: ExamProp) => void
     DeleteSchema: (schema: ExamProp) => void
     GetSchema: (
-        SendSchema: (schemaList: ExamProp[]) => void
+        SendSchema: (schemaList: ExamProp[], schemaResult: SchemaResults[], schemaMetric: SchemaMetrics[]) => void
     ) => void
     UpdatedSchema: () => void
     SendOutExam: (
@@ -44,16 +48,16 @@ export interface ExamSocketMapping
         schemaId: string,
         cb: (
             results: ExamResult[],
-            metric: SchemaMetrics
+            metric: ExamMetric
         ) => void
     ) => void
     UpdatedSchemaMetrics: (
         results: ExamResult[],
-        metric: SchemaMetrics
+        metric: ExamMetric
     ) => void
 }
 
-export interface SchemaMetrics{
+export interface ExamMetric{
     totalTakers: number
     totalScores: number
     minScore: number
@@ -102,6 +106,16 @@ export type ExamProp = {
     questionsOnPageMode?: "singlePage" | "questionPerPage" | "inputPerPage" | "standard"
     completedHtml?: string
     completedHtmlOnCondition?: ExamHtmlCondition[]
+}
+
+export interface SchemaResults{
+    id: string
+    result: ExamResult[]
+}
+
+export interface SchemaMetrics{
+    id: string
+    metric: ExamMetric
 }
 
 export type HtmlElement = {

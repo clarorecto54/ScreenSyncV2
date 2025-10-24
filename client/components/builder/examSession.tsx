@@ -1,8 +1,9 @@
 ﻿import SchemaHeader from "@/components/builder/schemaHeader";
+import { useExam } from "@/components/hooks/useExam";
 import { useGlobals } from "@/components/hooks/useGlobals";
 import { useSchema } from "@/components/hooks/useSchema";
 import { EncryptSchema } from "@/components/utils/crypto";
-import { ExamResult, ExamSocketMapping, SchemaMetrics } from "@/types/Exam.types";
+import { ExamMetric, ExamResult, ExamSocketMapping, SchemaMetrics } from "@/types/Exam.types";
 import { Avatar, Box, Card, CardHeader, Chip, Button, Stack, List, ListItem, Divider, ListItemButton, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -11,19 +12,14 @@ import { Socket } from "socket.io-client";
 export default function ExamSession()
 {
     const { socket, meetingCode } = useGlobals()
+    const { schemaResults, schemaMetrics } = useExam()
     const { schemaData } = useSchema()
     const [timer, setTimer] = useState<NodeJS.Timeout>()
     const [countdown, setCountdown] = useState<NodeJS.Timeout>()
     const [mappedSocket] = useState<Socket<ExamSocketMapping>>(socket)
     const [sendingOut, setSendingOut] = useState<boolean>(false)
-    const [results, setResults] = useState<ExamResult[]>([])
-    const [metric, setMetric] = useState<SchemaMetrics>({
-        totalTakers: 0,
-        totalScores: 0,
-        avgScore: 0,
-        maxScore: 0,
-        minScore: 0
-    })
+    const [results, setResults] = useState<ExamResult[]>(() => schemaResults.find(target => target.id === schemaData.id)!.result)
+    const [metric, setMetric] = useState<ExamMetric>(() => schemaMetrics.find(target => target.id === schemaData.id)!.metric)
     const [timeRemaining, setTimeRemaining] = useState<number>(0)
     const [studentCount, setStudentCount] = useState<number>(0)
     const SendOutExam = () =>
@@ -53,20 +49,24 @@ export default function ExamSession()
         setSendingOut(false)
         mappedSocket.emit("StopExam", meetingCode)
     }
+    useEffect(()=>{
+        setResults(schemaResults.find(target => target.id === schemaData.id)!.result)
+        setMetric(schemaMetrics.find(target => target.id === schemaData.id)!.metric)
+    },[schemaResults,schemaMetrics])
     useEffect(() =>
     {
-        const GetSchemaMetricsCb = (_results: ExamResult[], _metric: SchemaMetrics) =>
-        {
-            setResults(_results)
-            setMetric(_metric)
-        }
+        // const GetSchemaMetricsCb = (_results: ExamResult[], _metric: SchemaMetrics) =>
+        // {
+        //     setResults(_results)
+        //     setMetric(_metric)
+        // }
         const SendExamStatus = (takersCount: number) => setStudentCount(takersCount)
-        mappedSocket.emit("GetSchemaMetrics", schemaData.id, GetSchemaMetricsCb)
-        mappedSocket.on("UpdatedSchemaMetrics", GetSchemaMetricsCb)
+        // mappedSocket.emit("GetSchemaMetrics", schemaData.id, GetSchemaMetricsCb)
+        // mappedSocket.on("UpdatedSchemaMetrics", GetSchemaMetricsCb)
         mappedSocket.on("SendExamStatus", SendExamStatus)
         return () =>
         {
-            mappedSocket.off("UpdatedSchemaMetrics", GetSchemaMetricsCb)
+            // mappedSocket.off("UpdatedSchemaMetrics", GetSchemaMetricsCb)
             mappedSocket.off("SendExamStatus", SendExamStatus)
         }
     }, [])

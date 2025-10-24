@@ -1,5 +1,5 @@
 import { useGlobals } from "@/components/hooks/useGlobals";
-import { ExamProp, ExamSocketMapping, ExamTypes } from "@/types/Exam.types";
+import { ExamProp, ExamSocketMapping, ExamTypes, SchemaMetrics, SchemaResults } from "@/types/Exam.types";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 
@@ -12,11 +12,20 @@ export function ExamContextProvider({ children }: { children: ReactNode })
     const [consumerMode, setConsumerMode] = useState<boolean>(false)
     const [builderMode, setBuilderMode] = useState<boolean>(false)
     const [schemaList, setSchemaList] = useState<ExamProp[]>([])
+    const [schemaResults, setSchemaResults] = useState<SchemaResults[]>([])
+    const [schemaMetrics, setSchemaMetrics] = useState<SchemaMetrics[]>([])
     useEffect(() =>
     {
         const mappedSocket: Socket<ExamSocketMapping> = socket
-        const GetSchema: (list: ExamProp[]) => void = (list) => setSchemaList(list)
-        const UpdatedSchema = () => mappedSocket.emit("GetSchema", GetSchema)
+        const GetSchema: (list: ExamProp[], result: SchemaResults[], metric: SchemaMetrics[]) => void = (list, result, metric) =>
+        {
+            setSchemaList(list)
+            setSchemaResults(result)
+            setSchemaMetrics(metric)
+        }
+        const UpdatedSchema = () => {
+            mappedSocket.emit("GetSchema", GetSchema)
+        }
         mappedSocket.emit("GetSchema", GetSchema)
         mappedSocket.on("UpdatedSchema", UpdatedSchema)
         return () =>
@@ -27,7 +36,9 @@ export function ExamContextProvider({ children }: { children: ReactNode })
     const defaultValues: ExamTypes = {
         consumerMode, setConsumerMode,
         builderMode, setBuilderMode,
-        schemaList, setSchemaList
+        schemaList, setSchemaList,
+        schemaResults, setSchemaResults,
+        schemaMetrics, setSchemaMetrics
     }
     return <context.Provider value={defaultValues}>
         {children}
