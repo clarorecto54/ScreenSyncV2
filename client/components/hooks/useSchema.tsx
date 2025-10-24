@@ -58,7 +58,7 @@ export function SchemaContextProvider({ children }: { children: ReactNode })
                         points++
                 mappedSocket.emit("SendResult", meetingCode, {
                     id: mappedSocket.id!,
-                    examId: schemaData.id,
+                    examId: instanceSchemaData.id,
                     name: myInfo.name,
                     score: points,
                     examName: instanceSchemaData.title,
