@@ -1,14 +1,15 @@
 import { Server, Socket } from "socket.io";
-import { ExamProp, ExamSocketMapping, SchemaMetrics, SchemaSavefile } from "./exam.types";
+import { ExamMetric, ExamProp, ExamSocketMapping, SchemaMetrics, SchemaResults, SchemaSavefile } from "./exam.types";
 import { readFileSync, writeFileSync } from "fs-extra";
 import { ServerLog } from "../log";
-import { io } from "../../server";
 import { RoomList } from "../cleanups";
 import { existsSync, mkdirSync } from "fs";
 import { DecryptSchema, EncryptSchema } from "../../utils/crypto";
+import { io } from "../../server";
 
 export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
 {
+    const mappedServer: Server<ExamSocketMapping> = io
     const filename = "Exam-Templates.json"
     const path = `../${filename}`
     let saveList: SchemaSavefile[] = []
@@ -30,7 +31,7 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
     }
     socket.on("SaveSchema", (schema) =>
     {
-        let metric: SchemaMetrics = {
+        let metric: ExamMetric = {
             totalTakers: 0,
             totalScores: 0,
             avgScore: 0,
@@ -55,6 +56,8 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
         }
         saveList.push(savefile)
         UpdateSavefile(path, saveList)
+        saveList = ReadSavefile(path)
+        mappedServer.emit("UpdatedSchema")
     })
     socket.on("DeleteSchema", (schema) =>
     {
@@ -62,12 +65,17 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
         if (!existing) return
         saveList = saveList.filter(save => save.id !== schema.id)
         UpdateSavefile(path, saveList)
+        saveList = ReadSavefile(path)
+        mappedServer.emit("UpdatedSchema")
     })
     socket.on("GetSchema", (SendSchema) =>
     {
+        saveList = ReadSavefile(path)
         ServerLog("socket", `${socket.id} is requesting for the list of schema...`)
         let saveSchema: boolean = false
-        const list: ExamProp[] = []
+        const lists: ExamProp[] = []
+        const results: SchemaResults[] = []
+        const metrics: SchemaMetrics[] = []
         for (const save of saveList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()))
         {
             if (save.metric === undefined || save.metric === null)
@@ -86,11 +94,23 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
                 save.results = []
                 saveSchema = true
             }
-            list.push(DecryptSchema(save.data))
+            lists.push(DecryptSchema(save.data))
+            results.push({
+                id: save.id,
+                result: save.results
+            })
+            metrics.push({
+                id: save.id,
+                metric: save.metric
+            })
         }
-        SendSchema(list)
         if (saveSchema)
+        {
             UpdateSavefile(path, saveList)
+            saveList = ReadSavefile(path)
+            return mappedServer.emit("UpdatedSchema")
+        }
+        SendSchema(lists, results, metrics)
         ServerLog("socket", `${socket.id} has recevied the updated list of schema`)
     })
     socket.on("SendOutExam", (targetRoom, encryptedSchema) =>
@@ -121,7 +141,7 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
         socket.to(room.host.id).emit("SendExamStatus", room.exam.studentIds.length)
         socket.to(targetRoom).emit("StopExam", targetRoom)
     })
-    socket.on("SendResult", (targetRoom, result) =>
+    socket.on("SendResult", async (targetRoom, result) =>
     {
         const room = RoomList.find(room => room.id === targetRoom)!
         room.exam.studentIds = room.exam.studentIds.filter(id => id !== socket.id)
@@ -145,8 +165,10 @@ export default function ExamSocketListener(socket: Socket<ExamSocketMapping>)
             filePath = `${folderPath}/${filename}_${takeCount++}${ext}`
         writeFileSync(filePath, Buffer.from(result.pdf))
         UpdateSavefile(path, saveList)
+        saveList = ReadSavefile(path)
+        mappedServer.emit("UpdatedSchema")
         socket.to(room.host.id).emit("SendExamStatus", room.exam.studentIds.length)
-        socket.to(room.host.id).emit("UpdatedSchemaMetrics", schema.results, schema.metric)
+        // socket.to(room.host.id).emit("UpdatedSchemaMetrics", schema.results, schema.metric)
     })
     socket.on("GetSchemaMetrics", (schemaId, cb) =>
     {
@@ -172,8 +194,5 @@ function UpdateSavefile(path: string, saveList: SchemaSavefile[])
         JSON.stringify(saveList, null, 1),
         "utf-8"
     )
-    const mappedServer: Server<ExamSocketMapping> = io
-    mappedServer.emit("UpdatedSchema")
-    saveList = ReadSavefile(path)
     ServerLog("server", `Schema has been saved`)
 }

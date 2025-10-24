@@ -5,7 +5,7 @@ export interface ExamSocketMapping
     SaveSchema: (schema: ExamProp) => void
     DeleteSchema: (schema: ExamProp) => void
     GetSchema: (
-        SendSchema: (schemaList: ExamProp[]) => void
+        SendSchema: (schemaList: ExamProp[],schemaResult: SchemaResults[], schemaMetric: SchemaMetrics[]) => void
     ) => void
     UpdatedSchema: () => void
     SendOutExam: (
@@ -34,12 +34,12 @@ export interface ExamSocketMapping
         schemaId: string,
         cb: (
             results: ExamResult[],
-            metric: SchemaMetrics
+            metric: ExamMetric
         ) => void
     ) => void
     UpdatedSchemaMetrics: (
         results: ExamResult[],
-        metric: SchemaMetrics
+        metric: ExamMetric
     ) => void
 }
 
@@ -54,23 +54,33 @@ export interface ExamResult
     pdf: ArrayBuffer
 }
 
+export interface SchemaResults{
+    id: string
+    result: ExamResult[]
+}
+
 export interface SchemaSavefile
 {
     id: string
     name: string
     subject: string
-    metric: SchemaMetrics
+    metric: ExamMetric
     results: ExamResult[]
     date: Date
     data: string
 }
 
-export interface SchemaMetrics{
+export interface ExamMetric{
     totalTakers: number
     totalScores: number
     minScore: number
     avgScore: number
     maxScore: number
+}
+
+export interface SchemaMetrics{
+    id: string
+    metric: ExamMetric
 }
 
 export interface ExamTypes
